@@ -112,5 +112,8 @@ database.sqlite
 # Visual Studio
 .vs/
 
+#ENVIROMENT
+src\utils\env.js
+
 main.css
 main.min.css
