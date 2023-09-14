@@ -1,43 +1,64 @@
 
-const Sequelize = require('sequelize');
+const {Sequelize, Model} = require('sequelize');
 
 const db = require('../db.js');
+const Categoria = require('./categoria'); // Importa el modelo de Categoria
+const Moneda = require('./moneda'); // Importa el modelo de Moneda
+const Localidad = require('./localidad'); // Importa el modelo de Localidad
 
-const ProductType = require('./productType.js');
+class Product extends Model {}
 
-/**
- * Modelo de producto.
- *
- *
- */
-const Product = db.define(
-    'Product',
-    {
-        // Atributos
-        name: {
-            type: Sequelize.STRING,
-            allowNull: false,
-        },
-        price: {
-            type: Sequelize.NUMBER,
-            allowNull: false,
-        },
-        type: {
-            type: Sequelize.STRING,
-            allowNull: false,
-            values: ProductType.types,
-        },
-        discount: {
-            type: Sequelize.NUMBER,
-            allowNull: false,
-        },
-        description: {
-            type: Sequelize.STRING,
-            allowNull: true,
+Product.init({
+    id: {
+        type: Sequelize.INTEGER,
+        primaryKey: true,
+        autoIncrement: true,
+    },
+    nombre: {
+        type: Sequelize.STRING,
+        allowNull: false,
+    },
+    categoria: {
+        field: 'categoria_id',
+        type: Sequelize.INTEGER,
+        allowNull: false,
+        references: {
+            model: Categoria.Categoria,
+            key: 'id',
         },
     },
-    { tableName: 'Product' }
-);
+    precio: {
+        type: Sequelize.FLOAT,
+        allowNull: false,
+    },
+    moneda: {
+            field:'moneda_id',
+            type: Sequelize.INTEGER,
+            allowNull: false,
+            references: {
+            model: Moneda.Moneda,
+            key: 'id',
+        },
+    },
+    marca: {
+        type: Sequelize.STRING,
+    },
+    localidad: {
+            field:'localidad_id',
+            type: Sequelize.BIGINT,
+            references: {
+            model: Localidad,
+            key: 'id',
+        },
+    },
+    detalle: {
+        type: Sequelize.TEXT, // Cambiamos a TEXT para soportar nvarchar(MAX)
+    }
+},
+{db, modelName: 'Product',tableName: 'Producto' });
+
+Product.belongsTo(Categoria, { foreignKey: 'categoria_id', as: 'categoria' });
+
 
 /**
  * Obtener todos los productos de la base de datos.
@@ -59,11 +80,12 @@ const getAllProducts = (limit, skip, type) => {
         attributes: {
             exclude: ['createdAt', 'updatedAt'],
         },
+        include:['categoria'],
         where: where,
         // Agregamos la instrucción para que la lista venga ordenada directamente para toda la app
         order: [
-            ['name', 'ASC'],
-            ['price', 'ASC'],
+            ['nombre', 'ASC'],
+            ['precio', 'ASC'],
         ],
     });
 };
@@ -91,7 +113,7 @@ const getDiscountProducts = () => {
  *
  */
 const createProduct = ({
-    name = '',
+    name = '', 
     price = 0.0,
     type = ProductType.HOME,
     discount = 0.0,
@@ -144,12 +166,7 @@ function findById(id) {
 
 const ProductModel = {
     Product: Product,
-    findById: findById,
     getAll: getAllProducts,
-    getAllDiscount: getDiscountProducts,
-    create: createProduct,
-    update: updateProduct,
-    delete: deleteProduct,
 };
 
 module.exports = ProductModel;
