@@ -1,5 +1,6 @@
 const Sequelize = require('sequelize');
 const db = require('../db.js');
+const { Product } = require('./product.js');
 
 /**
  * Modelo de categoría
@@ -21,6 +22,7 @@ const Categoria = db.define(
     },
     { tableName: 'Categoria' }
 );
+
 
 /**
  * Crear una categoría nueva.
