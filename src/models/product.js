@@ -2,7 +2,7 @@
 const {Sequelize, Model} = require('sequelize');
 
 const db = require('../db.js');
-const {Categoria} = require('./categoria.js'); // Importa el modelo de Categoria
+const Categoria = require('./categoria.js'); // Importa el modelo de Categoria
 const Moneda = require('./moneda.js'); // Importa el modelo de Moneda
 const Localidad = require('./localidad.js'); // Importa el modelo de Localidad
 const dd = require('dump-die');
@@ -32,19 +32,19 @@ Product.init({
         type: Sequelize.FLOAT,
         allowNull: false,
     },
-    moneda: {
+    moneda_id: {
             field:'moneda_id',
             type: Sequelize.INTEGER,
             allowNull: false,
             references: {
-            model: Moneda.Moneda,
+            model: Moneda,
             key: 'id',
         },
     },
     marca: {
         type: Sequelize.STRING,
     },
-    localidad: {
+    localidad_id: {
             field:'localidad_id',
             type: Sequelize.BIGINT,
             references: {
@@ -60,8 +60,8 @@ Product.init({
 );
 
 Product.belongsTo(Categoria, { foreignKey: 'categoria_id', as: 'categoria' });
-
-
+Product.belongsTo(Moneda, { foreignKey: 'moneda_id', as: 'moneda' });
+Product.belongsTo(Localidad, { foreignKey: 'localidad_id', as: 'localidad' });
 /**
  * Obtener todos los productos de la base de datos.
  *
