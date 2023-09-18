@@ -1,13 +1,13 @@
-const Sequelize = require('sequelize');
+const {Sequelize,Model} = require('sequelize');
 const db = require('../db.js');
 const { Product } = require('./product.js');
 
 /**
  * Modelo de categoría
  */
-const Categoria = db.define(
-    'Categoria',
-    {
+class Categoria extends Model {}
+
+Categoria.init({
         // Atributos
         id: {
             type: Sequelize.INTEGER,
@@ -20,7 +20,7 @@ const Categoria = db.define(
             allowNull: false,
         },
     },
-    { tableName: 'Categoria' }
+    {sequelize: db, modelName: 'Categoria',timestamps:false}
 );
 
 

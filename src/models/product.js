@@ -2,9 +2,10 @@
 const {Sequelize, Model} = require('sequelize');
 
 const db = require('../db.js');
-const Categoria = require('./categoria'); // Importa el modelo de Categoria
-const Moneda = require('./moneda'); // Importa el modelo de Moneda
-const Localidad = require('./localidad'); // Importa el modelo de Localidad
+const {Categoria} = require('./categoria.js'); // Importa el modelo de Categoria
+const Moneda = require('./moneda.js'); // Importa el modelo de Moneda
+const Localidad = require('./localidad.js'); // Importa el modelo de Localidad
+const dd = require('dump-die');
 
 class Product extends Model {}
 
@@ -18,12 +19,12 @@ Product.init({
         type: Sequelize.STRING,
         allowNull: false,
     },
-    categoria: {
+    categoria_id: {
         field: 'categoria_id',
         type: Sequelize.INTEGER,
         allowNull: false,
         references: {
-            model: Categoria.Categoria,
+            model: Categoria,
             key: 'id',
         },
     },
@@ -55,7 +56,8 @@ Product.init({
         type: Sequelize.TEXT, // Cambiamos a TEXT para soportar nvarchar(MAX)
     }
 },
-{db, modelName: 'Product',tableName: 'Producto' });
+{sequelize: db, modelName: 'Product',tableName: 'Producto' }
+);
 
 Product.belongsTo(Categoria, { foreignKey: 'categoria_id', as: 'categoria' });
 
@@ -80,7 +82,7 @@ const getAllProducts = (limit, skip, type) => {
         attributes: {
             exclude: ['createdAt', 'updatedAt'],
         },
-        include:['categoria'],
+        include:'categoria',
         where: where,
         // Agregamos la instrucción para que la lista venga ordenada directamente para toda la app
         order: [
