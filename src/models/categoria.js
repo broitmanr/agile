@@ -1,6 +1,5 @@
 const {Sequelize,Model} = require('sequelize');
 const db = require('../db.js');
-const { Product } = require('./product.js');
 
 /**
  * Modelo de categoría
@@ -23,13 +22,4 @@ Categoria.init({
     {sequelize: db, modelName: 'Categoria',timestamps:false}
 );
 
-
-/**
- * Crear una categoría nueva.
- * Parámetro data: JSON con los atributos de la categoría.
- */
-const createCategoria = ({ nombre = '' } = {}) => {
-    return Categoria.create({ nombre });
-};
-
-module.exports = { Categoria, createCategoria };
+module.exports = Categoria;
