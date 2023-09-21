@@ -92,6 +92,11 @@ const getAllProducts = (limit, skip, type) => {
     });
 };
 
+function findById(id) {
+    return Product.findOne({ where: { id: id } });
+}
+
+ 
 /**
  * Obtener todos los productos con descuento de la base de datos.
  *
@@ -156,19 +161,20 @@ const deleteProduct = async (id) => {
     return null;
 };
 
+
 /**
  * Busca un producto por id
  *
- * @param {Number} id del producto buscado
- * @returns Product
  */
 function findById(id) {
     return Product.findOne({ where: { id: id } });
 }
 
+
 const ProductModel = {
     Product: Product,
     getAll: getAllProducts,
+    findById: findById
 };
 
 module.exports = ProductModel;
