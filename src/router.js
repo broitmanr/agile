@@ -2,6 +2,7 @@ const { CartModel, ProductModel } = require('./models/index.js');
 const express = require('express');
 const productType = require('./models/productType.js');
 const dd = require('dump-die');
+const path = require('path');
 
 const router = express.Router();
 
@@ -55,6 +56,10 @@ router.get('/discount', async function (req, res) {
     const productsWithDiscount = await ProductModel.getAllDiscount();
 
     res.render('discount.html', { products: productsWithDiscount });
+});
+
+router.get('/formulario', function(req, res) {
+    res.sendFile(path.join(__dirname, 'views', 'formulario.html'));
 });
 
 module.exports = router;
