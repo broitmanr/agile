@@ -167,8 +167,15 @@ const deleteProduct = async (id) => {
  *
  */
 function findById(id) {
-    return Product.findOne({ where: { id: id } });
+    return Product.findOne({ 
+        where: { id: id }, 
+        attributes: {
+            exclude: ['createdAt', 'updatedAt']
+        }
+    })
 }
+    
+
 
 
 const ProductModel = {
