@@ -4,8 +4,7 @@
 {% extends "_base.html" %}
 
 {% block main %}
-<div class="row">
-    <div class="col mt-4 vstack gap-2">
+<div class="col mt-4 vstack gap-2">
         {% if products | length > 0 %}
             {% for product in products %}
                 {{ productCard.productCard(product) }}
