@@ -1,12 +1,15 @@
 
-const Sequelize = require('sequelize');
+const {Sequelize, Model} = require('sequelize');
 
 const db = require('../db.js');
-const Categoria = require('./categoria'); // Importa el modelo de Categoria
-const Moneda = require('./moneda'); // Importa el modelo de Moneda
-const Localidad = require('./localidad'); // Importa el modelo de Localidad
+const Categoria = require('./categoria.js'); // Importa el modelo de Categoria
+const Moneda = require('./moneda.js'); // Importa el modelo de Moneda
+const Localidad = require('./localidad.js'); // Importa el modelo de Localidad
+const dd = require('dump-die');
 
-const Product = db.define('Product', {
+class Product extends Model {}
+
+Product.init({
     id: {
         type: Sequelize.INTEGER,
         primaryKey: true,
@@ -16,12 +19,12 @@ const Product = db.define('Product', {
         type: Sequelize.STRING,
         allowNull: false,
     },
-    categoria: {
+    categoria_id: {
         field: 'categoria_id',
         type: Sequelize.INTEGER,
         allowNull: false,
         references: {
-            model: Categoria.Categoria,
+            model: Categoria,
             key: 'id',
         },
     },
@@ -29,12 +32,12 @@ const Product = db.define('Product', {
         type: Sequelize.FLOAT,
         allowNull: false,
     },
-    moneda: {
+    moneda_id: {
             field:'moneda_id',
             type: Sequelize.INTEGER,
             allowNull: false,
             references: {
-            model: Moneda.Moneda,
+            model: Moneda,
             key: 'id',
         },
     },
@@ -51,11 +54,14 @@ const Product = db.define('Product', {
     },
     detalle: {
         type: Sequelize.TEXT, // Cambiamos a TEXT para soportar nvarchar(MAX)
-    },
-    
-},{ tableName: 'Producto' });
+    }
+},
+{sequelize: db, modelName: 'Product',tableName: 'Producto' }
+);
 
-
+Product.belongsTo(Categoria, { foreignKey: 'categoria_id', as: 'categoria' });
+Product.belongsTo(Moneda, { foreignKey: 'moneda_id', as: 'moneda' });
+Product.belongsTo(Localidad, { foreignKey: 'localidad_id', as: 'localidad' });
 /**
  * Obtener todos los productos de la base de datos.
  *
@@ -76,15 +82,39 @@ const getAllProducts = (limit, skip, type) => {
         attributes: {
             exclude: ['createdAt', 'updatedAt'],
         },
+        include:'categoria',
         where: where,
         // Agregamos la instrucción para que la lista venga ordenada directamente para toda la app
         order: [
-            ['name', 'ASC'],
-            ['price', 'ASC'],
+            ['nombre', 'ASC'],
+            ['precio', 'ASC'],
         ],
     });
 };
 
+/**
+ * Busca un producto por id
+ *
+ */
+function findById(id) {
+    return Product.findOne({ 
+        where: { id: id },
+        attributes: {
+            exclude: ['createdAt', 'updatedAt']
+        },
+        include: [
+            // Incluye la relación 'categoria' y muestra solo el campo 'nombre'
+            { model: Categoria, as: 'categoria', attributes: ['nombre'] },
+
+            // Incluye la relación 'moneda' y muestra solo el campo 'nombre'
+            { model: Moneda, as: 'moneda', attributes: ['simbolo', 'sigla'] },
+
+            // Incluye la relación 'localidad' y muestra solo el campo 'nombre'
+            { model: Localidad, as: 'localidad', attributes: ['nombre'] }
+        ]
+    })
+}
+    
 /**
  * Obtener todos los productos con descuento de la base de datos.
  *
@@ -149,24 +179,14 @@ const deleteProduct = async (id) => {
     return null;
 };
 
-/**
- * Busca un producto por id
- *
- * @param {Number} id del producto buscado
- * @returns Product
- */
-function findById(id) {
-    return Product.findOne({ where: { id: id } });
-}
+
+
+
 
 const ProductModel = {
     Product: Product,
-    findById: findById,
     getAll: getAllProducts,
-    getAllDiscount: getDiscountProducts,
-    create: createProduct,
-    update: updateProduct,
-    delete: deleteProduct,
+    findById: findById
 };
 
 module.exports = ProductModel;
