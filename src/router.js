@@ -22,6 +22,23 @@ router.get('/', async function (req, res) {
     });
 });
 
+router.get('/search', async (req, res) => {
+    const pageSize = 10;
+    const currentPage = +req.query.page || 1;
+    const category = req.query.type || undefined;
+    const skip = pageSize * (currentPage - 1);
+    const productName = req.query.product_name
+    const {rows,count} = await ProductModel.searchByName(productName);
+    res.render('home.html', {
+        products: rows,
+        categories: productType.types,
+        pagination: {
+            totalPages: Math.ceil(count / pageSize),
+            currentPage: currentPage,
+        },
+    })
+})
+
 router.post('/cart', async function (req, res) {
     const productID = +req.body.productid;
     const product = await ProductModel.findById(productID);
