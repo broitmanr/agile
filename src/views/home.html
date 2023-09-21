@@ -9,7 +9,9 @@
     <div class="col mt-4 vstack gap-2">
 
         {% for product in products %}
+        <a href="/product/details/{{ product.id }}" class="text-decoration-none text-dark">
             {{ productCard.productCard(product) }}
+        </a>
         {% endfor %}    
         
     </div>
