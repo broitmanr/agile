@@ -104,13 +104,13 @@ function findById(id) {
         },
         include: [
             // Incluye la relación 'categoria' y muestra solo el campo 'nombre'
-            { model: Categoria, as: 'categoria_id', attributes: ['nombre'] },
+            { model: Categoria, as: 'categoria', attributes: ['nombre'] },
 
             // Incluye la relación 'moneda' y muestra solo el campo 'nombre'
-            { model: Moneda, as: 'moneda_id', attributes: ['nombre'] },
+            { model: Moneda, as: 'moneda', attributes: ['simbolo', 'sigla'] },
 
             // Incluye la relación 'localidad' y muestra solo el campo 'nombre'
-            { model: Localidad, as: 'localidad_id', attributes: ['nombre'] }
+            { model: Localidad, as: 'localidad', attributes: ['nombre'] }
         ]
     })
 }
