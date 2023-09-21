@@ -92,11 +92,29 @@ const getAllProducts = (limit, skip, type) => {
     });
 };
 
+/**
+ * Busca un producto por id
+ *
+ */
 function findById(id) {
-    return Product.findOne({ where: { id: id } });
-}
+    return Product.findOne({ 
+        where: { id: id },
+        attributes: {
+            exclude: ['createdAt', 'updatedAt']
+        },
+        include: [
+            // Incluye la relación 'categoria' y muestra solo el campo 'nombre'
+            { model: Categoria, as: 'categoria_id', attributes: ['nombre'] },
 
- 
+            // Incluye la relación 'moneda' y muestra solo el campo 'nombre'
+            { model: Moneda, as: 'moneda_id', attributes: ['nombre'] },
+
+            // Incluye la relación 'localidad' y muestra solo el campo 'nombre'
+            { model: Localidad, as: 'localidad_id', attributes: ['nombre'] }
+        ]
+    })
+}
+    
 /**
  * Obtener todos los productos con descuento de la base de datos.
  *
@@ -162,19 +180,6 @@ const deleteProduct = async (id) => {
 };
 
 
-/**
- * Busca un producto por id
- *
- */
-function findById(id) {
-    return Product.findOne({ 
-        where: { id: id }, 
-        attributes: {
-            exclude: ['createdAt', 'updatedAt']
-        }
-    })
-}
-    
 
 
 
