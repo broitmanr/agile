@@ -22,7 +22,7 @@ router.get('/', async function (req, res) {
     });
 });
 
-router.get('/search', async (req, res) => {
+router.get('/_header', async (req, res) => {
     const pageSize = 10;
     const currentPage = +req.query.page || 1;
     const category = req.query.type || undefined;
