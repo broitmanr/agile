@@ -53,6 +53,19 @@
     overflow: hidden;
 }
 
+.input-field select{
+    width: 25%;
+    background-color: #828A97;
+    color: #FFFFFF;
+    border: none;
+    cursor: pointer;
+    outline: none;
+}
+
+.input-field select option{
+    color: #828A97;
+}
+
 input{
     width: 100%;
     background: transparent;
@@ -99,6 +112,8 @@ form p a{
     border-radius: 8px; /*Eliminar en caso de que se quiera hacer el botón como un cuadrado*/
     border: 0;
     outline: 0;
+    border: none;
+    outline: none;
     cursor: pointer;
     transition: background 1s;
     margin-right: 10px;

@@ -19,19 +19,27 @@
                 <div class="input-group">
                     <div class="input-field" id="nameInput">
                         <i class="fa-regular fa-user"></i>
-                        <input type="text" placeholder="Nombre">
+                        <input type="text" name="nombre" placeholder="Nombre">
                     </div>
-                    <div class="input-field" id>
+                    <div class="input-field">
                         <i class="fa-solid fa-bars"></i>
-                        <input type="text" placeholder="Categoria">
+                        <input type="text" name="categoria_id" placeholder="Categoria">
                     </div>
-                    <div class="input-field" id>
+                    <div class="input-field">
+                        <select name="moneda" style="width: 30%; background-color: #515966; color: #FFFFFF; border: none; outline: none;">
+                            <option value="">Moneda</option>
+                            {% for moneda in monedas %}
+                            <option value="{{ moneda.id }}">{{ moneda.sigla }}</option>
+                            {% endfor %}
+                        <!--</select>-->
+                    </div>
+                    <div class="input-field">
                         <i class="fa-solid fa-dollar-sign"></i>
-                        <input type="text" placeholder="Precio">
+                        <input type="text" name="precio" placeholder="Precio">
                     </div>
-                    <div class="input-field" id>
+                    <div class="input-field">
                         <i class="fa-solid fa-globe"></i>
-                        <input type="text" placeholder="Zona">
+                        <input type="text" name="localidad_id" placeholder="Zona">
                     </div>
                 </div>
                 <br>
@@ -39,10 +47,6 @@
                     <button id="cancel" type="button">Cancelar</button>
                     <button id="post" type="button">Publicar</button>
                 </div>
-                <!--<label for="fname">First name:</label><br>
-                <input type="text" id="fname" name="fname"><br>
-                <label for="lname">Last name:</label><br>
-                <input type="text" id="lname" name="lname">-->
             </form>
         </div>
     </div>
