@@ -3,6 +3,8 @@ const express = require('express');
 const productType = require('./models/productType.js');
 const dd = require('dump-die');
 const path = require('path');
+const { error } = require('console');
+//const Categoria=require('./categoria');
 
 const router = express.Router();
 
@@ -20,6 +22,15 @@ router.get('/', async function (req, res) {
             currentPage: currentPage,
         },
     });
+});
+
+router.get('/formulario', async(req,res) => {
+    try{
+        const monedas = await ProductModel.getMonedas();
+        res.render('formulario.html', { monedas });
+    }catch(error){
+        console.error(error);
+    }
 });
 
 router.get('/_header', async (req, res) => {

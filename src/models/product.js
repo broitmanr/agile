@@ -137,20 +137,18 @@ const getDiscountProducts = () => {
     });
 };
 
+
+const getMonedas = async() => {
+    return await Moneda.findAll({
+        attributes: ['sigla']
+    });
+};
+
 /**
  * Crear un producto nuevo.
  * Parámetro data: JSON con los atributos a crear.
  *
  */
-const createProduct = ({
-    name = '', 
-    price = 0.0,
-    type = ProductType.HOME,
-    discount = 0.0,
-    description = '',
-} = {}) => {
-    return Product.create({ name, price, type, discount, description });
-};
 
 /**
  * Modifica un producto ya existente.
@@ -189,5 +187,6 @@ const ProductModel = {
     Product: Product,
     getAll: getAllProducts, 
     searchByName: searchProductsByName,
+    getMonedas: getMonedas,
 }
 module.exports = ProductModel
