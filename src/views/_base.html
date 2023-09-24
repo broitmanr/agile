@@ -24,19 +24,35 @@
 </head>
 
 <body class="app">
-    <header>
-        {% include "search.html" %}
-    </header>
-    <main class="container">
+  
+    <main id="content-wrap" class="container-fluid">
         {% block main %} {% endblock %}
     </main>
 
     {% block js %} {% endblock %}
 
     <script src="https://mozilla.github.io/nunjucks/files/nunjucks-slim.min.js"></script>
+    <footer>
+        {% include "_footer.html" %}
+    </footer>
 </body>
-<footer>
-    {% include "_footer.html" %}
-</footer>
 
+
+<style>
+    footer{
+        position:absolute;
+        bottom: 0;
+        width: 100%;
+        height: 2.5rem;
+    }
+
+    body {
+        position: relative;
+        min-height: 100vh;
+    }
+
+    #content-wrap {
+        padding-bottom: 2.5rem;    /* Footer height */
+    }
+</style>
 </html>

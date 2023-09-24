@@ -1,0 +1,32 @@
+{% extends "_base.html" %}
+<!-- Falta agregar el nav bar del header -y corregir las posiciones esteticas de los productos-->
+
+{% block main %}
+<div class="container">
+    <div class="row">
+        <div class="col">
+            <h1>Detalles del Producto</h1>
+        </div>
+    </div>
+    <div class="row mt-4">
+        <div class="col-md-4 d-flex justify-content-center">
+
+            <img src="/no-image.jpg" alt="Imagen de {{ product.nombre }}" width="200px" height="200px" class="rounded border b-2"
+                 loading="async" />
+        </div>
+        <div class="col-md-8">
+            <h2>{{ product.nombre }}</h2>
+            <p><strong>Precio:</strong> {{ product.moneda.simbolo }}{{ product.precio }} {{ product.moneda.sigla }}</p>
+            <p><strong>Zona:</strong> {{ product.localidad.nombre }}</p>
+        </div>
+    </div>
+    <div class="row mt-4">
+        <div class="col p-3">
+            <h3>Características:</h3>
+            <p>{{ product.detalle }}</p>
+            <a href="/" class="btn btn-primary">Volver a la página principal</a>
+
+        </div>
+    </div>
+</div>
+{% endblock %}

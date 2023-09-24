@@ -2,7 +2,6 @@ const Sequelize = require('sequelize');
 const db = require('../db.js');
 const Municipio = require('./municipio.js')
 
-
 const Localidad = db.define('Localidad', {
     id: {
         type: Sequelize.INTEGER,
@@ -31,9 +30,10 @@ const Localidad = db.define('Localidad', {
       references: {
         model: Municipio, // Nombre del modelo de destino (en este caso, el modelo de Municipio)
         key: 'id', // Nombre de la columna a la que se hace referencia en la tabla de Municipio
-      },
-    },
-  }
-  );
-  
-  module.exports = Localidad;
+      }
+    }
+  }, {
+    tableName: 'Localidad' // Especifica el nombre de la tabla en la base de datos
+})
+
+module.exports = Localidad;
