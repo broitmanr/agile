@@ -21,6 +21,7 @@ router.get('/', async function (req, res) {
     });
 });
 
+
 router.get('/product/details/:id', async function (req, res) {
     const productId = +req.params.id; // Obtenemos el ID del producto desde la URL
     const productDetails = await ProductModel.findById(productId);
@@ -28,6 +29,23 @@ router.get('/product/details/:id', async function (req, res) {
     }
      // Renderiza la vista de detalles del producto y pasa los datos del producto
     res.render('_product_details.html', { product: productDetails });
+  
+})
+router.get('/search', async (req, res) => {
+    const pageSize = 10;
+    const currentPage = +req.query.page || 1;
+    const category = req.query.type || undefined;
+    const skip = pageSize * (currentPage - 1);
+    const productName = req.query.product_name
+    const {rows,count} = await ProductModel.searchByName(productName);
+    res.render('home.html', {
+        products: rows,
+        categories: productType.types,
+        pagination: {
+            totalPages: Math.ceil(count / pageSize),
+            currentPage: currentPage,
+        },
+    })
 })
 
 router.post('/cart', async function (req, res) {

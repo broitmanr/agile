@@ -114,7 +114,36 @@ function findById(id) {
         ]
     })
 }
-    
+
+ /**   
+ * Busca un producto por nombre
+ *
+ *
+ */
+
+const searchProductsByName = async (productName) => {
+    let where = {};
+    if (productName) {
+        where = {
+            nombre: {
+                [Sequelize.Op.like]: `%${productName}%`,
+            },
+        };
+    }
+
+    return Product.findAndCountAll({
+        attributes: {
+            exclude: ['createdAt', 'updatedAt'],
+        },
+        include: 'categoria',
+        where: where,
+        order: [
+            ['nombre', 'ASC'],
+            ['precio', 'ASC'],
+        ],
+    });
+};
+
 /**
  * Obtener todos los productos con descuento de la base de datos.
  *
@@ -177,16 +206,14 @@ const deleteProduct = async (id) => {
         return product.destroy();
     }
     return null;
-};
 
-
-
-
+}
 
 const ProductModel = {
     Product: Product,
     getAll: getAllProducts,
-    findById: findById
-};
+    findById: findById,
+    searchByName: searchProductsByName
+}
 
-module.exports = ProductModel;
+module.exports = ProductModel
