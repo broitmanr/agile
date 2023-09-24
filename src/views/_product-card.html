@@ -18,7 +18,7 @@
 
         <div class="flex-grow-1 d-flex align-items-center justify-content-end">
             <!-- Si tiene definido CartProduct quiere decir que estamos en el carrito -->
-            <form action="/cart" method="POST">
+            <form action="product/details/{{ product.id }}" method="GET">
                 <input type="text" class="d-none" name="productid" value="{{ product.id }}">
                 <button type="submit" class="btn btn-outline-dark">Me interesa</button>
             </form>
