@@ -104,6 +104,29 @@ const getAllProducts = (limit, skip, type) => {
 };
 
 /**
+ * Busca un producto por id
+ *
+ */
+function findById(id) {
+    return Product.findOne({ 
+        where: { id: id },
+        attributes: {
+            exclude: ['createdAt', 'updatedAt']
+        },
+        include: [
+            // Incluye la relación 'categoria' y muestra solo el campo 'nombre'
+            { model: Categoria, as: 'categoria', attributes: ['nombre'] },
+
+            // Incluye la relación 'moneda' y muestra solo el campo 'nombre'
+            { model: Moneda, as: 'moneda', attributes: ['simbolo', 'sigla'] },
+
+            // Incluye la relación 'localidad' y muestra solo el campo 'nombre'
+            { model: Localidad, as: 'localidad', attributes: ['nombre'] }
+        ]
+    })
+}
+
+ /**   
  * Busca un producto por nombre
  *
  *
@@ -131,6 +154,7 @@ const searchProductsByName = async (productName) => {
         ],
     });
 };
+
 /**
  * Obtener todos los productos con descuento de la base de datos.
  *
@@ -210,14 +234,16 @@ const deleteProduct = async (id) => {
         return product.destroy();
     }
     return null;
+
 }
 
-  
 const ProductModel = {
     Product: Product,
     getAll: getAllProducts, 
     searchByName: searchProductsByName,
     getMonedas: getMonedas,
     createProduct: createProduct,
+    findById: findById,
 }
+
 module.exports = ProductModel

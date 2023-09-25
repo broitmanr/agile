@@ -2,7 +2,6 @@ const Sequelize = require('sequelize');
 const db = require('../db.js');
 const Municipio = require('./municipio.js')
 
-
 const Localidad = db.define('Localidad', {
     id: {
         type: Sequelize.INTEGER,
