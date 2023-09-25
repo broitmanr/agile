@@ -15,7 +15,7 @@
     <div class="container">
         <div class="form-content">
             <h1 id="title">Publicar producto</h1>
-            <form>
+            <form action="/formulario" method="post">
                 <div class="input-group">
                     <div class="input-field" id="nameInput">
                         <i class="fa-regular fa-user"></i>
@@ -26,10 +26,10 @@
                         <input type="text" name="categoria_id" placeholder="Categoria">
                     </div>
                     <div class="input-field">
-                        <select name="moneda" style="width: 30%; background-color: #515966; color: #FFFFFF; border: none; outline: none;">
+                        <select name="moneda_id" style="width: 30%; background-color: #515966; color: #FFFFFF; border: none; outline: none;">
                             <option value="">Moneda</option>
                             {% for moneda in monedas %}
-                            <option value="{{ moneda.id }}">{{ moneda.sigla }}</option>
+                            <option value="{{ moneda.sigla }}">{{ moneda.sigla }}</option>
                             {% endfor %}
                         <!--</select>-->
                     </div>
@@ -45,7 +45,7 @@
                 <br>
                 <div class="btn-field">
                     <button id="cancel" type="button">Cancelar</button>
-                    <button id="post" type="button">Publicar</button>
+                    <button id="post" type="submit">Publicar</button>
                 </div>
             </form>
         </div>

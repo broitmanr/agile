@@ -1,11 +1,12 @@
 
-const {Sequelize, Model} = require('sequelize');
+const {Sequelize, Model, DataTypes} = require('sequelize');
 
 const db = require('../db.js');
 const Categoria = require('./categoria.js'); // Importa el modelo de Categoria
 const Moneda = require('./moneda.js'); // Importa el modelo de Moneda
 const Localidad = require('./localidad.js'); // Importa el modelo de Localidad
 const dd = require('dump-die');
+const sequelize = require('../db.js');
 
 class Product extends Model {}
 
@@ -54,9 +55,19 @@ Product.init({
     },
     detalle: {
         type: Sequelize.TEXT, // Cambiamos a TEXT para soportar nvarchar(MAX)
+    },
+    createdAt: {
+        type: DataTypes.DATE,
+        allowNull: false,
+        defaultValue: sequelize.literal('CURRENT_TIMESTAMP')
+    },
+    updatedAt: {
+        type: DataTypes.DATE,
+        allowNull: false,
+        defaultValue: sequelize.literal('CURRENT_TIMESTAMP')
     }
 },
-{sequelize: db, modelName: 'Product',tableName: 'Producto' }
+{sequelize: db, modelName: 'Product', tableName: 'Producto'}
 );
 
 Product.belongsTo(Categoria, { foreignKey: 'categoria_id', as: 'categoria' });
@@ -150,6 +161,25 @@ const getMonedas = async() => {
  *
  */
 
+const createProduct = async(productData) => {
+    const { nombre, categoria_id, precio, moneda_id, localidad_id } = productData;
+    const categoria = await Categoria.findOne({ where: { nombre: categoria_id }, attributes: ['id'] }); //Para identificar el id del nombre de la categoria ingresada
+    const moneda = await Moneda.findOne({ where: { sigla: moneda_id }, attributes: ['id'] }); //Para identificar el id de la sigla de la moneda ingresada
+    const localidad = await Localidad.findOne({ where: { nombre: localidad_id }, attributes: ['id'] }); //Para identificar el id del nombre de la localidad ingresada
+    const marca = "adfadsfsa";
+    const detalle = "sindetalle";
+
+    return await Product.create({
+        nombre,
+        categoria_id: categoria ? categoria.id: null,
+        precio,
+        moneda_id: moneda ? moneda.id: null,
+        marca,
+        localidad_id: localidad ? localidad.id: null,
+        detalle
+    });
+};
+
 /**
  * Modifica un producto ya existente.
  * Parámetro id: id a buscar en la base de datos.
@@ -188,5 +218,6 @@ const ProductModel = {
     getAll: getAllProducts, 
     searchByName: searchProductsByName,
     getMonedas: getMonedas,
+    createProduct: createProduct,
 }
 module.exports = ProductModel

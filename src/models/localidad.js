@@ -33,6 +33,8 @@ const Localidad = db.define('Localidad', {
         key: 'id', // Nombre de la columna a la que se hace referencia en la tabla de Municipio
       },
     },
+  }, {
+    tableName: 'Localidad'
   }
   );
   

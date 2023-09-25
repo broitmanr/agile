@@ -33,6 +33,17 @@ router.get('/formulario', async(req,res) => {
     }
 });
 
+router.post('/formulario', async (req, res) => {
+    const productData = req.body;
+    try{
+        const newProduct = await ProductModel.createProduct(productData);
+        res.status(201).json(newProduct);
+    } catch (error){
+        console.error(error);
+        res.status(500).json({message: "¡Error! No se ha podido crear el producto"});
+    }
+});
+
 router.get('/_header', async (req, res) => {
     const pageSize = 10;
     const currentPage = +req.query.page || 1;
