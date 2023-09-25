@@ -44,8 +44,6 @@ router.post('/formulario', async (req, res) => {
     }
 });
 
-router.get('/_header', async (req, res) => {
-
 router.get('/product/details/:id', async function (req, res) {
     const productId = +req.params.id; // Obtenemos el ID del producto desde la URL
     const productDetails = await ProductModel.findById(productId);
@@ -54,10 +52,9 @@ router.get('/product/details/:id', async function (req, res) {
      // Renderiza la vista de detalles del producto y pasa los datos del producto
     res.render('_product_details.html', { product: productDetails });
   
-})
-})
+});
 
-router.get('/search', async (req, res) => {
+router.get('/_header', async (req, res) => {
     const pageSize = 10;
     const currentPage = +req.query.page || 1;
     const category = req.query.type || undefined;
