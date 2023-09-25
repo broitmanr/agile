@@ -5,6 +5,9 @@
 body {
     background-color: var(--bs-gray-400);
 }
+.navbar {
+    background-color: #000000;
+}
 
 .navbar-brand {
     font-family: 'Macondo', 'Montserrat', sans-serif;
