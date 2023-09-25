@@ -1,0 +1,27 @@
+<style>
+    .btn:hover {
+        background-color: #007bff;
+        color: white;
+    }
+</style>
+
+<nav class="navbar navbar-expand-lg py-3">
+    <div class="container">
+        <a class="navbar-brand" href="/">
+            <img src="Logov3.png" alt="Logo de rentAR" width="100" height="auto">
+        </a>
+        <form action="/_header" method="get" class="form-search flex-grow-1 mx-3">
+            <div class="input-group">
+                <input
+                    type="text"
+                    class="form-control"
+                    placeholder="Buscar productos por nombre"
+                    name="product_name"
+                    aria-label="Buscar productos por nombre"
+                    aria-describedby="button-search">
+                <button class="btn btn-outline-secondary" type="submit" id="button-search" style= " color: #ffffff;">Buscar</button>
+            </div>
+        </form>
+        <button onclick='window.location.href = "/formulario" ' class="btn btn-light ml-auto" style="font-size: 1.0rem; padding: 0.50rem 1.0rem;">Publicar producto</button>
+    </div>
+</nav>

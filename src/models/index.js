@@ -1,6 +1,6 @@
 // const CartModel = require('./cart.js');
 // const CartProductModel = require('./cartProduct.js');
-const ProductModel = require('./producto.js');
+const ProductModel = require('./product.js');
 
 // CartModel.Cart.belongsToMany(ProductModel.Product, {
 //     through: CartProductModel.CartProduct,

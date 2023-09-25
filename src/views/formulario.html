@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+
+<head>
+    <html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Formulario</title>
+    <link rel="stylesheet" href="../static/css/formstyle.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css" integrity="sha512-z3gLpd7yknf1YoNbCzqRKc4qyor8gaKU1qmn+CShxbuBusANI9QpRohGBreCFkKxLhei6S9CQXFEbbKuqLg0DA==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+</head>
+<body>
+    <!--<script src="script.js"></script>-->
+    <div class="container">
+        <div class="form-content">
+            <h1 id="title">Publicar producto</h1>
+            <form action="/formulario" method="post">
+                <div class="input-group">
+                    <div class="input-field" id="nameInput">
+                        <i class="fa-regular fa-user"></i>
+                        <input type="text" name="nombre" placeholder="Nombre">
+                    </div>
+                    <div class="input-field">
+                        <i class="fa-solid fa-bars"></i>
+                        <input type="text" name="categoria_id" placeholder="Categoria">
+                    </div>
+                    <div class="input-field">
+                        <select name="moneda_id" style="width: 30%; background-color: #515966; color: #FFFFFF; border: none; outline: none;">
+                            <option value="">Moneda</option>
+                            {% for moneda in monedas %}
+                            <option value="{{ moneda.sigla }}">{{ moneda.sigla }}</option>
+                            {% endfor %}
+                        <!--</select>-->
+                    </div>
+                    <div class="input-field">
+                        <i class="fa-solid fa-dollar-sign"></i>
+                        <input type="text" name="precio" placeholder="Precio">
+                    </div>
+                    <div class="input-field">
+                        <i class="fa-solid fa-globe"></i>
+                        <input type="text" name="localidad_id" placeholder="Zona">
+                    </div>
+                </div>
+                <br>
+                <div class="btn-field">
+                    <button id="cancel" type="button">Cancelar</button>
+                    <button id="post" type="submit">Publicar</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</body>
+
+
+</html>
