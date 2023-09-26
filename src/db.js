@@ -17,7 +17,7 @@ const sequelize = new Sequelize(base, userbd, contrabd, {
       },
     },
   })
-  
+
   sequelize
     .authenticate()
     .then(() => {
@@ -26,8 +26,8 @@ const sequelize = new Sequelize(base, userbd, contrabd, {
     .catch((error) => {
       console.error('error al conectarse a la base: ', error)
     })
-  
-  
+
+
 //   db.User = require('./user')(sequelize)
-  
-  module.exports = sequelize
+
+  module.exports = sequelize;
