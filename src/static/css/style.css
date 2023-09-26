@@ -13,6 +13,11 @@ body {
     font-family: 'Macondo', 'Montserrat', sans-serif;
     font-size: 2rem;
 }
+.navbar-brand:hover {
+    transform: scale(1.1);
+    cursor: pointer;
+    transition: transform 0.2s;
+}
 
 .pagination {
     justify-content: center;
@@ -46,5 +51,4 @@ body {
 .ui-search-rescue__list {
     font-size: 16px;
     margin: 18px 10px 10px 0;
-  }
- 
+ }
