@@ -3,19 +3,17 @@
         <ul class="hstack gap-3">
             <li class="pagination__prev ">
                 {% if currentPage != 1 %}
-                <a style="color: black " href="?page={{ currentPage - 1 }}">< Anterior</a>
+                <a style="color: black " href="?page={{ currentPage - 1 }}"><i class="fa-solid fa-chevron-left fa-beat" style="color: #000000;"></i></a>
                 {% endif %}
             </li>
-
             <li>
                 <span class="current" aria-current="page">
                     {{ currentPage }}
                 </span> de {{ totalPages }}
             </li>
-
             <li class="pagination__next">
                 {% if currentPage < totalPages %}
-                <a style="color: black;" href="?page={{ currentPage + 1 }}">Siguiente ></a>
+                <a style="color: black;" href="?page={{ currentPage + 1 }}"><i class="fa-solid fa-chevron-right fa-beat" style="color: #000000;"></i></a>
                 {% endif %}
             </li>
         </ul>
