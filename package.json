@@ -34,6 +34,7 @@
         "jquery": "^3.7.1",
         "morgan": "^1.10.0",
         "nunjucks": "^3.2.3",
+        "picocolors": "^1.0.0",
         "select2": "^4.1.0-rc.0",
         "sequelize": "^6.19.0",
         "sqlite3": "^5.0.8",
