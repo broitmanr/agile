@@ -117,3 +117,6 @@ src/utils/env.js
 
 main.css
 main.min.css
+
+#Codigo para ejecutar debugs
+.vscode
