@@ -3,7 +3,7 @@
 
 <head>
     <meta charset="UTF-8" />
-    <title>{% block title %} Shopp {% endblock %}</title>
+    <title>{% block title %} rentAR {% endblock %}</title>
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <!-- build:css /static/css/main.min.css -->
 
@@ -18,8 +18,8 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Macondo&family=Montserrat:wght@400;700&display=swap"
         rel="stylesheet">
-
     <link rel="stylesheet" href="/static/css/style.css">
+    {% block stylesheet %} {%endblock%}
     <!-- /build -->
 </head>
 
@@ -27,21 +27,20 @@
     {% include "_header.html" %}
 </header>
 
+<script src="/jquery/jquery.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
+<script src="https://mozilla.github.io/nunjucks/files/nunjucks-slim.min.js"></script>
+{% block js %} {% endblock %}
 <body class="app">
-
     <main id="content-wrap" class="container">
         {% block main %} {% endblock %}
     </main>
-
-    {% block js %} {% endblock %}
-
-    <script src="https://mozilla.github.io/nunjucks/files/nunjucks-slim.min.js"></script>
     <footer>
         {% include "_footer.html" %}
     </footer>
 </body>
 
-
+{% block css %} {%endblock%}
 <style>
     footer{
         position:absolute;
@@ -60,8 +59,7 @@
     }
 </style>
 
-<script src="/jquery/jquery.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
+
 
 
 <script>
