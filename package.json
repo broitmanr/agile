@@ -31,8 +31,10 @@
         "dump-die": "^1.0.0",
         "express": "^4.18.1",
         "jest-environment-jsdom": "^28.1.0",
+        "jquery": "^3.7.1",
         "morgan": "^1.10.0",
         "nunjucks": "^3.2.3",
+        "select2": "^4.1.0-rc.0",
         "sequelize": "^6.19.0",
         "sqlite3": "^5.0.8",
         "tedious": "^16.4.0"
