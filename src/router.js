@@ -4,7 +4,6 @@ const productType = require('./models/productType.js');
 const dd = require('dump-die');
 const path = require('path');
 const { error } = require('console');
-//const Categoria=require('./categoria');
 
 const router = express.Router();
 
@@ -33,16 +32,18 @@ router.get('/formulario', async(req,res) => {
     }
 });
 
+
 router.post('/formulario', async (req, res) => {
     const productData = req.body;
     try{
         const newProduct = await ProductModel.createProduct(productData);
-        res.status(201).json(newProduct);
+        const productID = newProduct.id;
+        res.redirect(`/product/details/${productID}`);
     } catch (error){
         console.error(error);
-        res.status(500).json({message: "¡Error! No se ha podido crear el producto"});
+        res.status(500).json({ message: "¡Error! No se ha podido crear el producto" });
     }
-});
+}); 
 
 router.get('/product/details/:id', async function (req, res) {
     const productId = +req.params.id; // Obtenemos el ID del producto desde la URL
