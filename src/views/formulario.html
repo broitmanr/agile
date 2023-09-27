@@ -9,6 +9,7 @@
     <title>Formulario</title>
     <link rel="stylesheet" href="../static/css/formstyle.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css" integrity="sha512-z3gLpd7yknf1YoNbCzqRKc4qyor8gaKU1qmn+CShxbuBusANI9QpRohGBreCFkKxLhei6S9CQXFEbbKuqLg0DA==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
 </head>
 <body>
     <div class="container">
@@ -24,17 +25,19 @@
                         <i class="fa-solid fa-bars"></i>
                         <input type="text" name="categoria_id" placeholder="Categoria">
                     </div>
-                    <div class="input-field">
-                        <select name="moneda_id" style="width: 30%; background-color: #515966; color: #FFFFFF; border: none; outline: none;">
-                            <option value="">Moneda</option>
-                            {% for moneda in monedas %}
-                            <option value="{{ moneda.sigla }}">{{ moneda.sigla }}</option>
-                            {% endfor %}
-                        <!--</select>-->
-                    </div>
-                    <div class="input-field">
-                        <i class="fa-solid fa-dollar-sign"></i>
-                        <input type="text" name="precio" placeholder="Precio">
+                    <div class="input-field" style="display: flex; align-items: center;">
+                        <div style="flex: 1;">
+                            <select class="select2 select2-dropdown select" name="moneda_id" style="width: 100%; border: none; outline: none; margin-right: 2px">
+                                <option value="">Moneda</option>
+                                {% for moneda in monedas %}
+                                <option value="{{ moneda.sigla }}">{{ moneda.sigla }}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                        <div style="display: flex; align-items: center;">
+                            <i class="fa-solid fa-dollar-sign"></i>
+                            <input type="text" name="precio" placeholder="Precio">
+                        </div>
                     </div>
                     <div class="input-field">
                         <i class="fa-solid fa-globe"></i>
@@ -102,5 +105,38 @@
         });
     </script>
 </body>
+
+<script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+<script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
+<script>
+    $('.select2').select2().on('select2:select', function () {
+        $(this).trigger('blur');
+    });
+    $('.select2-noSearch').select2({
+        minimumResultsForSearch: Infinity,
+    }).on('select2:select', function () {
+        $(this).trigger('blur');
+    });
+</script>
+
+
+<style>
+    /* Cambiar el fondo del dropdown a oscuro */
+    .select2-container .select2-dropdown {
+        background-color: #333; /* Cambia el color de fondo a tu preferencia */
+    }
+
+    /* Cambiar el color del texto en el dropdown a blanco */
+    .select2-container .select2-dropdown .select2-results {
+        color: #fff; /* Cambia el color del texto a tu preferencia */
+    }
+
+    .select2-container .select2-selection--single {
+        background-color: #333; /* Cambia el color de fondo a tu preferencia */
+        color: #fff; /* Cambia el color del texto a tu preferencia */
+    }
+</style>
+
 
 </html>

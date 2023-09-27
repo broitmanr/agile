@@ -1,28 +1,26 @@
 
 const {Sequelize, Model, DataTypes} = require('sequelize');
 
-const db = require('../db.js');
+const Bd = require('../db.js');
 const Categoria = require('./categoria.js'); // Importa el modelo de Categoria
 const Moneda = require('./moneda.js'); // Importa el modelo de Moneda
 const Localidad = require('./localidad.js'); // Importa el modelo de Localidad
-const dd = require('dump-die');
-const sequelize = require('../db.js');
 
 class Product extends Model {}
 
 Product.init({
     id: {
-        type: Sequelize.INTEGER,
+        type: DataTypes.INTEGER,
         primaryKey: true,
         autoIncrement: true,
     },
     nombre: {
-        type: Sequelize.STRING,
+        type: DataTypes.STRING,
         allowNull: false,
     },
     categoria_id: {
         field: 'categoria_id',
-        type: Sequelize.INTEGER,
+        type: DataTypes.INTEGER,
         allowNull: false,
         references: {
             model: Categoria,
@@ -30,12 +28,12 @@ Product.init({
         },
     },
     precio: {
-        type: Sequelize.FLOAT,
+        type: DataTypes.FLOAT,
         allowNull: false,
     },
     moneda_id: {
             field:'moneda_id',
-            type: Sequelize.INTEGER,
+            type: DataTypes.INTEGER,
             allowNull: false,
             references: {
             model: Moneda,
@@ -43,31 +41,31 @@ Product.init({
         },
     },
     marca: {
-        type: Sequelize.STRING,
+        type: DataTypes.STRING,
     },
     localidad_id: {
             field:'localidad_id',
-            type: Sequelize.BIGINT,
+            type: DataTypes.BIGINT,
             references: {
             model: Localidad,
             key: 'id',
         },
     },
     detalle: {
-        type: Sequelize.TEXT, // Cambiamos a TEXT para soportar nvarchar(MAX)
+        type: DataTypes.TEXT, // Cambiamos a TEXT para soportar nvarchar(MAX)
     },
     createdAt: {
         type: DataTypes.DATE,
         allowNull: false,
-        defaultValue: sequelize.literal('CURRENT_TIMESTAMP')
+        defaultValue: Sequelize.literal('CURRENT_TIMESTAMP')
     },
     updatedAt: {
         type: DataTypes.DATE,
         allowNull: false,
-        defaultValue: sequelize.literal('CURRENT_TIMESTAMP')
+        defaultValue: Sequelize.literal('CURRENT_TIMESTAMP')
     }
 },
-{sequelize: db, modelName: 'Product', tableName: 'Producto'}
+{sequelize: Bd, modelName: 'Product', tableName: 'Producto'}
 );
 
 Product.belongsTo(Categoria, { foreignKey: 'categoria_id', as: 'categoria' });
@@ -108,7 +106,7 @@ const getAllProducts = (limit, skip, type) => {
  *
  */
 function findById(id) {
-    return Product.findOne({ 
+    return Product.findOne({
         where: { id: id },
         attributes: {
             exclude: ['createdAt', 'updatedAt']
@@ -126,7 +124,7 @@ function findById(id) {
     })
 }
 
- /**   
+ /**
  * Busca un producto por nombre
  *
  *
@@ -239,7 +237,7 @@ const deleteProduct = async (id) => {
 
 const ProductModel = {
     Product: Product,
-    getAll: getAllProducts, 
+    getAll: getAllProducts,
     searchByName: searchProductsByName,
     getMonedas: getMonedas,
     createProduct: createProduct,

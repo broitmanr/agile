@@ -1,31 +1,138 @@
 {% extends "_base.html" %}
 <!-- Falta agregar el nav bar del header -y corregir las posiciones esteticas de los productos-->
 
+{% block css %}
+<style>
+
+    /**{*/
+    /*    margin: 0;*/
+    /*    padding: 0;*/
+    /*    font-family: Arial, Helvetica, sans-serif;*/
+    /*    box-sizing: border-box;*/
+    /*    text-decoration: none;*/
+    /*}*/
+    .container-central{
+        width: 90%;
+        height: 90%;
+        background-color: #1A2234;
+        margin-bottom: 2em;
+        padding: 20px 20px 20px;
+        text-align: center;
+        border-radius: 25px;
+    }
+
+    h1{
+        font-size: 2em;
+        margin-bottom: 60px;
+        color: #FFFFFF;
+        position: relative;
+    }
+    .span-label{
+        font-size: 1.4em;
+        margin-bottom: 60px;
+        color: #FFFFFF;
+        float:left;
+    }
+    .span-content{
+        font-size: 1.2em;
+        margin-bottom: 60px;
+        color: #FFFFFF;
+        position: relative;
+    }
+
+    .row-detalle{
+        height: 5em;
+    }
+    .input-field select{
+        width: 25%;
+        background-color: #828A97;
+        color: #FFFFFF;
+        border: none;
+        cursor: pointer;
+        outline: none;
+    }
+
+    .input-field select option{
+        color: #828A97;
+    }
+
+    .btn-field{
+        width: 100%;
+        display: flex;
+        justify-content: center;
+        position: relative;
+        top: -15px;
+    }
+
+    .btn-field button{
+        flex-basis: 48%;
+        font-size: 14px;
+        background-color: #6982E8;
+        color: #FFFFFF;
+        height: 35px;
+        border-radius: 8px; /*Eliminar en caso de que se quiera hacer el botón como un cuadrado*/
+        border: 0;
+        outline: 0;
+        border: none;
+        outline: none;
+        cursor: pointer;
+        transition: background 1s;
+        margin-right: 10px;
+    }
+
+</style>
+{%endblock%}
+
 {% block main %}
-<div class="container">
-    <div class="row">
+<div class="container container-central mt-4">
         <div class="col">
-            <h1>Detalles del Producto</h1>
+            <h1>{{product.nombre}}</h1>
         </div>
-    </div>
     <div class="row mt-4">
         <div class="col-md-4 d-flex justify-content-center">
-
             <img src="/no-image.jpg" alt="Imagen de {{ product.nombre }}" width="200px" height="200px" class="rounded border b-2"
                  loading="async" />
         </div>
         <div class="col-md-8">
-            <h2>{{ product.nombre }}</h2>
-            <p><strong>Precio:</strong> {{ product.moneda.simbolo }}{{ product.precio }} {{ product.moneda.sigla }}</p>
-            <p><strong>Zona:</strong> {{ product.localidad.nombre }}</p>
+            <div class="row row-detalle">
+                <div class="col-md-3 m-1">
+                    <strong class="span-label">Marca:</strong>
+                </div>
+                <div class="col-md-4 m-1">
+                    <span class="span-content"> {{ product.marca }}</span>
+                </div>
+
+            </div>
+            <div class="row row-detalle">
+                <div class="col-md-3 m-1">
+                    <strong class="span-label">Precio:</strong>
+                </div>
+                <div class="col-md-4 m-1">
+                    <span class="span-content"> {{ product.moneda.simbolo }} {{ product.precio }} {{ product.moneda.sigla }}</span>
+                </div>
+
+            </div>
+            <div class="row row-detalle">
+                <div class="col-md-3 m-1">
+                    <strong class="span-label">Zona:</strong>
+                </div>
+                <div class="col-md-4 m-1">
+                    <span class="span-content"> {{ product.localidad.nombre }}</span>
+                </div>
+            </div>
+            <div class="row row-detalle">
+                <div class="col-md-12 m-1">
+                    <strong class="mb-1 span-label" style="width: 100%; text-align: left">Caracteristicas</strong>
+                    <span style="color: #ced4da;float: left"> {{ product.detalle }}</span>
+                </div>
+            </div>
+
         </div>
+
     </div>
     <div class="row mt-4">
-        <div class="col p-3">
-            <h3>Características:</h3>
-            <p>{{ product.detalle }}</p>
-            <a href="/" class="btn btn-primary">Volver a la página principal</a>
-
+        <div class="col p-3 d-flex justify-content-start">
+            <a href="/" class="btn btn-primary"><i class="fa-solid fa-arrow-left fa-bounce"></i>    Volver</a>
         </div>
     </div>
 </div>

@@ -16,6 +16,7 @@ const detectPort = require('detect-port');
 const router = require('./router.js');
 const lhroute = require('./.lhroute.js');
 const compression = require('compression');
+const dd = require("dump-die");
 
 const inTest = env.test;
 const viewsPath = path.resolve(__dirname, '.', 'views');
@@ -37,6 +38,16 @@ async function startServer(port = process.env.PORT) {
 
     app.use('/static', express.static(publicPath));
     app.use(express.static(path.join(__dirname, 'images')));
+
+
+    const jqueryPath = require.resolve('jquery');
+    app.use('/jquery', express.static(path.dirname(jqueryPath)));
+
+    const select2Path = require.resolve('select2');
+    app.use('/select2', express.static(path.dirname(select2Path)));
+
+
+
 
     nunjucks.init({
         express: app,
