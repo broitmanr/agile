@@ -26,7 +26,9 @@ router.get('/', async function (req, res) {
 router.get('/formulario', async(req,res) => {
     try{
         const monedas = await ProductModel.getMonedas();
-        res.render('formulario.html', { monedas });
+        const localidades = await ProductModel.getLocalidades();
+        const categorias = await ProductModel.getCategorias();
+        res.render('formulario.html', { monedas, localidades, categorias });
     }catch(error){
         console.error(error);
     }

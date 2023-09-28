@@ -1,4 +1,5 @@
-<!DOCTYPE html>
+
+
 
 <head>
     <html lang="en">
@@ -11,7 +12,9 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css" integrity="sha512-z3gLpd7yknf1YoNbCzqRKc4qyor8gaKU1qmn+CShxbuBusANI9QpRohGBreCFkKxLhei6S9CQXFEbbKuqLg0DA==" crossorigin="anonymous" referrerpolicy="no-referrer" />
     <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
 </head>
+
 <body>
+
     <div class="container">
         <div class="form-content">
             <h1 id="title">Publicar producto</h1>
@@ -23,25 +26,42 @@
                     </div>
                     <div class="input-field">
                         <i class="fa-solid fa-bars"></i>
-                        <input type="text" name="categoria_id" placeholder="Categoria">
+                        <div style="flex: 1;">
+                            <select class="select2-no-search select2-dropdown select" name="categoria_id" style="width: 100%; border: none; outline: none; margin-right: 2px">
+                                <option value="">Categoria</option>
+                                {% for categoria in categorias %}
+                                <option value="{{ categoria.nombre }}">{{ categoria.nombre }}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
                     </div>
                     <div class="input-field" style="display: flex; align-items: center;">
                         <div style="flex: 1;">
-                            <select class="select2 select2-dropdown select" name="moneda_id" style="width: 100%; border: none; outline: none; margin-right: 2px">
+                            <select class="select2 select2-dropdown select small-input" name="moneda_id" style="width: 100%; border: none; outline: none; margin-right: 2px">
                                 <option value="">Moneda</option>
                                 {% for moneda in monedas %}
                                 <option value="{{ moneda.sigla }}">{{ moneda.sigla }}</option>
                                 {% endfor %}
                             </select>
                         </div>
-                        <div style="display: flex; align-items: center;">
+                        <div style="display: flex; align-items: center">
                             <i class="fa-solid fa-dollar-sign"></i>
-                            <input type="text" name="precio" placeholder="Precio">
+                            <input type="text" name="precio" placeholder="Precio" class="small-input">
                         </div>
                     </div>
                     <div class="input-field">
                         <i class="fa-solid fa-globe"></i>
-                        <input type="text" name="localidad_id" placeholder="Zona">
+                        <div style="flex: 1;">
+                            <select class="select2-no-search select2-dropdown select" name="localidad_id" style="width: 100%; border: none; outline: none; margin-right: 2px">
+                                <option value="">Zona</option>
+                                {% for localidad in localidades %}
+                                <option value="{{ localidad.nombre }}">{{ localidad.nombre }}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                    </div>
+                    <div class="input-field" style="width: 100%; height: 100px; display: flex; justify-content: center; align-items: center;">
+                        <i class="fa-solid fa-arrow-up-from-bracket fa-bounce fa-2xl" style="width: 300%; display: block;"></i>
                     </div>
                 </div>
                 <br>
@@ -52,7 +72,7 @@
             </form>
         </div>
     </div>
-    
+
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
     <script>
@@ -89,8 +109,8 @@
                 showCancelButton: true,
                 confirmButtonColor: '#d33',
                 cancelButtonColor: '#6982E8',
-                confirmButtonText: 'Sí, cancelar',
-                cancelButtonText: 'No, seguir aquí',
+                confirmButtonText: 'Salir',
+                cancelButtonText: 'Seguir aquí',
             }).then((result) => {
                 if (result.isConfirmed) {
                     Swal.fire(
@@ -104,39 +124,51 @@
             });
         });
     </script>
+   
 </body>
 
 <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
 <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
 <script>
-    $('.select2').select2().on('select2:select', function () {
-        $(this).trigger('blur');
-    });
-    $('.select2-noSearch').select2({
+    $('.select2').select2({
         minimumResultsForSearch: Infinity,
     }).on('select2:select', function () {
         $(this).trigger('blur');
     });
-</script>
 
+    $('.select2-no-search').select2().on('select2:select', function () {
+        $(this).trigger('blur');
+    });
+</script>
 
 <style>
     /* Cambiar el fondo del dropdown a oscuro */
     .select2-container .select2-dropdown {
-        background-color: #333; /* Cambia el color de fondo a tu preferencia */
+        background-color: #515966;
     }
 
     /* Cambiar el color del texto en el dropdown a blanco */
     .select2-container .select2-dropdown .select2-results {
-        color: #fff; /* Cambia el color del texto a tu preferencia */
+        color: #fff;
     }
 
     .select2-container .select2-selection--single {
-        background-color: #333; /* Cambia el color de fondo a tu preferencia */
-        color: #fff; /* Cambia el color del texto a tu preferencia */
+        background-color: #515966;
+        color: #fff;
+        border: none;
+    }
+
+    .select2-container--default .select2-selection--single .select2-selection__rendered {
+        color: #ffffff;
+        line-height: 28px;
+        height: 20px;
+        text-align: left;
+        height: 80px;
+    }
+
+    .select2-results__option--highlighted{
+        background-color: #6982E8 !important;
+        color: #ffffff;
     }
 </style>
-
-
-</html>

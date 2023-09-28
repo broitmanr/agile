@@ -177,6 +177,18 @@ const getMonedas = async() => {
     });
 };
 
+const getLocalidades = async() => {
+    return await Localidad.findAll({
+        attributes: ['nombre']
+    });
+};
+
+const getCategorias = async() => {
+    return await Categoria.findAll({
+        attributes: ['nombre']
+    });
+};
+
 /**
  * Crear un producto nuevo.
  * Parámetro data: JSON con los atributos a crear.
@@ -242,6 +254,8 @@ const ProductModel = {
     getMonedas: getMonedas,
     createProduct: createProduct,
     findById: findById,
+    getLocalidades: getLocalidades,
+    getCategorias: getCategorias,
 }
 
 module.exports = ProductModel
