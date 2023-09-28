@@ -1,6 +1,7 @@
 const path = require('path');
 const Sequelize = require('sequelize');
 const env = require('./utils/env.js');
+const pc = require('picocolors');
 
 const inTest = env.test;
 const base = env.base;
@@ -21,10 +22,10 @@ const sequelize = new Sequelize(base, userbd, contrabd, {
   sequelize
     .authenticate()
     .then(() => {
-      console.info('conectado al servidor')
+      console.info(pc.green('conectado al servidor'))
     })
     .catch((error) => {
-      console.error('error al conectarse a la base: ', error)
+      console.error(pc.red('error al conectarse a la base: ', error))
     })
 
 

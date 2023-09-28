@@ -7,6 +7,9 @@ const bodyParser = require('body-parser');
 const nunjucks = require('./utils/nunjucks.js');
 const env = require('./utils/env.js');
 
+//Color de consola
+const pc = require('picocolors');
+
 // Modelos
 const models = require('./models/index.js');
 
@@ -64,7 +67,7 @@ async function startServer(port = process.env.PORT) {
     return new Promise(function (resolve) {
         const server = app.listen(port, function () {
             if (!inTest) {
-                console.log(`Server listen on http://localhost:${port}`);
+                console.log(pc.blue(`Server listen on`),pc.bold(`http://localhost:${port}`));
             }
 
             const originalClose = server.close.bind(server);
