@@ -93,8 +93,5 @@ router.get('/discount', async function (req, res) {
     res.render('discount.html', { products: productsWithDiscount });
 });
 
-router.get('/formulario', function(req, res) {
-    res.sendFile(path.join(__dirname, 'views', 'formulario.html'));
-});
 
 module.exports = router;
