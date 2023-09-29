@@ -106,3 +106,8 @@ input::placeholder{
 #inputPost{
     flex-direction: column;
 }
+
+#button-publicar{
+    /*display: hide; Para eliminar el botón*/
+    visibility: hidden;
+}
