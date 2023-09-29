@@ -1,30 +1,22 @@
+{% extends "_base.html" %}
 
+{% block title %} Formulario {% endblock %}
+{% block stylesheet %} 
+<link rel="stylesheet" href="../static/css/formstyle.css">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css" integrity="sha512-z3gLpd7yknf1YoNbCzqRKc4qyor8gaKU1qmn+CShxbuBusANI9QpRohGBreCFkKxLhei6S9CQXFEbbKuqLg0DA==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+{%endblock%}
 
-
-<head>
-    <html lang="en">
-
-<head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>Formulario</title>
-    <link rel="stylesheet" href="../static/css/formstyle.css">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css" integrity="sha512-z3gLpd7yknf1YoNbCzqRKc4qyor8gaKU1qmn+CShxbuBusANI9QpRohGBreCFkKxLhei6S9CQXFEbbKuqLg0DA==" crossorigin="anonymous" referrerpolicy="no-referrer" />
-    <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
-</head>
-
-<body>
-
-    <div class="container">
+{% block main %}
+    <div class="container" id="containerPost">
         <div class="form-content">
             <h1 id="title">Publicar producto</h1>
-            <form action="/formulario" method="post">
-                <div class="input-group">
+            <form action="/formulario" method="post" id="formPostProduct">
+                <div class="input-group" id="inputPost">
                     <div class="input-field" id="nameInput">
                         <i class="fa-regular fa-user"></i>
                         <input type="text" name="nombre" placeholder="Nombre">
                     </div>
-                    <div class="input-field">
+                    <div class="input-field" id="categoriaInput">
                         <i class="fa-solid fa-bars"></i>
                         <div style="flex: 1;">
                             <select class="select2-no-search select2-dropdown select" name="categoria_id" style="width: 100%; border: none; outline: none; margin-right: 2px">
@@ -49,7 +41,7 @@
                             <input type="text" name="precio" placeholder="Precio" class="small-input">
                         </div>
                     </div>
-                    <div class="input-field">
+                    <div class="input-field" id="localidadInput">
                         <i class="fa-solid fa-globe"></i>
                         <div style="flex: 1;">
                             <select class="select2-no-search select2-dropdown select" name="localidad_id" style="width: 100%; border: none; outline: none; margin-right: 2px">
@@ -73,10 +65,8 @@
         </div>
     </div>
 
-    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-
     <script>
-        document.querySelector('form').addEventListener('submit', function(event){
+        document.getElementById('formPostProduct').addEventListener('submit', function(event){
             event.preventDefault();
         
             Swal.fire({
@@ -124,24 +114,28 @@
             });
         });
     </script>
-   
-</body>
 
-<script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+    <script>
+        $('.select2').select2({
+            minimumResultsForSearch: Infinity,
+        }).on('select2:select', function () {
+            $(this).trigger('blur');
+        });
+
+        $('.select2-no-search').select2().on('select2:select', function () {
+            $(this).trigger('blur');
+        });
+    </script>
+    
+{% endblock %}
+
+{% block js %}
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
-<script>
-    $('.select2').select2({
-        minimumResultsForSearch: Infinity,
-    }).on('select2:select', function () {
-        $(this).trigger('blur');
-    });
+{% endblock %}
 
-    $('.select2-no-search').select2().on('select2:select', function () {
-        $(this).trigger('blur');
-    });
-</script>
-
+{% block css %} 
 <style>
     /* Cambiar el fondo del dropdown a oscuro */
     .select2-container .select2-dropdown {
@@ -172,3 +166,4 @@
         color: #ffffff;
     }
 </style>
+{%endblock%}
