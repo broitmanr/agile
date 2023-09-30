@@ -57,17 +57,17 @@ router.get('/product/details/:id', async function (req, res) {
 
 });
 
-router.get('/product/eliminar:id', async function (req, res) {
-    const productId = +req.params.id; // Obtenemos el ID del producto desde la URL
-    const productDetails = await ProductModel.findById(productId);
-    if (productDetails != null) {
-        //Encontro el producto y llama para eliminarlo
-        res.render('_product_delete.html', { product: productDetails });
+router.delete('/product/eliminar/:id', async (req, res) => {
+    const productData = req.body;
+    try{
+        const productID = +req.params.id;
+        const result = await ProductModel.deleteProduct(productData);
+        res.redirect(`/`);
+    } catch (error){
+        console.error(error);
+        res.status(500).json({ message: "¡Error! No se ha podido eliminar el producto" });
     }
-     // Renderiza la vista de detalles del producto y pasa los datos del producto
-    //res.render('_product_details.html', { product: productDetails });
-
-});
+}); 
 
 router.get('/_header', async (req, res) => {
     const pageSize = 10;

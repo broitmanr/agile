@@ -256,6 +256,7 @@ const ProductModel = {
     findById: findById,
     getLocalidades: getLocalidades,
     getCategorias: getCategorias,
+    deleteProduct: deleteProduct,
 }
 
 module.exports = ProductModel
