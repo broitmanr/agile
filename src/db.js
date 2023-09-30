@@ -25,7 +25,7 @@ const sequelize = new Sequelize(base, userbd, contrabd, {
       console.info(pc.green('conectado al servidor'))
     })
     .catch((error) => {
-      console.error(pc.red('error al conectarse a la base: ', error))
+      console.error(pc.red('error al conectarse a la base: '), error)
     })
 
 
