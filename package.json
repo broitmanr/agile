@@ -37,6 +37,7 @@
         "picocolors": "^1.0.0",
         "select2": "^4.1.0-rc.0",
         "sequelize": "^6.19.0",
+        "socket.io": "^4.7.2",
         "sqlite3": "^5.0.8",
         "tedious": "^16.4.0"
     },
