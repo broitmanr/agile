@@ -24,9 +24,9 @@
                     <button type="submit" class="btn btn-outline-dark mb-2">Me interesa</button>
                 </form>
                 <!-- Boton para eliminar un producto-->
-                <form action="product/eliminar/{{ product.id }}" method="GET" id="btnEliminar">
-                    <input type="text" class="d-none" name="productidE" value="{{ product.id }}">
-                    <button type="button" class="btn btn-outline-danger mb-2">Eliminar</button>
+                <form action="/product/delete/{{ product.id }}" method="GET" id="btnDelete">
+                    <input type="text" class="d-none" name="productidDele" value="{{ product.id }}">
+                    <button type="submit" class="btn btn-outline-danger mb-2">Eliminar</button>
                 </form>
             </div>
         </div>
@@ -34,7 +34,7 @@
 </div>
 
 <script>
-    document.getElementById('btnEliminar').addEventListener('submit', function (event) {
+    document.getElementById('btnDelete').addEventListener('submit', function (event) {
         event.preventDefault();
         Swal.fire({
             title: '¿Estás seguro de que quiere eliminar este producto?',
