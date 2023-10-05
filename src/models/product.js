@@ -54,6 +54,9 @@ Product.init({
     detalle: {
         type: DataTypes.TEXT, // Cambiamos a TEXT para soportar nvarchar(MAX)
     },
+    /*urlImagen: {
+        type: DataTypes.STRING,
+    },*/
     createdAt: {
         type: DataTypes.DATE,
         allowNull: false,
@@ -196,10 +199,11 @@ const getCategorias = async() => {
  */
 
 const createProduct = async(productData) => {
-    const { nombre, categoria_id, precio, moneda_id, localidad_id } = productData;
+    const { nombre, categoria_id, precio, moneda_id, localidad_id, urlImagen } = productData;
     const categoria = await Categoria.findOne({ where: { nombre: categoria_id }, attributes: ['id'] }); //Para identificar el id del nombre de la categoria ingresada
     const moneda = await Moneda.findOne({ where: { sigla: moneda_id }, attributes: ['id'] }); //Para identificar el id de la sigla de la moneda ingresada
     const localidad = await Localidad.findOne({ where: { nombre: localidad_id }, attributes: ['id'] }); //Para identificar el id del nombre de la localidad ingresada
+    const url = req.file.path;
     const marca = "adfadsfsa";
     const detalle = "sindetalle";
 
@@ -210,7 +214,8 @@ const createProduct = async(productData) => {
         moneda_id: moneda ? moneda.id: null,
         marca,
         localidad_id: localidad ? localidad.id: null,
-        detalle
+        detalle,
+        urlImagen: url
     });
 };
 
