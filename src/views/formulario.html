@@ -10,7 +10,7 @@
     <div class="container" id="containerPost">
         <div class="form-content">
             <h1 id="title">Publicar producto</h1>
-            <form action="/formulario" method="post" id="formPostProduct">
+            <form action="/formulario" method="post" id="formPostProduct" enctype="multipart/form-data">
                 <div class="input-group" id="inputPost">
                     <div class="input-field" id="nameInput">
                         <i class="fa-regular fa-user"></i>
@@ -52,9 +52,16 @@
                             </select>
                         </div>
                     </div>
-                    <div class="input-field" style="width: 100%; height: 100px; display: flex; justify-content: center; align-items: center;">
-                        <i class="fa-solid fa-arrow-up-from-bracket fa-bounce fa-2xl" style="width: 300%; display: block;"></i>
-                    </div>
+                    <br>
+                    <input type="file" id="urlImagen" name="image">
+                    
+                    <!--<div class="input-field" style="width: 100%; height: 100px; display: flex; justify-content: center; align-items: center;">
+                        <input type="file" id="urlImagen" name="image" style="display: none;"><br>
+                        <label for="urlImagen" style="display: inline-block; padding: 10px 20px; cursor: pointer; background-color: #6982E8; color: white;  text-align: left; border-radius: 8px;">
+                            <i class="fa-solid fa-arrow-up-from-bracket fa-bounce fa-lg" style="color: white;"></i>
+                            Elegir archivo    
+                        </label>
+                    </div>-->
                 </div>
                 <br>
                 <div class="btn-field">
