@@ -4,6 +4,7 @@ const productType = require('./models/productType.js');
 const dd = require('dump-die');
 const path = require('path');
 const { error } = require('console');
+const { upload } = require('./models/product.js');
 
 const router = express.Router();
 
@@ -34,8 +35,7 @@ router.get('/formulario', async(req,res) => {
     }
 });
 
-
-router.post('/formulario', async (req, res) => {
+router.post('/formulario', upload.single('urlImagen'), async (req, res) => {
     const productData = req.body;
     try{
         const newProduct = await ProductModel.createProduct(productData);
