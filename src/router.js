@@ -37,6 +37,7 @@ router.get('/formulario', async(req,res) => {
 
 router.post('/formulario', upload.single('urlImagen'), async (req, res) => {
     const productData = req.body;
+    productData.urlImagen= req.file.path;
     try{
         const newProduct = await ProductModel.createProduct(productData);
         const productID = newProduct.id;
