@@ -2,6 +2,17 @@ const path = require('path');
 const Sequelize = require('sequelize');
 const env = require('./utils/env.js');
 const pc = require('picocolors');
+const cloudinary = require('cloudinary').v2;
+
+const cloudName = env.cloudName;
+const apiKey = env.apiKey;
+const apiSecret = env.apiSecret;
+
+cloudinary.config({ 
+  cloud_name: cloudName, 
+  api_key: apiKey, 
+  api_secret: apiSecret
+});
 
 const inTest = env.test;
 const base = env.base;
@@ -17,7 +28,7 @@ const sequelize = new Sequelize(base, userbd, contrabd, {
         trustServerCertificate: true,
       },
     },
-  })
+})
 
   sequelize
     .authenticate()
@@ -32,3 +43,4 @@ const sequelize = new Sequelize(base, userbd, contrabd, {
 //   db.User = require('./user')(sequelize)
 
   module.exports = sequelize;
+  module.exports.cloudinary = cloudinary;

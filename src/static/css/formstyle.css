@@ -111,3 +111,10 @@ input::placeholder{
     /*display: hide; Para eliminar el botón*/
     visibility: hidden;
 }
+
+#urlImagen{
+    background-color: #515966;
+    color: white; 
+    width: 100%; 
+    height: 100%;
+}

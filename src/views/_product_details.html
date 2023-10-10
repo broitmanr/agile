@@ -89,8 +89,11 @@
         </div>
     <div class="row mt-4">
         <div class="col-md-4 d-flex justify-content-center">
-            <img src="/no-image.jpg" alt="Imagen de {{ product.nombre }}" width="200px" height="200px" class="rounded border b-2"
-                 loading="async" />
+            {% if product.urlImagen %}
+                <img src="{{ product.urlImagen }}" alt="Imagen de {{ product.nombre }}" width="200px" height="200px" class="rounded border b-2" loading="async" />
+            {% else %}
+                <img src="/no-image.jpg" alt="Imagen de {{ product.nombre }}" width="200px" height="200px" class="rounded border b-2" loading="async" onerror="this.onerror=null; this.src='/no-image.jpg';"/>
+            {% endif %}
         </div>
         <div class="col-md-8">
             <div class="row row-detalle">
@@ -132,6 +135,13 @@
     <div class="row mt-4">
         <div class="col p-3 d-flex justify-content-start">
             <a href="/" class="btn btn-primary"><i class="fa-solid fa-arrow-left fa-bounce"></i>    Volver</a>
+        </div>
+        <div class="col p-3 d-flex justify-content-center">
+            <form action="/chat/{{ product.id }}" method="GET">
+                <button type="submit" class="btn btn-primary">
+                    <i class="fab fa-facebook-messenger"></i> Enviar mensaje
+                </button>
+            </form>
         </div>
     </div>
 </div>
