@@ -86,6 +86,13 @@ router.get('/_header', async (req, res) => {
     })
 })
 
+router.get('/chat/:productId', async (req, res) => {
+    // Obtén el ID del producto desde la URL
+    const productId = req.params.productId;
+
+    // Renderiza la vista del chat y pasa el ID del producto
+    res.render('_chatProducto.html', { productId });
+})
 
 router.get('/discount', async function (req, res) {
     const productsWithDiscount = await ProductModel.getAllDiscount();
