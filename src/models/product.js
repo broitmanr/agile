@@ -2,6 +2,9 @@
 const {Sequelize, Model, DataTypes} = require('sequelize');
 
 const Bd = require('../db.js');
+const { cloudinary } = require('../db.js');
+const multer = require ('multer');
+const { CloudinaryStorage } = require('multer-storage-cloudinary');
 const Categoria = require('./categoria.js'); // Importa el modelo de Categoria
 const Moneda = require('./moneda.js'); // Importa el modelo de Moneda
 const Localidad = require('./localidad.js'); // Importa el modelo de Localidad
@@ -54,6 +57,9 @@ Product.init({
     detalle: {
         type: DataTypes.TEXT, // Cambiamos a TEXT para soportar nvarchar(MAX)
     },
+    urlImagen: {
+        type: DataTypes.STRING,
+    },
     createdAt: {
         type: DataTypes.DATE,
         allowNull: false,
@@ -71,6 +77,18 @@ Product.init({
 Product.belongsTo(Categoria, { foreignKey: 'categoria_id', as: 'categoria' });
 Product.belongsTo(Moneda, { foreignKey: 'moneda_id', as: 'moneda' });
 Product.belongsTo(Localidad, { foreignKey: 'localidad_id', as: 'localidad' });
+
+const storage = new CloudinaryStorage({
+    cloudinary: cloudinary,
+    params: {
+        folder: 'Uploads',
+        format: async(req, file) => 'png', //Convierte la imagen en png
+        public_id: (req, file) => `${Date.now()}-${file.originalname}`, //Se agrega la fecha al nombre de la imagen
+    },
+});
+
+const upload = multer({ storage: storage });
+
 /**
  * Obtener todos los productos de la base de datos.
  *
@@ -196,7 +214,7 @@ const getCategorias = async() => {
  */
 
 const createProduct = async(productData) => {
-    const { nombre, categoria_id, precio, moneda_id, localidad_id } = productData;
+    const { nombre, categoria_id, precio, moneda_id, localidad_id, urlImagen } = productData;
     const categoria = await Categoria.findOne({ where: { nombre: categoria_id }, attributes: ['id'] }); //Para identificar el id del nombre de la categoria ingresada
     const moneda = await Moneda.findOne({ where: { sigla: moneda_id }, attributes: ['id'] }); //Para identificar el id de la sigla de la moneda ingresada
     const localidad = await Localidad.findOne({ where: { nombre: localidad_id }, attributes: ['id'] }); //Para identificar el id del nombre de la localidad ingresada
@@ -210,7 +228,8 @@ const createProduct = async(productData) => {
         moneda_id: moneda ? moneda.id: null,
         marca,
         localidad_id: localidad ? localidad.id: null,
-        detalle
+        detalle,
+        urlImagen
     });
 };
 
@@ -259,4 +278,5 @@ const ProductModel = {
     deleteProduct: deleteProduct,
 }
 
-module.exports = ProductModel
+module.exports = ProductModel;
+module.exports.upload = upload;
