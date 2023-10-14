@@ -49,6 +49,22 @@ router.post('/formulario', upload.single('urlImagen'), async (req, res) => {
     }
 }); 
 
+router.get('/my_products/:userId', async (req, res) => {
+    const userId = req.params.userId;
+
+    try{
+        const products = await ProductModel.getProductsByUser(userId);
+        res.render('_my_products.html', { products });
+    } catch (error) {
+        console.error(error);
+        res.status(500).json ({ message: "¡Error! No se han encontrado los productos del usuario"});
+    }
+});
+
+/*router.get('/my_products', async function(req, res) {
+    res.sendFile(path.join(__dirname, '/views/_my_products.html'));
+})*/
+
 router.get('/product/details/:id', async function (req, res) {
     const productId = +req.params.id; // Obtenemos el ID del producto desde la URL
     const productDetails = await ProductModel.findById(productId);
@@ -102,10 +118,5 @@ router.get('/discount', async function (req, res) {
 
     res.render('discount.html', { products: productsWithDiscount });
 });
-
-router.get('/my_products', async function(req, res) {
-    res.sendFile(path.join(__dirname, '/views/_my_products.html'));
-})
-
 
 module.exports = router;

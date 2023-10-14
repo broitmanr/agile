@@ -153,6 +153,15 @@ function findById(id) {
     })
 }
 
+/**
+ * Busca un producto por usuario
+ *
+ */
+
+const getProductsByUser = async (userId) => {
+    return await Product.findAll({ where: { usu_id: userId } });
+};
+
  /**
  * Busca un producto por nombre
  *
@@ -295,7 +304,8 @@ const ProductModel = {
     getLocalidades: getLocalidades,
     getCategorias: getCategorias,
     deleteProduct: deleteProduct,
-    getUsuarios: getUsuarios
+    getUsuarios: getUsuarios,
+    getProductsByUser: getProductsByUser
 }
 
 module.exports = ProductModel;
