@@ -52,6 +52,17 @@
                             </select>
                         </div>
                     </div>
+                    <div class="input-field" id="usuarioInput">
+                        <i class="fa-regular fa-circle-user"></i>
+                        <div style="flex: 1;">
+                            <select class="select2-no-search select2-dropdown select" name="usu_id" style="width: 100%; border: none; outline: none; margin-right: 2px">
+                                <option value="">Usuario</option>
+                                {% for usuario in usuarios %}
+                                <option value="{{ usuario.id }}">{{ usuario.id }}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                    </div>
                     <br>
                     <input type="file" id="urlImagen" name="urlImagen">
                     

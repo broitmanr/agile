@@ -29,7 +29,8 @@ router.get('/formulario', async(req,res) => {
         const monedas = await ProductModel.getMonedas();
         const localidades = await ProductModel.getLocalidades();
         const categorias = await ProductModel.getCategorias();
-        res.render('formulario.html', { monedas, localidades, categorias });
+        const usuarios = await ProductModel.getUsuarios();
+        res.render('formulario.html', { monedas, localidades, categorias, usuarios });
     }catch(error){
         console.error(error);
     }
@@ -101,6 +102,10 @@ router.get('/discount', async function (req, res) {
 
     res.render('discount.html', { products: productsWithDiscount });
 });
+
+router.get('/my_products', async function(req, res) {
+    res.sendFile(path.join(__dirname, '/views/_my_products.html'));
+})
 
 
 module.exports = router;
