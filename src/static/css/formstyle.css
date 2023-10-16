@@ -99,7 +99,7 @@ input::placeholder{
     margin-right: 10px;
 }
 
-#categoriaInput, #localidadInput{
+#categoriaInput, #localidadInput, #municipioInput{
     padding: 8px 8px;
 }
 

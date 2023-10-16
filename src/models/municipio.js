@@ -1,38 +1,51 @@
-const Sequelize = require('sequelize');
+const {Sequelize,Model,DataTypes} = require('sequelize');
 const db = require('../db.js');
 const Provincia = require('./provincia.js')
 
 
-const Municipio = db.define('Municipio', {
+class Municipio extends Model {}
+
+Municipio.init({
     id: {
-        type: Sequelize.INTEGER,
+        type: DataTypes.INTEGER,
         primaryKey: true,
         autoIncrement: true,
     },
     nombre: {
-      type: Sequelize.STRING,
+      type: DataTypes.STRING,
       allowNull: false,
       field: 'nombre',
     },
     longitud: {
-      type: Sequelize.FLOAT,
+      type: DataTypes.FLOAT,
       allowNull: false,
-      field: 'centroide_lon', 
+      field: 'centroide_lon',
     },
     latitud: {
-      type: Sequelize.FLOAT,
+      type: DataTypes.FLOAT,
       allowNull: false,
-      field: 'centroide_lat', 
+      field: 'centroide_lat',
     },
     provincia: {
-      type: Sequelize.INTEGER,
+      type: DataTypes.INTEGER,
       allowNull: false,
-      field: 'provincia_id', 
+      field: 'provincia_id',
       references: {
-        model: Provincia, 
-        key: 'id', 
+        model: Provincia,
+        key: 'id',
       },
     }
-  });
-  
-  module.exports = Municipio;
+  },{
+    sequelize:db,
+    modelName:'Municipio',
+    tableName: 'Municipio',
+});
+
+function findAll() {
+    return Municipio.findAll();
+}
+
+  module.exports = {
+    Municipio: Municipio,
+      findAll: findAll,
+  };

@@ -11,6 +11,9 @@ const contrabd = env.contrabd;
 const sequelize = new Sequelize(base, userbd, contrabd, {
     host: 'servidoragiles.database.windows.net',
     dialect: 'mssql',
+    define: {
+        timestamps: false, // Desactiva la generación automática de createdAt y updatedAt
+    },
     dialectOptions: {
       options: {
         encrypt: true,

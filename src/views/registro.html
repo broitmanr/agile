@@ -1,0 +1,165 @@
+{% extends "_base.html" %}
+
+{% block title %} Formulario {% endblock %}
+{% block stylesheet %}
+<link rel="stylesheet" href="../static/css/formstyle.css">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css" integrity="sha512-z3gLpd7yknf1YoNbCzqRKc4qyor8gaKU1qmn+CShxbuBusANI9QpRohGBreCFkKxLhei6S9CQXFEbbKuqLg0DA==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+{%endblock%}
+
+
+{% block main %}
+    <div class="container" id="containerPost">
+        <div class="form-content">
+            <h1 id="title">Bienvenid@</h1>
+            <form action="/sign-up" method="post">
+                <div class="input-group" id="inputPost">
+                    <div class="input-field" id="nameInput">
+                        <i class="fa-regular fa-user"></i>
+                        <input type="text" name="nombre" placeholder="Nombre">
+                    </div>
+                    <div class="input-field">
+                        <i class="fa-regular fa-user"></i>
+                        <input type="text" name="apellido" placeholder="Apellido">
+                    </div>
+                    <div class="input-field">
+                        <i class="fa-regular fa-id-card"></i>
+                        <input type="text" name="documento" placeholder="Documento">
+                    </div>
+                    <div class="input-field">
+                        <i class="fa-regular fa-envelope"></i>
+                        <input type="email" name="email" placeholder="Email">
+                    </div>
+                    <div class="input-field">
+                        <i class="fa-solid fa-lock"></i>
+                        <input type="password" name="password" placeholder="Contraseña">
+                    </div>
+                    <div class="input-field" id="municipioInput">
+
+                        <i class="fa-solid fa-globe"></i>
+                        <div style="flex: 1;">
+                            <select class="select2-no-search select2-dropdown select" name="municipio_id" style="width: 100%; border: none; outline: none; margin-right: 2px">
+                                <option value="">Zona</option>
+                                {% for municipio in municipios %}
+                                <option value="{{ municipio.id }}">{{ municipio.nombre }}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                    </div>
+
+                </div>
+                <br>
+                <div class="btn-field">
+                    <button id="cancel" type="button" style="background-color: #d33;">Cancelar</button>
+                    <button id="post" type="submit">Registrarme</button>
+                </div>
+                <div class="row">
+                    <div class="col">
+                        <a href="/sign-in" class="btn btn-info">Ya soy usuario</a>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        document.getElementById('formPostProduct').addEventListener('submit', function(event){
+            event.preventDefault();
+
+            Swal.fire({
+                title: '¿Desea publicar el producto?',
+                showDenyButton: true,
+                confirmButtonColor: '#6982E8',
+                confirmButtonText: 'Confirmar',
+                denyButtonText: 'Cerrar',
+                reverseButtons: true,
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    Swal.fire({
+                        title: '¡Usted ha publicado su producto!',
+                        icon: 'success',
+                        showConfirmButton: false,
+                        timer: 1200,
+                    }).then(() => {
+                        event.target.submit();
+                    });
+                };
+            });
+        });
+    </script>
+
+    <script>
+        document.querySelector('#cancel').addEventListener('click', function(event) {
+            Swal.fire({
+                title: '¿Estás seguro de que quiere abandonar el lugar?',
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#d33',
+                cancelButtonColor: '#6982E8',
+                confirmButtonText: 'Salir',
+                cancelButtonText: 'Seguir aquí',
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    Swal.fire(
+                        '¡Cancelada!',
+                        'La operación ha sido cancelada.',
+                        'success'
+                    ).then(() => {
+                        window.location.href = '/';
+                    });
+                }
+            });
+        });
+    </script>
+
+    <script>
+        $('.select2').select2({
+            minimumResultsForSearch: Infinity,
+        }).on('select2:select', function () {
+            $(this).trigger('blur');
+        });
+
+        $('.select2-no-search').select2().on('select2:select', function () {
+            $(this).trigger('blur');
+        });
+    </script>
+
+{% endblock %}
+
+{% block js %}
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+<script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
+{% endblock %}
+
+{% block css %}
+<style>
+    /* Cambiar el fondo del dropdown a oscuro */
+    .select2-container .select2-dropdown {
+        background-color: #515966;
+    }
+
+    /* Cambiar el color del texto en el dropdown a blanco */
+    .select2-container .select2-dropdown .select2-results {
+        color: #fff;
+    }
+
+    .select2-container .select2-selection--single {
+        background-color: #515966;
+        color: #fff;
+        border: none;
+    }
+
+    .select2-container--default .select2-selection--single .select2-selection__rendered {
+        color: #ffffff;
+        line-height: 28px;
+        height: 20px;
+        text-align: left;
+        height: 80px;
+    }
+
+    .select2-results__option--highlighted{
+        background-color: #6982E8 !important;
+        color: #ffffff;
+    }
+</style>
+{%endblock%}

@@ -4,8 +4,13 @@ const productType = require('./models/productType.js');
 const dd = require('dump-die');
 const path = require('path');
 const { error } = require('console');
+const Categoria = require("./models/categoria");
+const Municipio = require("./models/municipio");
+const passport = require('passport');
 
 const router = express.Router();
+
+
 
 router.get('/', async function (req, res) {
     const pageSize = 10;
@@ -45,7 +50,7 @@ router.post('/formulario', async (req, res) => {
         console.error(error);
         res.status(500).json({ message: "¡Error! No se ha podido crear el producto" });
     }
-}); 
+});
 
 router.get('/product/details/:id', async function (req, res) {
     const productId = +req.params.id; // Obtenemos el ID del producto desde la URL
@@ -67,7 +72,7 @@ router.delete('/product/eliminar/:id', async (req, res) => {
         console.error(error);
         res.status(500).json({ message: "¡Error! No se ha podido eliminar el producto" });
     }
-}); 
+});
 
 router.get('/_header', async (req, res) => {
     const pageSize = 10;
@@ -86,12 +91,41 @@ router.get('/_header', async (req, res) => {
     })
 })
 
-
-router.get('/discount', async function (req, res) {
-    const productsWithDiscount = await ProductModel.getAllDiscount();
-
-    res.render('discount.html', { products: productsWithDiscount });
+router.get('/sign-up',async function (req, res, next){
+  const municipios = await Municipio.findAll();
+    res.render('registro.html',{municipios: municipios});
 });
 
+router.post('/sign-up',passport.authenticate('local-signup',{
+    successRedirect: '/',
+    failureRedirect: '/sign-up',
+    passReqToCallback:true,
+}));
 
+
+router.get('/logout',(req,res,next)=>{
+    req.logout();
+    res.redirect('/');
+})
+router.get('/sign-in',async function (req, res, next){
+    res.render('login.html');
+});
+router.post('/sign-in',passport.authenticate('local-signin',{
+    successRedirect: '/',
+    failureRedirect:'/sign-in',
+    passReqToCallback:true,
+}));
+
+
+
+router.get('/prueba',isAuth,async function (req, res, next){
+    res.render('prueba.html');
+});
+function isAuth(req,res,next){
+    if (req.isAuthenticated()){
+        return next();
+    }
+    res.redirect('/');
+
+}
 module.exports = router;
