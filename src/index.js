@@ -1,5 +1,6 @@
 const path = require('path');
 
+
 const morgan = require('morgan');
 const express = require('express');
 const bodyParser = require('body-parser');
@@ -7,6 +8,7 @@ const { Server }=require('socket.io');
 const http =require('http');
 const nunjucks = require('./utils/nunjucks.js');
 const env = require('./utils/env.js');
+const flash = require('connect-flash');
 
 //Color de consola
 const pc = require('picocolors');
@@ -21,6 +23,9 @@ const router = require('./router.js');
 const lhroute = require('./.lhroute.js');
 const compression = require('compression');
 const dd = require("dump-die");
+const session = require("express-session");
+const passport = require("passport");
+const net = require("net");
 
 const inTest = env.test;
 const viewsPath = path.resolve(__dirname, '.', 'views');
@@ -46,13 +51,35 @@ async function startServer(port = process.env.PORT) {
         });
     });
 
+    // Cosas de usuario y sesion
+    require('./passport/local-auth');
+    const session = require('express-session');
+    app.use(session({
+        secret: '$ave4RgenTina',
+        resave:false,
+        saveUninitialized:false,
+    }))
+
+    const passport = require('passport');
+    app.use(passport.initialize());
+    app.use(passport.session());
+    app.use(flash());
+
+    app.use((req,res,next)=>{
+        app.locals.signupMessage = req.flash('signupMessage');
+        app.locals.signinMessage = req.flash('signinMessage');
+        console.log(app.locals.signinMessage);
+        next();
+    })
     if (!inTest) {
         app.use(morgan('dev'));
     }
 
+
     app.use(bodyParser.urlencoded({ extended: false }));
     app.use(bodyParser.json());
     app.use(compression());
+    app.use(express.urlencoded({ extended: false }));
 
     app.use('/static', express.static(publicPath));
     app.use(express.static(path.join(__dirname, 'images')));
@@ -68,6 +95,8 @@ async function startServer(port = process.env.PORT) {
 
 
 
+
+
     nunjucks.init({
         express: app,
         viewsPath,
@@ -75,6 +104,7 @@ async function startServer(port = process.env.PORT) {
 
     // rutas de la vista
     app.use('/', router);
+
 
     if (process.env.NODE_ENV !== 'production') {
         app.use('/lh', lhroute);
@@ -98,6 +128,7 @@ async function startServer(port = process.env.PORT) {
     });
 }
 
+
 if (require.main === module) {
     startServer();
 }
@@ -105,3 +136,4 @@ if (require.main === module) {
 module.exports = {
     start: startServer,
 };
+
