@@ -7,6 +7,7 @@ const { error } = require('console');
 const Categoria = require("./models/categoria");
 const Municipio = require("./models/municipio");
 const passport = require('passport');
+const { upload } = require('./models/product.js');
 
 const router = express.Router();
 
@@ -39,9 +40,9 @@ router.get('/formulario', async(req,res) => {
     }
 });
 
-
-router.post('/formulario', async (req, res) => {
+router.post('/formulario', upload.single('urlImagen'), async (req, res) => {
     const productData = req.body;
+    productData.urlImagen= req.file.path;
     try{
         const newProduct = await ProductModel.createProduct(productData);
         const productID = newProduct.id;
@@ -62,12 +63,13 @@ router.get('/product/details/:id', async function (req, res) {
 
 });
 
-router.delete('/product/eliminar/:id', async (req, res) => {
-    const productData = req.body;
+router.get('/product/delete/:id', async (req, res) =>{
+    console.log("Entro al metodo");
     try{
         const productID = +req.params.id;
-        const result = await ProductModel.deleteProduct(productData);
-        res.redirect(`/`);
+        const result = await ProductModel.deleteProduct(productID);
+        console.info({message: "¡Eliminado! Se elimino con exito el producto ",result});
+        res.redirect('/');
     } catch (error){
         console.error(error);
         res.status(500).json({ message: "¡Error! No se ha podido eliminar el producto" });
@@ -90,6 +92,15 @@ router.get('/_header', async (req, res) => {
         },
     })
 })
+
+router.get('/chat/:productId', async (req, res) => {
+    // Obtén el ID del producto desde la URL
+    const productId = req.params.productId;
+
+    // Renderiza la vista del chat y pasa el ID del producto
+    res.render('_chatProducto.html', { productId });
+});
+
 
 router.get('/sign-up',async function (req, res, next){
   const municipios = await Municipio.findAll();

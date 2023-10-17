@@ -4,7 +4,8 @@ const path = require('path');
 const morgan = require('morgan');
 const express = require('express');
 const bodyParser = require('body-parser');
-
+const { Server }=require('socket.io');
+const http =require('http');
 const nunjucks = require('./utils/nunjucks.js');
 const env = require('./utils/env.js');
 const flash = require('connect-flash');
@@ -35,6 +36,20 @@ async function startServer(port = process.env.PORT) {
     // await models.createTables();
 
     const app = express();
+
+    const server = http.createServer(app);
+    const io = new Server(server); // Crea una instancia de Socket.IO y úsala en el servidor HTTP
+
+    io.on('connection', (socket) => {
+        console.log('Un usuario se ha conectado al chat');
+        
+        socket.on('disconnect', () => {
+            console.log('Un usuario se ha desconectado del chat');
+        });
+        socket.on('chat message', (msg) => {
+            io.emit('chat message', msg);
+        });
+    });
 
     // Cosas de usuario y sesion
     require('./passport/local-auth');
@@ -69,6 +84,7 @@ async function startServer(port = process.env.PORT) {
     app.use('/static', express.static(publicPath));
     app.use(express.static(path.join(__dirname, 'images')));
 
+    app.use('/socket.io', express.static(path.join(__dirname, 'node_modules/socket.io-client/dist')));
 
     const jqueryPath = require.resolve('jquery');
     app.use('/jquery', express.static(path.dirname(jqueryPath)));
@@ -95,9 +111,9 @@ async function startServer(port = process.env.PORT) {
     }
 
     return new Promise(function (resolve) {
-        const server = app.listen(port, function () {
+        server.listen(port, function () {
             if (!inTest) {
-                console.log(pc.blue(`Server listen on`),pc.bold(`http://localhost:${port}`));
+                console.log(pc.blue(`Server listen on`), pc.bold(`http://localhost:${port}`));
             }
 
             const originalClose = server.close.bind(server);

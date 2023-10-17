@@ -1,6 +1,13 @@
 {% macro productCard(product) %}
 <div class="product card">
-    <div class="card-body d-flex flex-row justify-content-between">
+    <div class="card-body d-flex flex-row justify-content-between align-items: center">
+        <p>
+            {% if product.urlImagen %}
+                <img src="{{ product.urlImagen }}" alt="Imagen de {{ product.nombre }}" width="144px" height="144px" small class="rounded border b-2 float-start" loading="async" />
+            {% else %}
+                <img src="/no-image.jpg" alt="Imagen de {{ product.nombre }}" width="144px" height="144px" class="rounded border b-2 float-start" loading="async" onerror="this.onerror=null; this.src='/no-image.jpg';"/>
+            {% endif %}
+        </p>
         <div class="ms-3">
             <h5 class="card-title mb-0">{{ product.nombre }}</h5>
             <p class="card-text">
@@ -24,9 +31,9 @@
                     <button type="submit" class="btn btn-outline-dark mb-2">Me interesa</button>
                 </form>
                 <!-- Boton para eliminar un producto-->
-                <form action="product/eliminar/{{ product.id }}" method="GET" id="btnEliminar">
-                    <input type="text" class="d-none" name="productidE" value="{{ product.id }}">
-                    <button type="button" class="btn btn-outline-danger mb-2">Eliminar</button>
+                <form action="/product/delete/{{ product.id }}" method="GET" id="btnDelete">
+                    <input type="text" class="d-none" name="productidDele" value="{{ product.id }}">
+                    <button type="submit" class="btn btn-outline-danger mb-2">Eliminar</button>
                 </form>
             </div>
         </div>
@@ -34,7 +41,7 @@
 </div>
 
 <script>
-    document.getElementById('btnEliminar').addEventListener('submit', function (event) {
+    document.getElementById('btnDelete').addEventListener('submit', function (event) {
         event.preventDefault();
         Swal.fire({
             title: '¿Estás seguro de que quiere eliminar este producto?',
