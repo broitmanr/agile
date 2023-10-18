@@ -154,6 +154,18 @@ function findById(id) {
 }
 
 /**
+ * Verifica si el usuario está registrado
+ *
+ */
+
+function estaAutenticado(req, res, next){
+    if(req.isAuthenticated()){
+        return next();
+    }
+    res.redirect('/sign-in');
+}
+
+/**
  * Busca un producto por usuario
  *
  */
@@ -305,7 +317,8 @@ const ProductModel = {
     getCategorias: getCategorias,
     deleteProduct: deleteProduct,
     getUsuarios: getUsuarios,
-    getProductsByUser: getProductsByUser
+    getProductsByUser: getProductsByUser,
+    estaAutenticado: estaAutenticado
 }
 
 module.exports = ProductModel;
