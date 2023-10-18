@@ -43,10 +43,11 @@ router.get('/formulario', estaAutenticado, async(req,res) => {
 });
 
 router.post('/formulario', upload.single('urlImagen'), async (req, res) => {
+    const userId = req.user;
     const productData = req.body;
     productData.urlImagen= req.file.path;
     try{
-        const newProduct = await ProductModel.createProduct(productData);
+        const newProduct = await ProductModel.createProduct(productData, userId);
         const productID = newProduct.id;
         res.redirect(`/product/details/${productID}`);
     } catch (error){
@@ -54,9 +55,9 @@ router.post('/formulario', upload.single('urlImagen'), async (req, res) => {
         res.status(500).json({ message: "¡Error! No se ha podido crear el producto" });
     }
 });
-/*
-router.get('/my_products/:userId', estaAutenticado, async (req, res) => {
-    const userId = req.params.userId;
+
+router.get('/my_products', estaAutenticado, async (req, res) => {
+    const userId = req.user;
 
     try{
         const products = await ProductModel.getProductsByUser(userId);
@@ -65,11 +66,7 @@ router.get('/my_products/:userId', estaAutenticado, async (req, res) => {
         console.error(error);
         res.status(500).json ({ message: "¡Error! No se han encontrado los productos del usuario"});
     }
-});*/
-
-router.get('/my_products', async function(req, res) {
-    res.sendFile(path.join(__dirname, '/views/_my_products.html'));
-})
+});
 
 router.get('/product/details/:id', async function (req, res) {
     const productId = +req.params.id; // Obtenemos el ID del producto desde la URL
