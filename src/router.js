@@ -8,6 +8,7 @@ const Categoria = require("./models/categoria");
 const Municipio = require("./models/municipio");
 const passport = require('passport');
 const { upload } = require('./models/product.js');
+const { estaAutenticado } = require('./models/product.js');
 
 const router = express.Router();
 
@@ -26,10 +27,11 @@ router.get('/', async function (req, res) {
             totalPages: Math.ceil(count / pageSize),
             currentPage: currentPage,
         },
+        estaAutenticado: req.isAuthenticated(),
     });
 });
 
-router.get('/formulario', async(req,res) => {
+router.get('/formulario', estaAutenticado, async(req,res) => {
     try{
         const monedas = await ProductModel.getMonedas();
         const localidades = await ProductModel.getLocalidades();
@@ -54,7 +56,7 @@ router.post('/formulario', upload.single('urlImagen'), async (req, res) => {
     }
 });
 
-router.get('/my_products/:userId', async (req, res) => {
+router.get('/my_products/:userId', estaAutenticado, async (req, res) => {
     const userId = req.params.userId;
 
     try{
@@ -130,10 +132,15 @@ router.post('/sign-up',passport.authenticate('local-signup',{
 }));
 
 
-router.get('/logout',(req,res,next)=>{
-    req.logout();
-    res.redirect('/');
-})
+router.get('/logout', function(req, res){
+    req.logout(function(err) {
+        if (err) {
+            console.log(err);
+            return;
+        }
+        res.redirect('/');
+    });
+});
 router.get('/sign-in',async function (req, res, next){
     res.render('login.html');
 });

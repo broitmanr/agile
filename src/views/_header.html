@@ -23,6 +23,8 @@
             </div>
         </form>
         <button onclick='window.location.href = "/formulario" ' class="btn btn-light ml-auto" id="button-publicar" style="font-size: 1.0rem; padding: 0.50rem 1.0rem; margin-right: 10px;">Publicar producto</button>
-        <button onclick='window.location.href = "/my_products" ' class="btn btn-light ml-auto" id="button-list" style="font-size: 1.0rem; padding: 0.50rem 1.0rem;">Mis productos</button>
+        {% if estaAutenticado %}
+            <button onclick='window.location.href = "/my_products" ' class="btn btn-light ml-auto" id="button-list" style="font-size: 1.0rem; padding: 0.50rem 1.0rem; display: block;">Mis productos</button>
+        {% endif %}
     </div>
 </nav>
