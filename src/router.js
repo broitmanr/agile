@@ -8,6 +8,7 @@ const Categoria = require("./models/categoria");
 const Municipio = require("./models/municipio");
 const passport = require('passport');
 const { upload } = require('./models/product.js');
+const {Notificacion,createNotificacionChat} = require('./models/notificacion');
 const { estaAutenticado } = require('./models/product.js');
 
 const router = express.Router();
@@ -110,10 +111,11 @@ router.get('/_header', async (req, res) => {
     })
 })
 
-router.get('/chat/:productId', async (req, res) => {
+router.get('/chat/:productId',estaAutenticado, async (req, res) => {
     // Obtén el ID del producto desde la URL
     const productId = req.params.productId;
-
+    const product = await ProductModel.findById(productId);
+    await createNotificacionChat(product, req.user);
     // Renderiza la vista del chat y pasa el ID del producto
     res.render('_chatProducto.html', { productId });
 });

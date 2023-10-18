@@ -1,0 +1,68 @@
+
+const {Sequelize, Model, DataTypes} = require('sequelize');
+
+const Bd = require('../db.js');
+const Usuario = require('./usuario.js'); // Importa el modelo de Usuario
+
+class Notificacion extends Model {}
+
+Notificacion.init({
+    id: {
+        type: DataTypes.INTEGER,
+        primaryKey: true,
+        autoIncrement: true,
+    },
+    texto: {
+        type: DataTypes.STRING,
+        allowNull: false,
+    },
+    estado: {
+        type: DataTypes.STRING,
+        allowNull: false,
+    },
+    usuario_id: {
+        field:'usuario_id',
+        type: DataTypes.INTEGER,
+        allowNull: false,
+        references: {
+            model: Usuario,
+            key: 'id',
+        },
+    },
+    createdAt: {
+        type: DataTypes.DATE,
+        allowNull: false,
+        defaultValue: Sequelize.literal('CURRENT_TIMESTAMP')
+    },
+    updatedAt: {
+        type: DataTypes.DATE,
+        allowNull: false,
+        defaultValue: Sequelize.literal('CURRENT_TIMESTAMP')
+    },
+},
+{sequelize: Bd, modelName: 'Notificacion', tableName: 'Notificacion'}
+);
+
+
+
+const createNotificacionChat = async(product, userId) => {
+
+
+    const userReceptor = product.usuario_id;
+    const user = await Usuario.findByPk(userId);
+    const texto = `${user.nombre} ${user.apellido} esta interesad@ en tu ${product.nombre}`;
+    const notificacion = await Notificacion.create({
+        texto:texto,
+        estado:'N',
+        usuario_id:userReceptor
+    });
+    await notificacion.save();
+};
+
+
+module.exports = {
+    Notificacion: Notificacion,
+    createNotificacionChat:createNotificacionChat
+}
+
+
