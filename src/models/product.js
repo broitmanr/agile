@@ -103,13 +103,22 @@ const upload = multer({ storage: storage });
  * Obtener todos los productos de la base de datos.
  *
  */
-const getAllProducts = (limit, skip, type) => {
+const getAllProducts = (limit, skip/*, type*/, usuario_id) => {
     let where = {};
 
-    if (type) {
+    /*if (type) {
         where = {
             ...where,
             type: type,
+        };
+    }*/
+
+    if(usuario_id){
+        where = {
+            ...where,
+            usuario_id: {
+                [Sequelize.Op.ne]: usuario_id,
+            },
         };
     }
 
@@ -179,12 +188,21 @@ const getProductsByUser = async (userId) => {
  *
  */
 
-const searchProductsByName = async (productName) => {
+const searchProductsByName = async (productName, usuario_id) => {
     let where = {};
     if (productName) {
         where = {
             nombre: {
                 [Sequelize.Op.like]: `%${productName}%`,
+            },
+        };
+    }
+
+    if(usuario_id){
+        where = {
+            ...where,
+            usuario_id: {
+                [Sequelize.Op.ne]: usuario_id,
             },
         };
     }

@@ -19,7 +19,8 @@ router.get('/', async function (req, res) {
     const currentPage = +req.query.page || 1;
     const category = req.query.type || undefined;
     const skip = pageSize * (currentPage - 1);
-    const { rows, count } = await ProductModel.getAll(pageSize, skip);
+    const usuario_id = req.user;
+    const { rows, count } = await ProductModel.getAll(pageSize, skip, usuario_id);
     res.render('home.html', {
         products: rows,
         categories: productType.types,
@@ -97,7 +98,8 @@ router.get('/_header', async (req, res) => {
     const category = req.query.type || undefined;
     const skip = pageSize * (currentPage - 1);
     const productName = req.query.product_name
-    const {rows,count} = await ProductModel.searchByName(productName);
+    const usuario_id = req.user;
+    const {rows,count} = await ProductModel.searchByName(productName, usuario_id);
     res.render('home.html', {
         products: rows,
         categories: productType.types,
