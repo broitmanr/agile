@@ -8,7 +8,7 @@ const { CloudinaryStorage } = require('multer-storage-cloudinary');
 const Categoria = require('./categoria.js'); // Importa el modelo de Categoria
 const Moneda = require('./moneda.js'); // Importa el modelo de Moneda
 const Localidad = require('./localidad.js'); // Importa el modelo de Localidad
-const Usu = require('./usu.js'); // Importa el modelo de Usu
+/*const Usu = require('./usu.js'); // Importa el modelo de Usu*/
 
 class Product extends Model {}
 
@@ -70,7 +70,7 @@ Product.init({
         type: DataTypes.DATE,
         allowNull: false,
         defaultValue: Sequelize.literal('CURRENT_TIMESTAMP')
-    },
+    }/*,
     usu_id: {
         field:'usu_id',
         type: DataTypes.INTEGER,
@@ -79,7 +79,7 @@ Product.init({
         model: Usu,
         key: 'id',
         },
-    }
+    }*/
 },
 {sequelize: Bd, modelName: 'Product', tableName: 'Producto'}
 );
@@ -87,7 +87,7 @@ Product.init({
 Product.belongsTo(Categoria, { foreignKey: 'categoria_id', as: 'categoria' });
 Product.belongsTo(Moneda, { foreignKey: 'moneda_id', as: 'moneda' });
 Product.belongsTo(Localidad, { foreignKey: 'localidad_id', as: 'localidad' });
-Product.belongsTo(Usu, { foreignKey: 'usu_id', as: 'usuario' });
+/*Product.belongsTo(Usu, { foreignKey: 'usu_id', as: 'usuario' });*/
 
 const storage = new CloudinaryStorage({
     cloudinary: cloudinary,
@@ -169,10 +169,10 @@ function estaAutenticado(req, res, next){
  * Busca un producto por usuario
  *
  */
-
+/*
 const getProductsByUser = async (userId) => {
     return await Product.findAll({ where: { usu_id: userId } });
-};
+};*/
 
  /**
  * Busca un producto por nombre
@@ -239,12 +239,6 @@ const getCategorias = async() => {
     });
 };
 
-const getUsuarios = async() => {
-    return await Usu.findAll({
-        attributes: ['id']
-    });
-};
-
 /**
  * Crear un producto nuevo.
  * Parámetro data: JSON con los atributos a crear.
@@ -252,13 +246,12 @@ const getUsuarios = async() => {
  */
 
 const createProduct = async(productData) => {
-    const { nombre, categoria_id, precio, moneda_id, localidad_id, urlImagen, usu_id } = productData;
+    const { nombre, categoria_id, precio, moneda_id, localidad_id, urlImagen/*, usu_id */ } = productData;
     const categoria = await Categoria.findOne({ where: { nombre: categoria_id }, attributes: ['id'] }); //Para identificar el id del nombre de la categoria ingresada
     const moneda = await Moneda.findOne({ where: { sigla: moneda_id }, attributes: ['id'] }); //Para identificar el id de la sigla de la moneda ingresada
     const localidad = await Localidad.findOne({ where: { nombre: localidad_id }, attributes: ['id'] }); //Para identificar el id del nombre de la localidad ingresada
     const marca = "adfadsfsa";
     const detalle = "sindetalle";
-    const usuario = await Usu.findOne({ where: { id: usu_id }, attributes: ['id'] }); //Para identificar el id del nombre del usuario ingresado
 
     return await Product.create({
         nombre,
@@ -269,7 +262,7 @@ const createProduct = async(productData) => {
         localidad_id: localidad ? localidad.id: null,
         detalle,
         urlImagen,
-        usu_id: usuario ? usuario.id: null,
+        /*usu_id,*/
     });
 };
 
@@ -316,8 +309,7 @@ const ProductModel = {
     getLocalidades: getLocalidades,
     getCategorias: getCategorias,
     deleteProduct: deleteProduct,
-    getUsuarios: getUsuarios,
-    getProductsByUser: getProductsByUser,
+    /*getProductsByUser: getProductsByUser,*/
     estaAutenticado: estaAutenticado
 }
 

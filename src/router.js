@@ -36,8 +36,7 @@ router.get('/formulario', estaAutenticado, async(req,res) => {
         const monedas = await ProductModel.getMonedas();
         const localidades = await ProductModel.getLocalidades();
         const categorias = await ProductModel.getCategorias();
-        const usuarios = await ProductModel.getUsuarios();
-        res.render('formulario.html', { monedas, localidades, categorias, usuarios });
+        res.render('formulario.html', { monedas, localidades, categorias });
     }catch(error){
         console.error(error);
     }
@@ -55,7 +54,7 @@ router.post('/formulario', upload.single('urlImagen'), async (req, res) => {
         res.status(500).json({ message: "¡Error! No se ha podido crear el producto" });
     }
 });
-
+/*
 router.get('/my_products/:userId', estaAutenticado, async (req, res) => {
     const userId = req.params.userId;
 
@@ -66,11 +65,11 @@ router.get('/my_products/:userId', estaAutenticado, async (req, res) => {
         console.error(error);
         res.status(500).json ({ message: "¡Error! No se han encontrado los productos del usuario"});
     }
-});
+});*/
 
-/*router.get('/my_products', async function(req, res) {
+router.get('/my_products', async function(req, res) {
     res.sendFile(path.join(__dirname, '/views/_my_products.html'));
-})*/
+})
 
 router.get('/product/details/:id', async function (req, res) {
     const productId = +req.params.id; // Obtenemos el ID del producto desde la URL
