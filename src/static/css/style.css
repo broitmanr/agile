@@ -51,4 +51,8 @@ body {
 .ui-search-rescue__list {
     font-size: 16px;
     margin: 18px 10px 10px 0;
- }
+}
+
+#btnDelete{
+    display: none;
+}

@@ -28,12 +28,12 @@
                 <!-- Si tiene definido CartProduct quiere decir que estamos en el carrito -->
                 <form action="product/details/{{ product.id }}" method="GET">
                     <input type="text" class="d-none" name="productid" value="{{ product.id }}">
-                    <button type="submit" class="btn btn-outline-dark mb-2">Me interesa</button>
+                    <button type="submit" id="interestButton" class="btn btn-outline-dark mb-2">Me interesa</button>
                 </form>
                 <!-- Boton para eliminar un producto-->
                 <form action="/product/delete/{{ product.id }}" method="GET" id="btnDelete">
                     <input type="text" class="d-none" name="productidDele" value="{{ product.id }}">
-                    <button type="submit" class="btn btn-outline-danger mb-2">Eliminar</button>
+                    <button type="submit" class="btn btn-outline-danger mb-2"><i class="fa-solid fa-trash-can fa-xl"></i></button>
                 </form>
             </div>
         </div>

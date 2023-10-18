@@ -85,7 +85,7 @@ router.get('/product/delete/:id', async (req, res) =>{
         const productID = +req.params.id;
         const result = await ProductModel.deleteProduct(productID);
         console.info({message: "¡Eliminado! Se elimino con exito el producto ",result});
-        res.redirect('/');
+        res.redirect('/my_products');
     } catch (error){
         console.error(error);
         res.status(500).json({ message: "¡Error! No se ha podido eliminar el producto" });
