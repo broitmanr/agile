@@ -1,7 +1,7 @@
 {% extends "_base.html" %}
 
 {% block title %} Formulario {% endblock %}
-{% block stylesheet %} 
+{% block stylesheet %}
 <link rel="stylesheet" href="../static/css/formstyle.css">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css" integrity="sha512-z3gLpd7yknf1YoNbCzqRKc4qyor8gaKU1qmn+CShxbuBusANI9QpRohGBreCFkKxLhei6S9CQXFEbbKuqLg0DA==" crossorigin="anonymous" referrerpolicy="no-referrer" />
 {%endblock%}
@@ -13,7 +13,7 @@
             <form action="/formulario" method="post" id="formPostProduct" enctype="multipart/form-data">
                 <div class="input-group" id="inputPost">
                     <div class="input-field" id="nameInput">
-                        <i class="fa-regular fa-user"></i>
+                        <i class="fa-solid fa-toolbox"></i>
                         <input type="text" name="nombre" placeholder="Nombre">
                     </div>
                     <div class="input-field" id="categoriaInput">
@@ -26,6 +26,10 @@
                                 {% endfor %}
                             </select>
                         </div>
+                    </div>
+                    <div class="input-field" id="marcaInput">
+                        <i class="fa-regular fa-copyright"></i>
+                        <input type="text" name="marca" placeholder="Marca">
                     </div>
                     <div class="input-field" style="display: flex; align-items: center;">
                         <div style="flex: 1;">
@@ -41,6 +45,10 @@
                             <input type="text" name="precio" placeholder="Precio" class="small-input">
                         </div>
                     </div>
+                    <div class="input-field" id="detalleInput">
+                        <i class="fa-regular fa-copyright"></i>
+                        <textarea type="text" name="detalle" placeholder="Detalle"></textarea>
+                    </div>
                     <div class="input-field" id="localidadInput">
                         <i class="fa-solid fa-globe"></i>
                         <div style="flex: 1;">
@@ -53,13 +61,16 @@
                         </div>
                     </div>
                     <br>
-                    <input type="file" id="urlImagen" name="urlImagen">
-                    
+                    <div class="file-select input-field" id="src-file1" >
+                                            <input type="file" id="urlImagen" name="urlImagen">
+<!--                        <input type="file" name="src-file1" aria-label="Archivo">-->
+                    </div>
+
                     <!--<div class="input-field" style="width: 100%; height: 100px; display: flex; justify-content: center; align-items: center;">
                         <input type="file" id="urlImagen" name="image" style="display: none;"><br>
                         <label for="urlImagen" style="display: inline-block; padding: 10px 20px; cursor: pointer; background-color: #6982E8; color: white;  text-align: left; border-radius: 8px;">
                             <i class="fa-solid fa-arrow-up-from-bracket fa-bounce fa-lg" style="color: white;"></i>
-                            Elegir archivo    
+                            Elegir archivo
                         </label>
                     </div>-->
                 </div>
@@ -75,7 +86,7 @@
     <script>
         document.getElementById('formPostProduct').addEventListener('submit', function(event){
             event.preventDefault();
-        
+
             Swal.fire({
                 title: '¿Desea publicar el producto?',
                 showDenyButton: true,
@@ -95,7 +106,7 @@
                     });
                 };
             });
-        }); 
+        });
     </script>
 
     <script>
@@ -133,7 +144,7 @@
             $(this).trigger('blur');
         });
     </script>
-    
+
 {% endblock %}
 
 {% block js %}
@@ -142,10 +153,71 @@
 <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
 {% endblock %}
 
-{% block css %} 
+{% block css %}
 <style>
+
+    ::file-selector-button{
+        width: 12em;
+        opacity: 0;
+    }
+
+
+    .file-select {
+        position: relative;
+        display: inline-block;
+    }
+    .file-select::after {
+        background-color: #071031;
+        color: white;
+        display: flex;
+        padding-left: 1em;
+        justify-content: start;
+        align-items: center;
+        border-radius: 5px;
+        font-family: FontAwesome;
+        content: '\f093';
+        position: absolute;
+        left: 1%;
+        bottom: 5%;
+        height: 85%;
+        width: 8%;
+    }
+
+    .file-select::before {
+        background-color: #071031;
+        color: white;
+        display: flex;
+        padding-left: 8%;
+        justify-content: start;
+        align-items: center;
+        border-radius: 5px;
+        content: 'Subí una imagen';
+        position: absolute;
+        line-height: normal;
+        left:1%;
+        bottom: 5%;
+        height: 85%;
+        width: 30%;
+    }
+
+    .file-select input[type="file"] {
+
+        width: 100px;
+        height: 32px;
+        display: inline-block;
+    }
+
+    #urlImagen::before {
+        content: '\f093';
+    }
+
+
     /* Cambiar el fondo del dropdown a oscuro */
-    .select2-container .select2-dropdown {
+    .select2-container .select2-dropdown{
+        background-color: #515966;
+    }
+
+    .select2-container .select2-dropdown{
         background-color: #515966;
     }
 

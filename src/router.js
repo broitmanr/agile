@@ -33,7 +33,7 @@ router.get('/', async function (req, res) {
     });
 });
 
-router.get('/formulario', estaAutenticado, async(req,res) => {
+router.get('/formulario',async(req,res) => {
     try{
         const monedas = await ProductModel.getMonedas();
         const localidades = await ProductModel.getLocalidades();
@@ -44,10 +44,11 @@ router.get('/formulario', estaAutenticado, async(req,res) => {
     }
 });
 
-router.post('/formulario', upload.single('urlImagen'), async (req, res) => {
+router.post('/formulario',estaAutenticado, upload.single('urlImagen'), async (req, res) => {
     const userId = req.user;
     const productData = req.body;
-    productData.urlImagen= req.file.path;
+
+    productData.urlImagen= req.file ? req.file.path : '';
     try{
         const newProduct = await ProductModel.createProduct(productData, userId);
         const productID = newProduct.id;
