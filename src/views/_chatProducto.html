@@ -1,0 +1,102 @@
+{% extends "_base.html" %}
+
+{% block stylesheet %} 
+<link rel="stylesheet" href="../static/css/chatStyle.css">
+{%endblock%}
+
+{% block main %}
+<div class="chat_container">
+  <div class="chat_window">
+    <div class="top_menu">
+      <div class="buttons">
+        <div class="button close"></div>
+        <div class="button minimize"></div>
+        <div class="button maximize"></div>
+      </div>
+      
+      <div class="title">Chat
+      </div>
+    </div>
+    <ul class="messages"></ul>
+    <div class="bottom_wrapper clearfix">
+      <div class="message_input_wrapper">
+        <input class="message_input"  autocomplete= "off" placeholder="Type your message here..." />
+      </div>
+      <div class="send_message"> 
+        <div class="icon"></div>
+        <div class="text">Enviar</div>
+      </div>
+    </div>
+  </div>
+  <div class="message_template">
+    <li class="message">
+      <div class="avatar"></div>
+      <div class="text_wrapper">
+        <div class="text"></div>
+      </div>
+    </li>
+  </div>
+</div>
+<script src="/socket.io/socket.io.js"></script>
+
+<script>
+  document.addEventListener('DOMContentLoaded', () => {
+  const socket = io();
+  const messageInput = document.querySelector('.message_input');
+  const messagesList = document.querySelector('.messages');
+  // Definimos sentMessages para tener un registro de los mensajes enviados y su tiempo de envío
+  const sentMessages = {};
+  
+  // Función para agregar un nuevo mensaje al chat
+  function addMessage(message, isCurrentUser) {
+  const currentTime = Date.now();
+  
+  // Verifica si el mensaje ya ha sido enviado recientemente
+  if (!sentMessages[message] || (currentTime - sentMessages[message]) > 500) {
+  sentMessages[message] = currentTime; // Registra el mensaje y su tiempo de envío
+
+  // Crea el elemento de mensaje y lo agrega al DOM
+  const messageClass = isCurrentUser ? 'right' : 'left'; // Determina si el mensaje es del usuario actual (derecha) o del otro usuario (izquierda)
+  const messageWrapper = document.createElement('li'); // Crea un elemento <li> para el mensaje
+  messageWrapper.className = `message ${messageClass} appeared`; // Asigna clases CSS al elemento <li> para aplicar estilos
+  messageWrapper.innerHTML = `
+    <div class="avatar"></div>
+    <div class="text_wrapper">
+      <div class="text">${message}</div> <!-- Agrega el texto del mensaje al elemento -->
+    </div>
+  `;
+  messagesList.appendChild(messageWrapper); // Agrega el mensaje al contenedor de mensajes en el DOM
+  messagesList.scrollTop = messagesList.scrollHeight; // Hace que el chat se desplace hacia abajo para mostrar el mensaje más reciente
+  }
+}
+  // Función para enviar un mensaje al servidor
+  function sendMessage() {
+    const messageText = messageInput.value;
+    if (messageText.trim() !== '') {
+      addMessage(messageText, true);
+      socket.emit('chat message', messageText);
+      messageInput.value = '';
+    }
+  }
+
+  // Manejar el evento de enviar un mensaje al hacer clic en el botón "Send"
+  document.querySelector('.send_message').addEventListener('click', () => {
+    sendMessage();
+  });
+
+  // Manejar el evento de enviar un mensaje al presionar la tecla "Enter" en el campo de entrada
+  messageInput.addEventListener('keypress', (event) => {
+    if (event.key === 'Enter') {
+      event.preventDefault();
+      sendMessage();
+    }
+  });
+
+  // Manejar el evento de recibir un mensaje del servidor
+  socket.on('chat message', (msg) => {
+    //console.log('Mensaje recibido del servidor:', msg);
+    addMessage(msg, false);
+  });
+});
+</script>
+{% endblock %}

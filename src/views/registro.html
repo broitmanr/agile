@@ -1,72 +1,61 @@
 {% extends "_base.html" %}
 
 {% block title %} Formulario {% endblock %}
-{% block stylesheet %} 
+{% block stylesheet %}
 <link rel="stylesheet" href="../static/css/formstyle.css">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css" integrity="sha512-z3gLpd7yknf1YoNbCzqRKc4qyor8gaKU1qmn+CShxbuBusANI9QpRohGBreCFkKxLhei6S9CQXFEbbKuqLg0DA==" crossorigin="anonymous" referrerpolicy="no-referrer" />
 {%endblock%}
 
+
 {% block main %}
     <div class="container" id="containerPost">
         <div class="form-content">
-            <h1 id="title">Publicar producto</h1>
-            <form action="/formulario" method="post" id="formPostProduct" enctype="multipart/form-data">
+            <h1 id="title">Bienvenid@</h1>
+            <form action="/sign-up" method="post">
                 <div class="input-group" id="inputPost">
                     <div class="input-field" id="nameInput">
                         <i class="fa-regular fa-user"></i>
                         <input type="text" name="nombre" placeholder="Nombre">
                     </div>
-                    <div class="input-field" id="categoriaInput">
-                        <i class="fa-solid fa-bars"></i>
-                        <div style="flex: 1;">
-                            <select class="select2-no-search select2-dropdown select" name="categoria_id" style="width: 100%; border: none; outline: none; margin-right: 2px">
-                                <option value="">Categoria</option>
-                                {% for categoria in categorias %}
-                                <option value="{{ categoria.nombre }}">{{ categoria.nombre }}</option>
-                                {% endfor %}
-                            </select>
-                        </div>
+                    <div class="input-field">
+                        <i class="fa-regular fa-user"></i>
+                        <input type="text" name="apellido" placeholder="Apellido">
                     </div>
-                    <div class="input-field" style="display: flex; align-items: center;">
-                        <div style="flex: 1;">
-                            <select class="select2 select2-dropdown select small-input" name="moneda_id" style="width: 100%; border: none; outline: none; margin-right: 2px">
-                                <option value="">Moneda</option>
-                                {% for moneda in monedas %}
-                                <option value="{{ moneda.sigla }}">{{ moneda.sigla }}</option>
-                                {% endfor %}
-                            </select>
-                        </div>
-                        <div style="display: flex; align-items: center">
-                            <i class="fa-solid fa-dollar-sign"></i>
-                            <input type="text" name="precio" placeholder="Precio" class="small-input">
-                        </div>
+                    <div class="input-field">
+                        <i class="fa-regular fa-id-card"></i>
+                        <input type="text" name="documento" placeholder="Documento">
                     </div>
-                    <div class="input-field" id="localidadInput">
+                    <div class="input-field">
+                        <i class="fa-regular fa-envelope"></i>
+                        <input type="email" name="email" placeholder="Email">
+                    </div>
+                    <div class="input-field">
+                        <i class="fa-solid fa-lock"></i>
+                        <input type="password" name="password" placeholder="Contraseña">
+                    </div>
+                    <div class="input-field" id="municipioInput">
+
                         <i class="fa-solid fa-globe"></i>
                         <div style="flex: 1;">
-                            <select class="select2-no-search select2-dropdown select" name="localidad_id" style="width: 100%; border: none; outline: none; margin-right: 2px">
+                            <select class="select2-no-search select2-dropdown select" name="municipio_id" style="width: 100%; border: none; outline: none; margin-right: 2px">
                                 <option value="">Zona</option>
-                                {% for localidad in localidades %}
-                                <option value="{{ localidad.nombre }}">{{ localidad.nombre }}</option>
+                                {% for municipio in municipios %}
+                                <option value="{{ municipio.id }}">{{ municipio.nombre }}</option>
                                 {% endfor %}
                             </select>
                         </div>
                     </div>
-                    <br>
-                    <input type="file" id="urlImagen" name="urlImagen">
-                    
-                    <!--<div class="input-field" style="width: 100%; height: 100px; display: flex; justify-content: center; align-items: center;">
-                        <input type="file" id="urlImagen" name="image" style="display: none;"><br>
-                        <label for="urlImagen" style="display: inline-block; padding: 10px 20px; cursor: pointer; background-color: #6982E8; color: white;  text-align: left; border-radius: 8px;">
-                            <i class="fa-solid fa-arrow-up-from-bracket fa-bounce fa-lg" style="color: white;"></i>
-                            Elegir archivo    
-                        </label>
-                    </div>-->
+
                 </div>
                 <br>
                 <div class="btn-field">
                     <button id="cancel" type="button" style="background-color: #d33;">Cancelar</button>
-                    <button id="post" type="submit">Publicar</button>
+                    <button id="post" type="submit">Registrarme</button>
+                </div>
+                <div class="row">
+                    <div class="col">
+                        <a href="/sign-in" class="btn btn-info">Ya soy usuario</a>
+                    </div>
                 </div>
             </form>
         </div>
@@ -75,7 +64,7 @@
     <script>
         document.getElementById('formPostProduct').addEventListener('submit', function(event){
             event.preventDefault();
-        
+
             Swal.fire({
                 title: '¿Desea publicar el producto?',
                 showDenyButton: true,
@@ -95,7 +84,7 @@
                     });
                 };
             });
-        }); 
+        });
     </script>
 
     <script>
@@ -133,7 +122,7 @@
             $(this).trigger('blur');
         });
     </script>
-    
+
 {% endblock %}
 
 {% block js %}
@@ -142,7 +131,7 @@
 <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
 {% endblock %}
 
-{% block css %} 
+{% block css %}
 <style>
     /* Cambiar el fondo del dropdown a oscuro */
     .select2-container .select2-dropdown {

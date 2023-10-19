@@ -1,11 +1,14 @@
 const path = require('path');
 
+
 const morgan = require('morgan');
 const express = require('express');
 const bodyParser = require('body-parser');
-
+const { Server }=require('socket.io');
+const http =require('http');
 const nunjucks = require('./utils/nunjucks.js');
 const env = require('./utils/env.js');
+const flash = require('connect-flash');
 
 //Color de consola
 const pc = require('picocolors');
@@ -20,6 +23,9 @@ const router = require('./router.js');
 const lhroute = require('./.lhroute.js');
 const compression = require('compression');
 const dd = require("dump-die");
+const session = require("express-session");
+const passport = require("passport");
+const net = require("net");
 
 const inTest = env.test;
 const viewsPath = path.resolve(__dirname, '.', 'views');
@@ -31,23 +37,62 @@ async function startServer(port = process.env.PORT) {
 
     const app = express();
 
+    const server = http.createServer(app);
+    const io = new Server(server); // Crea una instancia de Socket.IO y úsala en el servidor HTTP
+
+    io.on('connection', (socket) => {
+        console.log('Un usuario se ha conectado al chat');
+        
+        socket.on('disconnect', () => {
+            console.log('Un usuario se ha desconectado del chat');
+        });
+        socket.on('chat message', (msg) => {
+            io.emit('chat message', msg);
+        });
+    });
+
+    // Cosas de usuario y sesion
+    require('./passport/local-auth');
+    const session = require('express-session');
+    app.use(session({
+        secret: '$ave4RgenTina',
+        resave:false,
+        saveUninitialized:false,
+    }))
+
+    const passport = require('passport');
+    app.use(passport.initialize());
+    app.use(passport.session());
+    app.use(flash());
+
+    app.use((req,res,next)=>{
+        app.locals.signupMessage = req.flash('signupMessage');
+        app.locals.signinMessage = req.flash('signinMessage');
+        console.log(app.locals.signinMessage);
+        next();
+    })
     if (!inTest) {
         app.use(morgan('dev'));
     }
 
+
     app.use(bodyParser.urlencoded({ extended: false }));
     app.use(bodyParser.json());
     app.use(compression());
+    app.use(express.urlencoded({ extended: false }));
 
     app.use('/static', express.static(publicPath));
     app.use(express.static(path.join(__dirname, 'images')));
 
+    app.use('/socket.io', express.static(path.join(__dirname, 'node_modules/socket.io-client/dist')));
 
     const jqueryPath = require.resolve('jquery');
     app.use('/jquery', express.static(path.dirname(jqueryPath)));
 
     const select2Path = require.resolve('select2');
     app.use('/select2', express.static(path.dirname(select2Path)));
+
+
 
 
 
@@ -60,14 +105,15 @@ async function startServer(port = process.env.PORT) {
     // rutas de la vista
     app.use('/', router);
 
+
     if (process.env.NODE_ENV !== 'production') {
         app.use('/lh', lhroute);
     }
 
     return new Promise(function (resolve) {
-        const server = app.listen(port, function () {
+        server.listen(port, function () {
             if (!inTest) {
-                console.log(pc.blue(`Server listen on`),pc.bold(`http://localhost:${port}`));
+                console.log(pc.blue(`Server listen on`), pc.bold(`http://localhost:${port}`));
             }
 
             const originalClose = server.close.bind(server);
@@ -82,6 +128,7 @@ async function startServer(port = process.env.PORT) {
     });
 }
 
+
 if (require.main === module) {
     startServer();
 }
@@ -89,3 +136,4 @@ if (require.main === module) {
 module.exports = {
     start: startServer,
 };
+
