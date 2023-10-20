@@ -104,15 +104,14 @@ const upload = multer({ storage: storage });
  * Obtener todos los productos de la base de datos.
  *
  */
-const getAllProducts = (limit, skip/*, type*/, usuario_id) => {
+const getAllProducts = (limit, skip, type, usuario_id) => {
     let where = {};
-
-    /*if (type) {
+    if (type) {
         where = {
             ...where,
-            type: type,
+            categoria_id: type,
         };
-    }*/
+    }
 
     if(usuario_id){
         where = {
@@ -189,7 +188,7 @@ const getProductsByUser = async (userId) => {
  *
  */
 
-const searchProductsByName = async (productName, usuario_id) => {
+const searchProductsByName = async (productName, usuario_id, type) => {
     let where = {};
     if (productName) {
         where = {
@@ -198,6 +197,13 @@ const searchProductsByName = async (productName, usuario_id) => {
             },
         };
     }
+
+     if (type) {
+         where = {
+             ...where,
+             categoria_id: type,
+         };
+     }
 
     if(usuario_id){
         where = {
@@ -252,9 +258,7 @@ const getLocalidades = async() => {
 };
 
 const getCategorias = async() => {
-    return await Categoria.findAll({
-        attributes: ['nombre']
-    });
+    return await Categoria.findAll();
 };
 
 /**
