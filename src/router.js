@@ -9,7 +9,8 @@ const Municipio = require("./models/municipio");
 const passport = require('passport');
 const { upload } = require('./models/product.js');
 const { estaAutenticado } = require('./models/product.js');
-
+const  Mensaje = require('./models/mensaje.js')
+const  Interaccion  =require('./models/interaccion.js')
 const router = express.Router();
 
 
@@ -110,12 +111,56 @@ router.get('/_header', async (req, res) => {
     })
 })
 
-router.get('/chat/:productId', async (req, res) => {
-    // Obtén el ID del producto desde la URL
-    const productId = req.params.productId;
+router.post('/chat/:productId',estaAutenticado, async (req, res) => {
+    const userId = req.user;
+    const productId= req.params.productId
+    const idOwnerProduct= await ProductModel.getOwner(productId);
+    console.log('Valor de userId:', userId);
+    console.log('Valor de productId:', productId);
+    console.log('Valor del id del dueño del producto:', idOwnerProduct);
 
-    // Renderiza la vista del chat y pasa el ID del producto
-    res.render('_chatProducto.html', { productId });
+    // Verificar si ya existe un chat entre los mismos usuarios y con el mismo producto
+    const existingChat = await Interaccion.findExistingChat(userId, idOwnerProduct, productId)
+    
+    if (existingChat) {
+        const chatId = existingChat.id;
+        console.log('Chat existente - ID del chat:', chatId);
+        res.render('_chatProducto.html', { emisor: userId, chatId });
+    }else {
+        console.log('Chat nuevo - Creando un chat');
+        // Crear un chat nuevo porque no existe uno existente
+        const newChat = await Interaccion.createInteraccion(userId, idOwnerProduct, productId);
+        const chatId = newChat.id;
+        console.log('Nuevo chat - ID del chat:', chatId);
+        res.render('_chatProducto.html', { emisor: userId, chatId });
+    }
+});
+
+// Agrega esta ruta para obtener mensajes anteriores
+router.get('/messages/:interaccionId', async (req, res) => {
+    const interaccionId = req.params.interaccionId;
+    console.log('interaccionId:', interaccionId);
+    const messages = await Mensaje.getMessagesByIDChat(interaccionId)
+    res.json(messages);
+});
+
+router.post('/enviarMensaje/:chatId', estaAutenticado, async (req, res) => {
+    const userId = req.body.emisor;
+    const chatId = req.params.chatId
+    const texto = req.body.texto;
+    console.log('Valores antes de crear el mensaje:');
+    console.log('userId:', userId);
+    console.log('chatId:', chatId);
+    console.log('texto:', req.body.texto);
+        // Aquí, puedes crear un un uevo mensaje en la base de datos
+        const newMessage = await Mensaje.createMessage(chatId,userId,texto);
+        const io = req.app.get('socketio');
+        console.log('valor de io:', io);
+        io.to(`chat-${chatId}`).emit('chat message', {
+            texto: newMessage.texto,
+            emisor: newMessage.emisor,
+        });
+        res.json(newMessage);
 });
 
 router.get('/sign-up',async function (req, res, next){
