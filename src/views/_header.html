@@ -3,6 +3,37 @@
         background-color: #6982E8;
         color: white;
     }
+    .dropdown-menu{
+        background-color: #f8f9fa;
+        border: none;
+        border-radius: 0.25rem;
+        box-shadow: none;
+        margin-top: 0.25rem;
+        /*padding: 0.5rem 0;;*/
+    }
+    .dropdown-item {
+        color: #212529;
+        display: block;
+        font-size: 1rem;
+        font-weight: normal;
+        line-height: 1.5rem;
+        padding: 0.25rem 1.5rem;
+    }
+    .dropdown-item:hover, .dropdown-item:focus {
+        background-color: #e9ecef;
+    }
+    .dropdown-item.active, .dropdown-item:active {
+        background-color: #6982E8;
+        color: #fff;
+    }
+    .dropdown-toggle::after {
+        display: none;
+    }
+    .hr{
+        border: black;
+        height: 1px;
+        margin: 10px 0;
+    }
 </style>
 
 <nav class="navbar bg-gradient bg-opacity-75 py-3">
@@ -24,7 +55,57 @@
         </form>
         <button onclick='window.location.href = "/formulario" ' class="btn btn-light ml-auto" id="button-publicar" style="font-size: 1.0rem; padding: 0.50rem 1.0rem; margin-right: 10px;">Publicar producto</button>
         {% if estaAutenticado %}
-            <button onclick='window.location.href = "/my_products" ' class="btn btn-light ml-auto" id="button-list" style="font-size: 1.0rem; padding: 0.50rem 1.0rem; display: block;">Mis productos</button>
+            {% set unreadCount = 0 %}
+            {% for notification in notifications %}
+                {% if notification.estado == 'N' %}
+                    {% set unreadCount = unreadCount + 1 %}
+                {% endif %}
+            {% endfor %}
+            <button onclick='window.location.href = "/my_products" ' class="btn btn-light ml-auto" id="button-list" style="font-size: 1.0rem; padding: 0.50rem 1.0rem; display: block; margin-right: 10px;">Mis productos</button>
+            <div class="dropdown notifications">
+                <button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownNotificactionButton" data-haspopup="true" aria-expanded="false">
+                    <i class="fa-regular fa-bell"></i>
+                    {% if unreadCount > 0 %}
+                        <span class="badge badge-danger">{{ unreadCount }}</span>
+                    {% endif %}
+                </button>
+                <div class="dropdown-menu" aria-labelledby="dropdownNotificactionButton" style="left: auto; right: 0; border: 0.5px solid #1A2234;">
+                {% if notifications|length >0 %}
+                    {% for notification in notifications %}
+                        <div class="show">
+                            {% if notification.estado == 'N' %}
+                                <a class="dropdown-item" style="background-color: #D0D4D6;" href="?notificationId={{notification.id}}">{{ notification.texto }}</a>
+                                {% if not loop.last %}
+                                    <hr>
+                                {% endif %}
+                            {% else %}
+                                <a class="dropdown-item" style="background-color: #E8ECEC;">{{ notification.texto }}</a>
+                            
+                            {% endif %}
+                        </div>
+                    {% endfor %}
+                {% else %}
+                    <div class="show">
+                        <a class="dropdown-item">No hay notificaciones</a>
+                    </div>
+                {% endif %}
+                </div>
+            </div>
         {% endif %}
     </div>
 </nav>
+
+<script>
+    document.addEventListener("DOMContentLoaded", function() {
+        var dropdownMenu = document.querySelector(".dropdown-menu");
+        var dropdownButton = document.querySelector("#dropdownNotificactionButton");
+
+        // Oculta el menú desplegable al cargar la página
+        dropdownMenu.classList.remove("show");
+
+        // Muestra y oculta el menú desplegable
+        dropdownButton.addEventListener("click", function() {
+            dropdownMenu.classList.toggle("show");
+        });
+    });
+</script>

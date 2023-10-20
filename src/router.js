@@ -8,7 +8,7 @@ const Categoria = require("./models/categoria");
 const Municipio = require("./models/municipio");
 const passport = require('passport');
 const { upload } = require('./models/product.js');
-const {Notificacion,createNotificacionChat} = require('./models/notificacion');
+const {createNotificacionChat,getNotifications,marcarComoLeido} = require('./models/notificacion');
 const { estaAutenticado } = require('./models/product.js');
 
 const router = express.Router();
@@ -21,7 +21,13 @@ router.get('/', async function (req, res) {
     const category = req.query.type || undefined;
     const skip = pageSize * (currentPage - 1);
     const usuario_id = req.user;
-    const { rows, count } = await ProductModel.getAll(pageSize, skip, usuario_id);
+    const { rows, count } = await ProductModel.getAll(pageSize, skip, usuario_id); 
+    const notifications = req.isAuthenticated() ? await getNotifications(usuario_id) : null;
+    const notificationId = req.query.notificationId;
+    if(notificationId){
+        await marcarComoLeido(notificationId);
+    }
+    
     res.render('home.html', {
         products: rows,
         categories: productType.types,
@@ -30,6 +36,7 @@ router.get('/', async function (req, res) {
             currentPage: currentPage,
         },
         estaAutenticado: req.isAuthenticated(),
+        notifications
     });
 });
 
@@ -100,6 +107,7 @@ router.get('/_header', async (req, res) => {
     const skip = pageSize * (currentPage - 1);
     const productName = req.query.product_name
     const usuario_id = req.user;
+    console.log(req.user);
     const {rows,count} = await ProductModel.searchByName(productName, usuario_id);
     res.render('home.html', {
         products: rows,
