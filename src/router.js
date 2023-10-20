@@ -121,7 +121,6 @@ router.get('/_header', async (req, res) => {
     })
 })
 
-<<<<<<< HEAD
 router.post('/chat/:productId',estaAutenticado, async (req, res) => {
     const userId = req.user;
     const productId= req.params.productId
@@ -176,15 +175,6 @@ router.post('/enviarMensaje/:chatId', estaAutenticado, async (req, res) => {
             emisor: newMessage.emisor,
         });
         res.json(newMessage);
-=======
-router.get('/chat/:productId',estaAutenticado, async (req, res) => {
-    // Obtén el ID del producto desde la URL
-    const productId = req.params.productId;
-    const product = await ProductModel.findById(productId);
-    await createNotificacionChat(product, req.user);
-    // Renderiza la vista del chat y pasa el ID del producto
-    res.render('_chatProducto.html', { productId });
->>>>>>> 5ff7bcd70db83a37decb4923edb54e4be511ea33
 });
 
 router.get('/sign-up',async function (req, res, next){
