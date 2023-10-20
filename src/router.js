@@ -8,6 +8,8 @@ const Categoria = require("./models/categoria");
 const Municipio = require("./models/municipio");
 const passport = require('passport');
 const { upload } = require('./models/product.js');
+const {createNotificacionChat,getNotifications,marcarComoLeido} = require('./models/notificacion');
+const { estaAutenticado } = require('./models/product.js');
 
 const router = express.Router();
 
@@ -18,18 +20,27 @@ router.get('/', async function (req, res) {
     const currentPage = +req.query.page || 1;
     const category = req.query.type || undefined;
     const skip = pageSize * (currentPage - 1);
-    const { rows, count } = await ProductModel.getAll(pageSize, skip);
+    const usuario_id = req.user;
+    const categorias = await ProductModel.getCategorias();
+    const { rows, count } = await ProductModel.getAll(pageSize, skip,category, usuario_id); 
+    const notifications = req.isAuthenticated() ? await getNotifications(usuario_id) : null;
+    const notificationId = req.query.notificationId;
+    if(notificationId){
+        await marcarComoLeido(notificationId);
+    }
     res.render('home.html', {
         products: rows,
-        categories: productType.types,
+        categories: categorias,
         pagination: {
             totalPages: Math.ceil(count / pageSize),
             currentPage: currentPage,
         },
+        estaAutenticado: req.isAuthenticated(),
+        notifications
     });
 });
 
-router.get('/formulario', async(req,res) => {
+router.get('/formulario',estaAutenticado,async(req,res) => {
     try{
         const monedas = await ProductModel.getMonedas();
         const localidades = await ProductModel.getLocalidades();
@@ -40,16 +51,30 @@ router.get('/formulario', async(req,res) => {
     }
 });
 
-router.post('/formulario', upload.single('urlImagen'), async (req, res) => {
+router.post('/formulario',estaAutenticado, upload.single('urlImagen'), async (req, res) => {
+    const userId = req.user;
     const productData = req.body;
-    productData.urlImagen= req.file.path;
+
+    productData.urlImagen= req.file ? req.file.path : '';
     try{
-        const newProduct = await ProductModel.createProduct(productData);
+        const newProduct = await ProductModel.createProduct(productData, userId);
         const productID = newProduct.id;
         res.redirect(`/product/details/${productID}`);
     } catch (error){
         console.error(error);
         res.status(500).json({ message: "¡Error! No se ha podido crear el producto" });
+    }
+});
+
+router.get('/my_products', estaAutenticado, async (req, res) => {
+    const userId = req.user;
+
+    try{
+        const products = await ProductModel.getProductsByUser(userId);
+        res.render('_my_products.html', { products });
+    } catch (error) {
+        console.error(error);
+        res.status(500).json ({ message: "¡Error! No se han encontrado los productos del usuario"});
     }
 });
 
@@ -69,7 +94,7 @@ router.get('/product/delete/:id', async (req, res) =>{
         const productID = +req.params.id;
         const result = await ProductModel.deleteProduct(productID);
         console.info({message: "¡Eliminado! Se elimino con exito el producto ",result});
-        res.redirect('/');
+        res.redirect('/my_products');
     } catch (error){
         console.error(error);
         res.status(500).json({ message: "¡Error! No se ha podido eliminar el producto" });
@@ -82,10 +107,12 @@ router.get('/_header', async (req, res) => {
     const category = req.query.type || undefined;
     const skip = pageSize * (currentPage - 1);
     const productName = req.query.product_name
-    const {rows,count} = await ProductModel.searchByName(productName);
+    const usuario_id = req.user;
+    const categorias = await ProductModel.getCategorias();
+    const {rows,count} = await ProductModel.searchByName(productName, usuario_id,category);
     res.render('home.html', {
         products: rows,
-        categories: productType.types,
+        categories: categorias,
         pagination: {
             totalPages: Math.ceil(count / pageSize),
             currentPage: currentPage,
@@ -93,14 +120,14 @@ router.get('/_header', async (req, res) => {
     })
 })
 
-router.get('/chat/:productId', async (req, res) => {
+router.get('/chat/:productId',estaAutenticado, async (req, res) => {
     // Obtén el ID del producto desde la URL
     const productId = req.params.productId;
-
+    const product = await ProductModel.findById(productId);
+    await createNotificacionChat(product, req.user);
     // Renderiza la vista del chat y pasa el ID del producto
     res.render('_chatProducto.html', { productId });
 });
-
 
 router.get('/sign-up',async function (req, res, next){
   const municipios = await Municipio.findAll();
@@ -114,10 +141,15 @@ router.post('/sign-up',passport.authenticate('local-signup',{
 }));
 
 
-router.get('/logout',(req,res,next)=>{
-    req.logout();
-    res.redirect('/');
-})
+router.get('/logout', function(req, res){
+    req.logout(function(err) {
+        if (err) {
+            console.log(err);
+            return;
+        }
+        res.redirect('/');
+    });
+});
 router.get('/sign-in',async function (req, res, next){
     res.render('login.html');
 });
