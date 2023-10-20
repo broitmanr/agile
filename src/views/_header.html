@@ -67,7 +67,17 @@
                     {% set unreadCount = unreadCount + 1 %}
                 {% endif %}
             {% endfor %}
-            <button onclick='window.location.href = "/my_products" ' class="btn btn-light ml-auto" id="button-list" style="font-size: 1.0rem; padding: 0.50rem 1.0rem; display: block; margin-right: 10px;">Mis productos</button>
+            <div class="dropdown user">
+                <button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownUserButton" data-haspopup="true" aria-expanded="false" style="margin-right: 10px;">
+                    <i class="fa-regular fa-circle-user"></i>
+                </button>
+                <div class="dropdown-menu dropdown-userLog" aria-labelledby="dropdownUserButton" style="left: auto; right: 0; border: 0.5px solid #1A2234;">
+                    <div class="show">
+                        <a class="dropdown-item" href="/my_products">Mis productos</a>
+                        <a class="dropdown-item" href="/logout">Cerrar sesión</a>
+                    </div>
+                </div>
+            </div>    
             <div class="dropdown notifications">
                 <button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownNotificactionButton" data-haspopup="true" aria-expanded="false">
                     <i class="fa-regular fa-bell"></i>
@@ -75,7 +85,7 @@
                         <span class="badge badge-danger">{{ unreadCount }}</span>
                     {% endif %}
                 </button>
-                <div class="dropdown-menu" aria-labelledby="dropdownNotificactionButton" style="left: auto; right: 0; border: 0.5px solid #1A2234;">
+                <div class="dropdown-menu dropdown-notifications" aria-labelledby="dropdownNotificactionButton" style="left: auto; right: 0; border: 0.5px solid #1A2234;">
                 {% if notifications|length >0 %}
                     {% for notification in notifications %}
                         <div class="show">
@@ -97,21 +107,57 @@
                 {% endif %}
                 </div>
             </div>
+        {% else %}
+            <div class="dropdown userNoLog">
+                <button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownUserNoLogButton" data-haspopup="true" aria-expanded="false" style="margin-right: 10px;">
+                    <i class="fa-regular fa-circle-user"></i>
+                </button>
+                <div class="dropdown-menu dropdown-userNoLog" aria-labelledby="dropdownUserNoLogButton" style="left: auto; right: 0; border: 0.5px solid #1A2234;">
+                    <div class="show">
+                        <a class="dropdown-item" href="/sign-in">Iniciar sesión</a>
+                        <a class="dropdown-item" href="/sign-up">Registrarme</a>
+                    </div>
+                </div>
+            </div> 
         {% endif %}
     </div>
 </nav>
 
 <script>
     document.addEventListener("DOMContentLoaded", function() {
-        var dropdownMenu = document.querySelector(".dropdown-menu");
-        var dropdownButton = document.querySelector("#dropdownNotificactionButton");
+        var dropdownNotificationsMenu = document.querySelector(".dropdown-menu.dropdown-notifications");
+        var dropdownNotificationsButton = document.querySelector("#dropdownNotificactionButton");
+        
+        var dropdownUserMenu = document.querySelector(".dropdown-menu.dropdown-userLog");
+        var dropdownUserButton = document.querySelector("#dropdownUserButton");
+        
+        // Oculta los menús desplegables al cargar la página
+        dropdownNotificationsMenu.classList.remove("show");
+        dropdownUserMenu.classList.remove("show");
+        
+        // Muestra y oculta el menú desplegable de notificaciones
+        dropdownNotificationsButton.addEventListener("click", function() {
+            dropdownNotificationsMenu.classList.toggle("show");
+        });
+        
+        // Muestra y oculta el menú desplegable de usuario
+        dropdownUserButton.addEventListener("click", function() {
+            dropdownUserMenu.classList.toggle("show");
+        });
+    });
+</script>
 
-        // Oculta el menú desplegable al cargar la página
-        dropdownMenu.classList.remove("show");
+<script>
+    document.addEventListener("DOMContentLoaded", function() {
+        var dropdownUserNoLogMenu = document.querySelector(".dropdown-menu.dropdown-userNoLog");
+        var dropdownUserNoLogButton = document.querySelector("#dropdownUserNoLogButton");
+        
+        // Oculta los menús desplegables al cargar la página
+        dropdownUserNoLogMenu.classList.remove("show");
 
-        // Muestra y oculta el menú desplegable
-        dropdownButton.addEventListener("click", function() {
-            dropdownMenu.classList.toggle("show");
+        // Muestra y oculta el menú desplegable de usuario no logueado
+        dropdownUserNoLogButton.addEventListener("click", function() {
+            dropdownUserNoLogMenu.classList.toggle("show");
         });
     });
 </script>
