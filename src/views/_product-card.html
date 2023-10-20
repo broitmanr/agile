@@ -1,4 +1,4 @@
-{% block stylesheet %} 
+{% block stylesheet %}
 <link rel="stylesheet" href="../static/css/formstyle.css">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css" integrity="sha512-z3gLpd7yknf1YoNbCzqRKc4qyor8gaKU1qmn+CShxbuBusANI9QpRohGBreCFkKxLhei6S9CQXFEbbKuqLg0DA==" crossorigin="anonymous" referrerpolicy="no-referrer" />
 {%endblock%}
@@ -46,12 +46,16 @@
                 <!-- Si tiene definido CartProduct quiere decir que estamos en el carrito -->
                 <form action="product/details/{{ product.id }}" method="GET">
                     <input type="text" class="d-none" name="productid" value="{{ product.id }}">
-                    <button type="submit" id="interestButton" class="btn btn-outline-dark mb-2">Me interesa</button>
+                    <button type="submit" id="interestButton" class="btn btn-outline-dark mb-2"
+                    style="position: absolute;right: 2em"|
+                    >Me interesa</button>
                 </form>
                 <!-- Boton para eliminar un producto-->
-                
+
                 <form action="" method="GET" id="btnDelete">
-                    <button type="button" id="eliminar-{{ product.id }}" class="btn btn-outline-danger mb-2 eliminar-button" data-product-id="{{ product.id }}"><i class="fa-solid fa-trash-can fa-xl"></i></button>
+                    <button type="button" id="eliminar-{{ product.id }}" class="btn btn-outline-danger mb-2 eliminar-button"
+                            data-product-id="{{ product.id }}"
+                            style="position: absolute;right: 3em"><i class="fa-solid fa-trash-can fa-xl"></i></button>
                 </form>
             </div>
         </div>
