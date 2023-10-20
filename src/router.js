@@ -21,16 +21,16 @@ router.get('/', async function (req, res) {
     const category = req.query.type || undefined;
     const skip = pageSize * (currentPage - 1);
     const usuario_id = req.user;
-    const { rows, count } = await ProductModel.getAll(pageSize, skip, usuario_id); 
+    const categorias = await ProductModel.getCategorias();
+    const { rows, count } = await ProductModel.getAll(pageSize, skip,category, usuario_id); 
     const notifications = req.isAuthenticated() ? await getNotifications(usuario_id) : null;
     const notificationId = req.query.notificationId;
     if(notificationId){
         await marcarComoLeido(notificationId);
     }
-    
     res.render('home.html', {
         products: rows,
-        categories: productType.types,
+        categories: categorias,
         pagination: {
             totalPages: Math.ceil(count / pageSize),
             currentPage: currentPage,
@@ -40,7 +40,7 @@ router.get('/', async function (req, res) {
     });
 });
 
-router.get('/formulario', estaAutenticado, async(req,res) => {
+router.get('/formulario',estaAutenticado,async(req,res) => {
     try{
         const monedas = await ProductModel.getMonedas();
         const localidades = await ProductModel.getLocalidades();
@@ -51,10 +51,11 @@ router.get('/formulario', estaAutenticado, async(req,res) => {
     }
 });
 
-router.post('/formulario', upload.single('urlImagen'), async (req, res) => {
+router.post('/formulario',estaAutenticado, upload.single('urlImagen'), async (req, res) => {
     const userId = req.user;
     const productData = req.body;
-    productData.urlImagen= req.file.path;
+
+    productData.urlImagen= req.file ? req.file.path : '';
     try{
         const newProduct = await ProductModel.createProduct(productData, userId);
         const productID = newProduct.id;
@@ -107,11 +108,11 @@ router.get('/_header', async (req, res) => {
     const skip = pageSize * (currentPage - 1);
     const productName = req.query.product_name
     const usuario_id = req.user;
-    console.log(req.user);
-    const {rows,count} = await ProductModel.searchByName(productName, usuario_id);
+    const categorias = await ProductModel.getCategorias();
+    const {rows,count} = await ProductModel.searchByName(productName, usuario_id,category);
     res.render('home.html', {
         products: rows,
-        categories: productType.types,
+        categories: categorias,
         pagination: {
             totalPages: Math.ceil(count / pageSize),
             currentPage: currentPage,

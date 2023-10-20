@@ -8,7 +8,8 @@ const { CloudinaryStorage } = require('multer-storage-cloudinary');
 const Categoria = require('./categoria.js'); // Importa el modelo de Categoria
 const Moneda = require('./moneda.js'); // Importa el modelo de Moneda
 const Localidad = require('./localidad.js'); // Importa el modelo de Localidad
-const Usuario = require('./usuario.js'); // Importa el modelo de Usuario
+const Usuario = require('./usuario.js');
+const dd = require("dump-die"); // Importa el modelo de Usuario
 
 class Product extends Model {}
 
@@ -103,15 +104,14 @@ const upload = multer({ storage: storage });
  * Obtener todos los productos de la base de datos.
  *
  */
-const getAllProducts = (limit, skip/*, type*/, usuario_id) => {
+const getAllProducts = (limit, skip, type, usuario_id) => {
     let where = {};
-
-    /*if (type) {
+    if (type) {
         where = {
             ...where,
-            type: type,
+            categoria_id: type,
         };
-    }*/
+    }
 
     if(usuario_id){
         where = {
@@ -188,7 +188,7 @@ const getProductsByUser = async (userId) => {
  *
  */
 
-const searchProductsByName = async (productName, usuario_id) => {
+const searchProductsByName = async (productName, usuario_id, type) => {
     let where = {};
     if (productName) {
         where = {
@@ -197,6 +197,13 @@ const searchProductsByName = async (productName, usuario_id) => {
             },
         };
     }
+
+     if (type) {
+         where = {
+             ...where,
+             categoria_id: type,
+         };
+     }
 
     if(usuario_id){
         where = {
@@ -251,9 +258,7 @@ const getLocalidades = async() => {
 };
 
 const getCategorias = async() => {
-    return await Categoria.findAll({
-        attributes: ['nombre']
-    });
+    return await Categoria.findAll();
 };
 
 /**
@@ -263,12 +268,12 @@ const getCategorias = async() => {
  */
 
 const createProduct = async(productData, userId) => {
-    const { nombre, categoria_id, precio, moneda_id, localidad_id, urlImagen } = productData;
+
+    const { nombre, categoria_id,marca, moneda_id,precio,detalle, localidad_id, urlImagen } = productData;
     const categoria = await Categoria.findOne({ where: { nombre: categoria_id }, attributes: ['id'] }); //Para identificar el id del nombre de la categoria ingresada
     const moneda = await Moneda.findOne({ where: { sigla: moneda_id }, attributes: ['id'] }); //Para identificar el id de la sigla de la moneda ingresada
     const localidad = await Localidad.findOne({ where: { nombre: localidad_id }, attributes: ['id'] }); //Para identificar el id del nombre de la localidad ingresada
-    const marca = "adfadsfsa";
-    const detalle = "sindetalle";
+
 
     return await Product.create({
         nombre,

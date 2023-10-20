@@ -50,6 +50,12 @@
                     name="product_name"
                     aria-label="Buscar productos por nombre"
                     aria-describedby="button-search">
+                <select name="type" id="type" >
+                    <option value="">Categorías</option>
+                    {% for category in categories %}
+                    <option value="{{category.id}}">{{category.nombre}}</option>
+                    {% endfor %}
+                </select>
                 <button class="btn btn-outline-secondary" type="submit" id="button-search" style= " color: #ffffff;">Buscar</button>
             </div>
         </form>
