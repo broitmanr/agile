@@ -3,6 +3,37 @@
         background-color: #6982E8;
         color: white;
     }
+    .dropdown-menu{
+        background-color: #f8f9fa;
+        border: none;
+        border-radius: 0.25rem;
+        box-shadow: none;
+        margin-top: 0.25rem;
+        /*padding: 0.5rem 0;;*/
+    }
+    .dropdown-item {
+        color: #212529;
+        display: block;
+        font-size: 1rem;
+        font-weight: normal;
+        line-height: 1.5rem;
+        padding: 0.25rem 1.5rem;
+    }
+    .dropdown-item:hover, .dropdown-item:focus {
+        background-color: #e9ecef;
+    }
+    .dropdown-item.active, .dropdown-item:active {
+        background-color: #6982E8;
+        color: #fff;
+    }
+    .dropdown-toggle::after {
+        display: none;
+    }
+    .hr{
+        border: black;
+        height: 1px;
+        margin: 10px 0;
+    }
 </style>
 
 <nav class="navbar bg-gradient bg-opacity-75 py-3">
@@ -19,12 +50,114 @@
                     name="product_name"
                     aria-label="Buscar productos por nombre"
                     aria-describedby="button-search">
+                <select name="type" id="type" >
+                    <option value="">Categorías</option>
+                    {% for category in categories %}
+                    <option value="{{category.id}}">{{category.nombre}}</option>
+                    {% endfor %}
+                </select>
                 <button class="btn btn-outline-secondary" type="submit" id="button-search" style= " color: #ffffff;">Buscar</button>
             </div>
         </form>
         <button onclick='window.location.href = "/formulario" ' class="btn btn-light ml-auto" id="button-publicar" style="font-size: 1.0rem; padding: 0.50rem 1.0rem; margin-right: 10px;">Publicar producto</button>
         {% if estaAutenticado %}
-            <button onclick='window.location.href = "/my_products" ' class="btn btn-light ml-auto" id="button-list" style="font-size: 1.0rem; padding: 0.50rem 1.0rem; display: block;">Mis productos</button>
+            {% set unreadCount = 0 %}
+            {% for notification in notifications %}
+                {% if notification.estado == 'N' %}
+                    {% set unreadCount = unreadCount + 1 %}
+                {% endif %}
+            {% endfor %}
+            <div class="dropdown user">
+                <button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownUserButton" data-haspopup="true" aria-expanded="false" style="margin-right: 10px;">
+                    <i class="fa-regular fa-circle-user"></i>
+                </button>
+                <div class="dropdown-menu dropdown-userLog" aria-labelledby="dropdownUserButton" style="left: auto; right: 0; border: 0.5px solid #1A2234;">
+                    <div class="show">
+                        <a class="dropdown-item" href="/my_products">Mis productos</a>
+                        <a class="dropdown-item" href="/logout">Cerrar sesión</a>
+                    </div>
+                </div>
+            </div>    
+            <div class="dropdown notifications">
+                <button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownNotificactionButton" data-haspopup="true" aria-expanded="false">
+                    <i class="fa-regular fa-bell"></i>
+                    {% if unreadCount > 0 %}
+                        <span class="badge badge-danger">{{ unreadCount }}</span>
+                    {% endif %}
+                </button>
+                <div class="dropdown-menu dropdown-notifications" aria-labelledby="dropdownNotificactionButton" style="left: auto; right: 0; border: 0.5px solid #1A2234;">
+                {% if notifications|length >0 %}
+                    {% for notification in notifications %}
+                        <div class="show">
+                            {% if notification.estado == 'N' %}
+                                <a class="dropdown-item" style="background-color: #D0D4D6;" href="?notificationId={{notification.id}}">{{ notification.texto }}</a>
+                                {% if not loop.last %}
+                                    <hr>
+                                {% endif %}
+                            {% else %}
+                                <a class="dropdown-item" style="background-color: #E8ECEC;">{{ notification.texto }}</a>
+                            
+                            {% endif %}
+                        </div>
+                    {% endfor %}
+                {% else %}
+                    <div class="show">
+                        <a class="dropdown-item">No hay notificaciones</a>
+                    </div>
+                {% endif %}
+                </div>
+            </div>
+        {% else %}
+            <div class="dropdown userNoLog">
+                <button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownUserNoLogButton" data-haspopup="true" aria-expanded="false" style="margin-right: 10px;">
+                    <i class="fa-regular fa-circle-user"></i>
+                </button>
+                <div class="dropdown-menu dropdown-userNoLog" aria-labelledby="dropdownUserNoLogButton" style="left: auto; right: 0; border: 0.5px solid #1A2234;">
+                    <div class="show">
+                        <a class="dropdown-item" href="/sign-in">Iniciar sesión</a>
+                        <a class="dropdown-item" href="/sign-up">Registrarme</a>
+                    </div>
+                </div>
+            </div> 
         {% endif %}
     </div>
 </nav>
+
+<script>
+    document.addEventListener("DOMContentLoaded", function() {
+        var dropdownNotificationsMenu = document.querySelector(".dropdown-menu.dropdown-notifications");
+        var dropdownNotificationsButton = document.querySelector("#dropdownNotificactionButton");
+        
+        var dropdownUserMenu = document.querySelector(".dropdown-menu.dropdown-userLog");
+        var dropdownUserButton = document.querySelector("#dropdownUserButton");
+        
+        // Oculta los menús desplegables al cargar la página
+        dropdownNotificationsMenu.classList.remove("show");
+        dropdownUserMenu.classList.remove("show");
+        
+        // Muestra y oculta el menú desplegable de notificaciones
+        dropdownNotificationsButton.addEventListener("click", function() {
+            dropdownNotificationsMenu.classList.toggle("show");
+        });
+        
+        // Muestra y oculta el menú desplegable de usuario
+        dropdownUserButton.addEventListener("click", function() {
+            dropdownUserMenu.classList.toggle("show");
+        });
+    });
+</script>
+
+<script>
+    document.addEventListener("DOMContentLoaded", function() {
+        var dropdownUserNoLogMenu = document.querySelector(".dropdown-menu.dropdown-userNoLog");
+        var dropdownUserNoLogButton = document.querySelector("#dropdownUserNoLogButton");
+        
+        // Oculta los menús desplegables al cargar la página
+        dropdownUserNoLogMenu.classList.remove("show");
+
+        // Muestra y oculta el menú desplegable de usuario no logueado
+        dropdownUserNoLogButton.addEventListener("click", function() {
+            dropdownUserNoLogMenu.classList.toggle("show");
+        });
+    });
+</script>
