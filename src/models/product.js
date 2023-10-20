@@ -316,6 +316,18 @@ const deleteProduct = async (id) => {
 
 }
 
+const getOwnerIDbyProductID= async(productID) => {
+    const product = await Product.findOne({
+        where: { id: productID },
+        attributes: ['usuario_id'],
+    });
+    if (product) {
+        return product.usuario_id;
+    } else {
+        return null;
+    }
+}
+
 const ProductModel = {
     Product: Product,
     getAll: getAllProducts,
@@ -327,7 +339,8 @@ const ProductModel = {
     getCategorias: getCategorias,
     deleteProduct: deleteProduct,
     getProductsByUser: getProductsByUser,
-    estaAutenticado: estaAutenticado
+    estaAutenticado: estaAutenticado,
+    getOwner: getOwnerIDbyProductID
 }
 
 module.exports = ProductModel;
