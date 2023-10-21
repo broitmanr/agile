@@ -1,7 +1,7 @@
 const {  Model, DataTypes, Op } = require('sequelize');
 const Bd = require('../db.js');
 const Usuario = require('./usuario.js');
-const {Product} = require('./product.js'); 
+const {Product} = require('./product.js');
 
 class Interaccion extends Model {}
 
@@ -12,7 +12,7 @@ Interaccion.init(
       primaryKey: true,
       autoIncrement: true,
     },
-    usu1_id: {
+    locatario_id: {
         field:'usu1_id',
         type: DataTypes.INTEGER,
         allowNull: false,
@@ -21,7 +21,7 @@ Interaccion.init(
         key: 'id',
         },
     },
-    usu2_id: {
+    locador_id: {
         field:'usu2_id',
         type: DataTypes.INTEGER,
         allowNull: false,
@@ -30,7 +30,7 @@ Interaccion.init(
         key: 'id',
         },
     },
-    
+
     producto_id: {
       field: 'producto_id',
       type: DataTypes.INTEGER,
@@ -44,32 +44,32 @@ Interaccion.init(
   { sequelize: Bd, modelName: 'Interaccion', tableName: 'Interaccion' }
 );
 
-Interaccion.belongsTo(Usuario, { foreignKey: 'usu1_id', as: 'usuario1' });
-Interaccion.belongsTo(Usuario, { foreignKey: 'usu2_id', as: 'usuario2' });
+Interaccion.belongsTo(Usuario, { foreignKey: 'locatario_id', as: 'usuario1' });
+Interaccion.belongsTo(Usuario, { foreignKey: 'locador_id', as: 'usuario2' });
 Interaccion.belongsTo(Product, { foreignKey: 'producto_id', as: 'producto'});
 
 
-const createInteraccion = async (usu1_id, usu2_id, producto_id) => {
+const createInteraccion = async (locatario_id, locador_id, producto_id) => {
       const interaccion = await Interaccion.create({
-        usu1_id,
-        usu2_id,
+          locatario_id,
+          locador_id,
         producto_id,
       });
       return interaccion;
-} 
+}
 
 const findExistingChat = async (userId, idOwnerProduct, productId) => {
     const existingChat = await Interaccion.findOne({
       where: {
         [Op.or]: [
-          { usu1_id: userId, usu2_id: idOwnerProduct, producto_id: productId },
-          { usu1_id: idOwnerProduct, usu2_id: userId, producto_id: productId },
+          { locatario_id: userId, locador_id: idOwnerProduct, producto_id: productId },
+          { locatario_id: idOwnerProduct, locador_id: userId, producto_id: productId },
         ],
       },
     });
     return existingChat;
   };
-  
+
 module.exports = {
     Interaccion: Interaccion,
     createInteraccion: createInteraccion,
