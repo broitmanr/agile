@@ -9,7 +9,8 @@ const Categoria = require('./categoria.js'); // Importa el modelo de Categoria
 const Moneda = require('./moneda.js'); // Importa el modelo de Moneda
 const Localidad = require('./localidad.js'); // Importa el modelo de Localidad
 const Usuario = require('./usuario.js');
-const dd = require("dump-die"); // Importa el modelo de Usuario
+const dd = require("dump-die");
+const bycrypt = require("bcrypt-nodejs"); // Importa el modelo de Usuario
 
 class Product extends Model {}
 
@@ -102,6 +103,13 @@ const storage = new CloudinaryStorage({
 });
 
 const upload = multer({ storage: storage });
+
+
+
+Product.prototype.changeState = (estado) =>{
+    this.estado = estado;
+    this.save();
+}
 
 /**
  * Obtener todos los productos de la base de datos.

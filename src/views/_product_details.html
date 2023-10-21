@@ -151,9 +151,9 @@
                 </button>
             </form>
         </div>
-        {% if product.estado !== 'A' %}
+        {% if product.estado !== 'A' and estaAuth === true%}
         <div class="col p-3 d-flex justify-content-start">
-            <form action="/alquilar/{{ product.id }}" method="POST">
+            <form action="/alquilar/{{ product.id }}" method="GET">
                 <button type="submit" class="btn btn-success">
                     Alquilar Producto
                 </button>

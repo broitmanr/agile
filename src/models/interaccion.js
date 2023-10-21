@@ -66,10 +66,28 @@ const findExistingChat = async (userId, idOwnerProduct, productId) => {
       },
     });
     return existingChat;
-  };
+};
+
+const findByUsersProduct = async (locador_id,locatario_id,producto_id)=>{
+    const interaccion = await Interaccion.findOne(
+        {
+        where: {
+            locatario_id: locatario_id,
+            locador_id: locador_id,
+            producto_id: producto_id
+        }
+    });
+    if (interaccion){
+        return interaccion;
+    }else{
+        return createInteraccion(locatario_id,locador_id,producto_id);
+    }
+
+}
 
 module.exports = {
     Interaccion: Interaccion,
     createInteraccion: createInteraccion,
-    findExistingChat: findExistingChat
+    findExistingChat: findExistingChat,
+    findByUsersProduct:findByUsersProduct
 }

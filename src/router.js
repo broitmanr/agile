@@ -12,6 +12,7 @@ const {createNotificacionChat,getNotifications,marcarComoLeido} = require('./mod
 const {createAlquiler} = require('./models/alquiler');
 const { estaAutenticado } = require('./models/product.js');
 const Interaccion = require('./models/interaccion.js');
+const Alquiler = require('./models/alquiler');
 
 const router = express.Router();
 
@@ -24,7 +25,7 @@ router.get('/', async function (req, res) {
     const skip = pageSize * (currentPage - 1);
     const usuario_id = req.user;
     const categorias = await ProductModel.getCategorias();
-    const { rows, count } = await ProductModel.getAll(pageSize, skip,category, usuario_id); 
+    const { rows, count } = await ProductModel.getAll(pageSize, skip,category, usuario_id);
     const notifications = req.isAuthenticated() ? await getNotifications(usuario_id) : null;
     const notificationId = req.query.notificationId;
     if(notificationId){
@@ -68,17 +69,25 @@ router.post('/formulario',estaAutenticado, upload.single('urlImagen'), async (re
     }
 });
 
-router.post('/alquilar/:productId', async (req, res) => {
+router.get('/alquilar/:productId',estaAutenticado,async(req,res) => {
+    const productId = req.params.productId;
+
+    res.render('alquilar.html',{
+        product_id:productId
+    });
+});
+
+
+router.post('/alquilar/:productId',estaAutenticado, async (req, res) => {
     const productId = req.params.productId;
     console.log(productId)
     const product = await ProductModel.findById(productId);
     const locador = product.usuario_id;
     const locatario = req.user;
-    const interaccion = await Interaccion.findExistingChat(locador, locatario, productId);
-    if(!interaccion){
-        interaccion = await Interaccion.createInteraccion(locador, locatario)
-        await Alquilar.createAlquiler(interaccion);
-    }
+    const interaccion = await Interaccion.findByUsersProduct(locador, locatario, productId);
+    await Alquiler.createAlquiler(interaccion.id);
+    product.estado = 'A';
+    await product.save();
     res.redirect(`/`);
 });
 

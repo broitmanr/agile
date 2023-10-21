@@ -7,9 +7,9 @@
 <div class="col mt-4 vstack gap-2">
         {% if products | length > 0 %}
             {% for product in products %}
-            {% if product.estado != 'A' %}
+
                 {{ productCard.productCard(product) }}
-            {% endif %}
+
             {% endfor %}
             <div class="row mt-4">
                 {{
@@ -31,7 +31,7 @@
                                 <path stroke="#484848" stroke-linecap="square" d="M52.267 52.61l-6.646-6.647"></path>
                                 <path fill="#FFDB15" d="M61.601 54.585l-2.823-2.824c-1.405-1.405-3.988-1.099-5.768.682-1.78 1.78-2.087 4.363-.682 5.768l9.599 9.599 8.89 8.89c1.403 1.404 3.987 1.098 5.767-.682 1.78-1.78 2.086-4.364.683-5.768"></path>
                                 <path stroke="#484848" stroke-linecap="round" d="M52.095 58.273c-1.404-1.405-1.283-3.803.27-5.356s3.951-1.674 5.356-.27l9.6 9.6 8.89 8.89"></path>
-                            </g>                            
+                            </g>
                         </svg>
                     </div>
                     <div class="ui-search-rescue__info">
