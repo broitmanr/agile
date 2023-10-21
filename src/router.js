@@ -121,7 +121,7 @@ router.get('/_header', async (req, res) => {
     })
 })
 
-router.post('/chat/:productId',estaAutenticado, async (req, res) => {
+router.get('/chat/:productId',estaAutenticado, async (req, res) => {
     const userId = req.user;
     const productId= req.params.productId
     const idOwnerProduct= await ProductModel.getOwner(productId);
@@ -153,7 +153,7 @@ router.post('/chat/:productId',estaAutenticado, async (req, res) => {
 // Agrega esta ruta para obtener mensajes anteriores
 router.get('/messages/:interaccionId', async (req, res) => {
     const interaccionId = req.params.interaccionId;
-    console.log('interaccionId:', interaccionId);
+    console.log('Endpoint get/messages/:interaccionId con un valor de:', interaccionId);
     const messages = await Mensaje.getMessagesByIDChat(interaccionId)
     res.json(messages);
 });

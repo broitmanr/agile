@@ -88,8 +88,6 @@
     const messageText = messageInput.value;
     if (messageText.trim() !== '') {
         console.log("Enviando mensaje:", messageText);
-        addMessage(messageText, userId);
-
         const response = await fetch(`/enviarMensaje/${chatId}`, {
         method: 'POST',
         headers: {
@@ -128,6 +126,8 @@
     });
 
     socket.on('chat message', (data) => {
+      console.log('Valor de data:', data);
+      console.log('Valor de data:', data.emisor);
       addMessage(data, userId);
     });
   });
