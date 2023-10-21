@@ -151,6 +151,7 @@
                 </button>
             </form>
         </div>
+        {% if product.estado == null %}
         <div class="col p-3 d-flex justify-content-start">
             <form action="/alquilar/{{ product.id }}" method="POST">
                 <button type="submit" class="btn btn-success">
@@ -158,6 +159,7 @@
                 </button>
             </form>
         </div>
+        {% endif %}
     </div>
 </div>
 {% endblock %}
