@@ -14,19 +14,19 @@
                 <div class="input-group" id="inputPost">
                     <div class="input-field" id="nombreApellidoInput">
                         <i class="fa-solid fa-user"></i>
-                        <input type="text" name="nombreApellido" placeholder="NombreApellido">
+                        <input type="text" name="nombreApellido" placeholder="Nombre Apellido">
                     </div>
                     <div class="input-field" id="nroTarjetaInput">
                         <i class="fa-solid fa-credit-card"></i>
-                        <input type="text" name="nroTarjeta" placeholder="nroTarjeta">
+                        <input type="text" name="nroTarjeta" placeholder="Número de tarjeta">
                     </div>
                     <div class="input-field" id="codSegInput">
                         <i class="fa-solid fa-lock"></i>
-                        <input type="text" name="codSeg" placeholder="codSeg">
+                        <input type="password" name="codSeg" placeholder="Código de seguridad">
                     </div>
                     <div class="col">
-                        <label for="fecha"><i class="fa-solid fa-calendar-days"></i></label>
-                        <input type="month" name="fecha" id="fecha" class="form-control" value="2019-08">
+                        <label for="Fecha">Fecha</label>
+                        <input type="month" name="fecha" id="fecha" class="form-control" value="2019-08" style="background-color: #515966; color:white">
                     </div>
                 </div>
                 <br>
@@ -52,7 +52,7 @@
             }).then((result) => {
                 if (result.isConfirmed) {
                     Swal.fire({
-                        title: '¡Usted ha publicado su producto!',
+                        title: '¡Usted ha alquilado su producto!',
                         icon: 'success',
                         showConfirmButton: false,
                         timer: 1200,
