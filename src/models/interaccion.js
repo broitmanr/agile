@@ -13,7 +13,6 @@ Interaccion.init(
       autoIncrement: true,
     },
     locatario_id: {
-        field:'usu1_id',
         type: DataTypes.INTEGER,
         allowNull: false,
         references: {
@@ -22,7 +21,6 @@ Interaccion.init(
         },
     },
     locador_id: {
-        field:'usu2_id',
         type: DataTypes.INTEGER,
         allowNull: false,
         references: {

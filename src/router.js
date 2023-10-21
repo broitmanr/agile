@@ -9,7 +9,9 @@ const Municipio = require("./models/municipio");
 const passport = require('passport');
 const { upload } = require('./models/product.js');
 const {createNotificacionChat,getNotifications,marcarComoLeido} = require('./models/notificacion');
+const {createAlquiler} = require('./models/alquiler');
 const { estaAutenticado } = require('./models/product.js');
+const Interaccion = require('./models/interaccion.js');
 
 const router = express.Router();
 
@@ -64,6 +66,20 @@ router.post('/formulario',estaAutenticado, upload.single('urlImagen'), async (re
         console.error(error);
         res.status(500).json({ message: "¡Error! No se ha podido crear el producto" });
     }
+});
+
+router.post('/alquilar/:productId', async (req, res) => {
+    const productId = req.params.productId;
+    console.log(productId)
+    const product = await ProductModel.findById(productId);
+    const locador = product.usuario_id;
+    const locatario = req.user;
+    const interaccion = await Interaccion.findExistingChat(locador, locatario, productId);
+    if(!interaccion){
+        interaccion = await Interaccion.createInteraccion(locador, locatario)
+        await Alquilar.createAlquiler(interaccion);
+    }
+    res.redirect(`/`);
 });
 
 router.get('/my_products', estaAutenticado, async (req, res) => {
