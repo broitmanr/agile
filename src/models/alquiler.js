@@ -41,7 +41,7 @@ Alquiler.init({
 
 const createAlquiler = async(interaccion_id) => {
     const alquiler = await Alquiler.create({
-        estado:'A',
+        estado:'PR',
         interaccion_id
     });
     await alquiler.save();
@@ -50,10 +50,10 @@ const createAlquiler = async(interaccion_id) => {
 const cambioEstado = async(alquilerId, estado) => {
     const alquiler = await Alquiler.findByPk(alquilerId);
     if(alquiler) {
-        //El estado puede tomar R=por retirar, A=alquilando, PD=por devolver y F=finalizado
+        //El estado puede tomar PR=por retirar, A=alquilando, PD=por devolver y F=finalizado
         alquiler.estado = estado;
         await alquiler.save();
-    } 
+    }
 }
 
 module.exports = {

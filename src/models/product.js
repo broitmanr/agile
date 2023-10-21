@@ -80,6 +80,9 @@ Product.init({
         model: Usuario,
         key: 'id',
         },
+    },
+    estado:{
+        type: DataTypes.STRING, // A (alquilado), N (No disponible), null (disponible)
     }
 },
 {sequelize: Bd, modelName: 'Product', tableName: 'Producto'}
@@ -285,6 +288,7 @@ const createProduct = async(productData, userId) => {
         detalle,
         urlImagen,
         usuario_id: userId,
+        estado:null,
     });
 };
 
