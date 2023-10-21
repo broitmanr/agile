@@ -7,7 +7,9 @@
 <div class="col mt-4 vstack gap-2">
         {% if products | length > 0 %}
             {% for product in products %}
+            {% if product.estado != 'A' %}
                 {{ productCard.productCard(product) }}
+            {% endif %}
             {% endfor %}
             <div class="row mt-4">
                 {{
