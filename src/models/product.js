@@ -108,7 +108,13 @@ const upload = multer({ storage: storage });
  *
  */
 const getAllProducts = (limit, skip, type, usuario_id) => {
-    let where = {};
+
+    let where = {
+        [Sequelize.Op.or]: [
+            { estado: null },
+            { estado: 'A' }
+        ]
+    };
     if (type) {
         where = {
             ...where,
@@ -192,7 +198,13 @@ const getProductsByUser = async (userId) => {
  */
 
 const searchProductsByName = async (productName, usuario_id, type) => {
-    let where = {};
+     let where = {
+         [Sequelize.Op.or]: [
+             { estado: null },
+             { estado: 'A' }
+         ]
+     };
+
     if (productName) {
         where = {
             nombre: {

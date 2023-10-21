@@ -97,7 +97,7 @@ const getAllProducts = (limit, skip, type) => {
  *
  */
 function findById(id) {
-    return Product.findOne({ 
+    return Product.findOne({
         where: { id: id },
         attributes: {
             exclude: ['createdAt', 'updatedAt']
@@ -114,7 +114,7 @@ function findById(id) {
         ]
     })
 }
-    
+
 /**
  * Obtener todos los productos con descuento de la base de datos.
  *
@@ -138,7 +138,7 @@ const getDiscountProducts = () => {
  *
  */
 const createProduct = ({
-    name = '', 
+    name = '',
     price = 0.0,
     type = ProductType.HOME,
     discount = 0.0,
