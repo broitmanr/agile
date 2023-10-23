@@ -1,47 +1,49 @@
 {% extends "_base.html" %}
 
-{% block title %} Formulario {% endblock %}
+{% block title %} Alquiler {% endblock %}
 {% block stylesheet %}
 <link rel="stylesheet" href="../static/css/formstyle.css">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css" integrity="sha512-z3gLpd7yknf1YoNbCzqRKc4qyor8gaKU1qmn+CShxbuBusANI9QpRohGBreCFkKxLhei6S9CQXFEbbKuqLg0DA==" crossorigin="anonymous" referrerpolicy="no-referrer" />
 {%endblock%}
 
-
 {% block main %}
     <div class="container" id="containerPost">
         <div class="form-content">
-            <h1 id="title">Hola de nuevo!</h1>
-            <form action="/sign-in" method="post">
+            <h1 id="title">Alquilar producto</h1>
+            <form action="/alquilar/{{product_id}}" method="post" id="formPostAlquiler" enctype="multipart/form-data">
                 <div class="input-group" id="inputPost">
-                    <div class="input-field">
-                        <i class="fa-regular fa-envelope"></i>
-                        <input type="email" name="email" placeholder="Email">
+                    <div class="input-field" id="nombreApellidoInput">
+                        <i class="fa-solid fa-user"></i>
+                        <input type="text" name="nombreApellido" placeholder="Nombre Apellido">
                     </div>
-                    <div class="input-field">
+                    <div class="input-field" id="nroTarjetaInput">
+                        <i class="fa-solid fa-credit-card"></i>
+                        <input type="text" name="nroTarjeta" placeholder="Número de tarjeta">
+                    </div>
+                    <div class="input-field" id="codSegInput">
                         <i class="fa-solid fa-lock"></i>
-                        <input type="password" name="password" placeholder="Contraseña">
+                        <input type="password" name="codSeg" placeholder="Código de seguridad">
+                    </div>
+                    <div class="col">
+                        <label for="Fecha">Fecha</label>
+                        <input type="month" name="fecha" id="fecha" class="form-control" value="2019-08" style="background-color: #515966; color:white">
                     </div>
                 </div>
                 <br>
                 <div class="btn-field">
                     <button id="cancel" type="button" style="background-color: #d33;">Cancelar</button>
-                    <button id="post" type="submit">Entrar</button>
-                </div>
-                <div class="row">
-                    <div class="col">
-                        <a href="/sign-up">¿No tienes una cuenta? Registrate</a>
-                    </div>
+                    <button id="post" type="submit">Alquilar</button>
                 </div>
             </form>
         </div>
     </div>
 
     <script>
-        document.getElementById('formPostProduct').addEventListener('submit', function(event){
+        document.getElementById('formPostAlquiler').addEventListener('submit', function(event){
             event.preventDefault();
 
             Swal.fire({
-                title: '¿Desea publicar el producto?',
+                title: '¿Desea alquilar el producto?',
                 showDenyButton: true,
                 confirmButtonColor: '#6982E8',
                 confirmButtonText: 'Confirmar',
@@ -50,7 +52,7 @@
             }).then((result) => {
                 if (result.isConfirmed) {
                     Swal.fire({
-                        title: '¡Usted ha publicado su producto!',
+                        title: '¡Usted ha alquilado su producto!',
                         icon: 'success',
                         showConfirmButton: false,
                         timer: 1200,
@@ -86,30 +88,79 @@
         });
     </script>
 
-    <script>
-        $('.select2').select2({
-            minimumResultsForSearch: Infinity,
-        }).on('select2:select', function () {
-            $(this).trigger('blur');
-        });
-
-        $('.select2-no-search').select2().on('select2:select', function () {
-            $(this).trigger('blur');
-        });
-    </script>
-
 {% endblock %}
 
 {% block js %}
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
 {% endblock %}
 
+<!--
 {% block css %}
 <style>
+
+    ::file-selector-button{
+        width: 12em;
+        opacity: 0;
+    }
+
+
+    .file-select {
+        position: relative;
+        display: inline-block;
+    }
+    .file-select::after {
+        background-color: #071031;
+        color: white;
+        display: flex;
+        padding-left: 1em;
+        justify-content: start;
+        align-items: center;
+        border-radius: 5px;
+        font-family: FontAwesome;
+        content: '\f093';
+        position: absolute;
+        left: 1%;
+        bottom: 5%;
+        height: 85%;
+        width: 8%;
+    }
+
+    .file-select::before {
+        background-color: #071031;
+        color: white;
+        display: flex;
+        padding-left: 8%;
+        justify-content: start;
+        align-items: center;
+        border-radius: 5px;
+        content: 'Subí una imagen';
+        position: absolute;
+        line-height: normal;
+        left:1%;
+        bottom: 5%;
+        height: 85%;
+        width: 30%;
+    }
+
+    .file-select input[type="file"] {
+
+        width: 100px;
+        height: 32px;
+        display: inline-block;
+    }
+
+    #urlImagen::before {
+        content: '\f093';
+    }
+
+
     /* Cambiar el fondo del dropdown a oscuro */
-    .select2-container .select2-dropdown {
+    .select2-container .select2-dropdown{
+        background-color: #515966;
+    }
+
+    .select2-container .select2-dropdown{
         background-color: #515966;
     }
 
@@ -137,4 +188,4 @@
         color: #ffffff;
     }
 </style>
-{%endblock%}
+{%endblock%}-->

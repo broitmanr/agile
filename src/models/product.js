@@ -9,7 +9,8 @@ const Categoria = require('./categoria.js'); // Importa el modelo de Categoria
 const Moneda = require('./moneda.js'); // Importa el modelo de Moneda
 const Localidad = require('./localidad.js'); // Importa el modelo de Localidad
 const Usuario = require('./usuario.js');
-const dd = require("dump-die"); // Importa el modelo de Usuario
+const dd = require("dump-die");
+const bycrypt = require("bcrypt-nodejs"); // Importa el modelo de Usuario
 
 class Product extends Model {}
 
@@ -80,6 +81,9 @@ Product.init({
         model: Usuario,
         key: 'id',
         },
+    },
+    estado:{
+        type: DataTypes.STRING, // A (alquilado), N (No disponible), null (disponible)
     }
 },
 {sequelize: Bd, modelName: 'Product', tableName: 'Producto'}
@@ -100,12 +104,25 @@ const storage = new CloudinaryStorage({
 
 const upload = multer({ storage: storage });
 
+
+
+Product.prototype.changeState = (estado) =>{
+    this.estado = estado;
+    this.save();
+}
+
 /**
  * Obtener todos los productos de la base de datos.
  *
  */
 const getAllProducts = (limit, skip, type, usuario_id) => {
-    let where = {};
+
+    let where = {
+        [Sequelize.Op.or]: [
+            { estado: null },
+            { estado: 'A' }
+        ]
+    };
     if (type) {
         where = {
             ...where,
@@ -189,7 +206,13 @@ const getProductsByUser = async (userId) => {
  */
 
 const searchProductsByName = async (productName, usuario_id, type) => {
-    let where = {};
+     let where = {
+         [Sequelize.Op.or]: [
+             { estado: null },
+             { estado: 'A' }
+         ]
+     };
+
     if (productName) {
         where = {
             nombre: {
@@ -285,6 +308,7 @@ const createProduct = async(productData, userId) => {
         detalle,
         urlImagen,
         usuario_id: userId,
+        estado:null,
     });
 };
 

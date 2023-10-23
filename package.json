@@ -49,6 +49,7 @@
         "socket.io": "^4.7.2",
         "socket.io-client": "^4.7.2",
         "sqlite3": "^5.0.8",
+        "sweetalert2": "^11.7.32",
         "tedious": "^16.4.0"
     },
     "devDependencies": {

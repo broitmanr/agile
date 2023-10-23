@@ -41,9 +41,6 @@ async function startServer(port = process.env.PORT) {
     const io = new Server(server);
     io.on('connection', (socket) => {
         console.log('Un usuario se ha conectado al chat');
-        socket.on('joinChat', (chatId) => {
-          socket.join(`chat-${chatId}`);
-        });
         socket.on('disconnect', () => {
           console.log('Un usuario se ha desconectado del chat');
         });
@@ -74,7 +71,7 @@ async function startServer(port = process.env.PORT) {
     app.use((req,res,next)=>{
         app.locals.signupMessage = req.flash('signupMessage');
         app.locals.signinMessage = req.flash('signinMessage');
-        console.log(app.locals.signinMessage);
+        app.locals.estaAuth = req.isAuthenticated();
         next();
     })
     if (!inTest) {
