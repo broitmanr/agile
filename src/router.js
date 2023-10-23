@@ -13,7 +13,6 @@ const {createAlquiler} = require('./models/alquiler');
 const { estaAutenticado } = require('./models/product.js');
 const  Mensaje = require('./models/mensaje.js')
 const  Interaccion  =require('./models/interaccion.js')
-const Interaccion = require('./models/interaccion.js');
 const Alquiler = require('./models/alquiler');
 
 const router = express.Router();
@@ -147,7 +146,14 @@ router.get('/_header', async (req, res) => {
     })
 })
 
-router.get('/chat/:productId',estaAutenticado, async (req, res) => {
+router.get('/chat/:productId',estaAutenticado,async(req,res) => {
+    const productId = req.params.productId;
+    res.render('_chatProducto.html',{
+        product_id:productId
+    });
+});
+
+router.post('/chat/:productId',estaAutenticado, async (req, res) => {
     const userId = req.user;
     const productId= req.params.productId
     const idOwnerProduct= await ProductModel.getOwner(productId);
@@ -185,21 +191,17 @@ router.get('/messages/:interaccionId', async (req, res) => {
 });
 
 router.post('/enviarMensaje/:chatId', estaAutenticado, async (req, res) => {
-    const userId = req.body.emisor;
+    const userId = req.user;
     const chatId = req.params.chatId
     const texto = req.body.texto;
     console.log('Valores antes de crear el mensaje:');
-    console.log('userId:', userId);
-    console.log('chatId:', chatId);
-    console.log('texto:', req.body.texto);
+    console.log('Valor del userId antes de crear el mensaje:', userId);
+    console.log('Valor del chatId antes de crear el mensaje::', chatId);
+    console.log('Valor del texto antes de crear el mensaje::', req.body.texto);
         // Aquí, puedes crear un un uevo mensaje en la base de datos
-        const newMessage = await Mensaje.createMessage(chatId,userId,texto);
-        const io = req.app.get('socketio');
-        console.log('valor de io:', io);
-        io.to(`chat-${chatId}`).emit('chat message', {
-            texto: newMessage.texto,
-            emisor: newMessage.emisor,
-        });
+        const newMessage = await Mensaje.createMessage(chatId,userId,texto)
+        console.log('valor de chatId post crear el mensaje y persistirlo:', chatId);
+        console.log('texto del newMessage :', newMessage.texto);
         res.json(newMessage);
 });
 

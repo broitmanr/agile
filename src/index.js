@@ -41,14 +41,17 @@ async function startServer(port = process.env.PORT) {
     const io = new Server(server);
     io.on('connection', (socket) => {
         console.log('Un usuario se ha conectado al chat');
-        socket.on('disconnect', () => {
-          console.log('Un usuario se ha desconectado del chat');
+        socket.on('joinChat', (chatId) => {
+          socket.join(`chat-${chatId}`);
         });
         socket.on('chat message', (msg) => {
-          // Reenviar el mensaje a la sala de chat específica
-          console.log('Valor de msg:', msg);
-          console.log('Valor de msg.id:', msg.chatId);
-          io.to(`chat-${msg.chatId}`).emit('chat message', msg);
+            // Reenviar el mensaje a la sala de chat específica
+            console.log('Valor de msg del lado del server index.js antes del io.to:', msg);
+            console.log('Valor de msg.IDdelChat del lado del server index.js antes del io.to:', msg.chatId);
+            io.to(`chat-${msg.chatId}`).emit('chat message', msg);
+          });
+        socket.on('disconnect', () => {
+          console.log('Un usuario se ha desconectado del chat');
         });
       });     
 
@@ -72,6 +75,7 @@ async function startServer(port = process.env.PORT) {
         app.locals.signupMessage = req.flash('signupMessage');
         app.locals.signinMessage = req.flash('signinMessage');
         app.locals.estaAuth = req.isAuthenticated();
+        console.log(app.locals.signinMessage);
         next();
     })
     if (!inTest) {
@@ -139,4 +143,3 @@ if (require.main === module) {
 module.exports = {
     start: startServer,
 };
-
