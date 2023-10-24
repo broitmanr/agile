@@ -115,7 +115,6 @@ router.get('/product/details/:id', async function (req, res) {
 });
 
 router.get('/product/delete/:id', async (req, res) =>{
-    console.log("Entro al metodo");
     try{
         const productID = +req.params.id;
         const result = await ProductModel.deleteProduct(productID);

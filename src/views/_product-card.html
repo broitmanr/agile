@@ -73,11 +73,9 @@
 <script>
     document.addEventListener('DOMContentLoaded', function() {
         const eliminarButtons = document.querySelectorAll('.eliminar-button');
-        console.log('Entro');
         eliminarButtons.forEach(button => {
             button.addEventListener('click', function(event) {
                 const productId = button.getAttribute('data-product-id');
-                console.log('Entro2');
 
                 Swal.fire({
                     title: '¿Estás seguro de que quiere Eliminar el producto?',
