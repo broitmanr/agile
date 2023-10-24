@@ -27,11 +27,6 @@ router.get('/', async function (req, res) {
     const usuario_id = req.user;
     const categorias = await ProductModel.getCategorias();
     const { rows, count } = await ProductModel.getAll(pageSize, skip,category, usuario_id);
-    const notifications = req.isAuthenticated() ? await getNotifications(usuario_id) : null;
-    const notificationId = req.query.notificationId;
-    if(notificationId){
-        await marcarComoLeido(notificationId);
-    }
     res.render('home.html', {
         products: rows,
         categories: categorias,
@@ -40,8 +35,19 @@ router.get('/', async function (req, res) {
             currentPage: currentPage,
         },
         estaAutenticado: req.isAuthenticated(),
-        notifications
     });
+});
+
+router.get('/notificaciones', async function(req, res){
+    const usuario_id = req.user;
+    const notifications = req.isAuthenticated() ? await getNotifications(usuario_id) : null;
+    res.json(notifications);
+})
+
+router.post('/notificaciones/:id', async function(req, res){
+    const notificationId = req.params.id;
+    await marcarComoLeido(notificationId);
+    res.json({ success: true });
 });
 
 router.get('/formulario',estaAutenticado,async(req,res) => {
