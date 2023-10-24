@@ -62,19 +62,8 @@
         <button onclick='window.location.href = "/formulario" ' class="btn btn-light ml-auto" id="button-publicar" style="font-size: 1.0rem; padding: 0.50rem 1.0rem; margin-right: 10px;">Publicar producto</button>
         {% if estaAuth === true %}
             {% set unreadCount = 0 %}
-            <div class="dropdown user">
-                <button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownUserButton" data-haspopup="true" aria-expanded="false" style="margin-right: 10px;">
-                    <i class="fa-regular fa-circle-user"></i>
-                </button>
-                <div class="dropdown-menu dropdown-userLog" aria-labelledby="dropdownUserButton" style="left: auto; right: 0; border: 0.5px solid #1A2234;">
-                    <div class="show">
-                        <a class="dropdown-item" href="/my_products">Mis productos</a>
-                        <a class="dropdown-item" href="/logout">Cerrar sesión</a>
-                    </div>
-                </div>
-            </div>
             <div class="dropdown notifications">
-                <button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownNotificationButton" data-haspopup="true" aria-expanded="false">
+                <button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownNotificationButton" data-haspopup="true" aria-expanded="false" style="margin-right: 10px;">
                     <i class="fa-regular fa-bell"></i>
                     <span class="badge badge-danger unread-count" style="display: none;">{{ unreadCount }}</span>
                 </button>
@@ -87,17 +76,21 @@
                                 {% if not loop.last %}
                                     <hr>
                                 {% endif %}
-                            {% else %}
-                                <a class="dropdown-item" style="background-color: #E8ECEC;">{{ notification.texto }}</a>
-
                             {% endif %}
                         </div>
                     {% endfor %}
-                {% else %}
-                    <div class="show">
-                        <a class="dropdown-item">No hay notificaciones</a>
-                    </div>
                 {% endif %}
+                </div>
+            </div>
+            <div class="dropdown user">
+                <button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownUserButton" data-haspopup="true" aria-expanded="false">
+                    <i class="fa-regular fa-circle-user"></i>
+                </button>
+                <div class="dropdown-menu dropdown-userLog" aria-labelledby="dropdownUserButton" style="left: auto; right: 0; border: 0.5px solid #1A2234;">
+                    <div class="show">
+                        <a class="dropdown-item" href="/my_products">Mis productos</a>
+                        <a class="dropdown-item" href="/logout">Cerrar sesión</a>
+                    </div>
                 </div>
             </div>
         {% else %}
@@ -162,16 +155,13 @@
         newNotification.textContent = notification.texto;
         if(notification.estado == 'N'){
             newNotification.style.backgroundColor = '#D0D4D6';
-        }else{
-            newNotification.style.backgroundColor = '#E8ECEC';
-        }
-        newNotification.addEventListener('click', function(){
-            fetch(`/notificaciones/${notification.id}`, {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-            })
+            newNotification.addEventListener('click', function(){
+                fetch(`/notificaciones/${notification.id}`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                })
             .then(response => response.json())
             .then(data => {
                 if(data.success){
@@ -192,7 +182,8 @@
             .catch((error) => {
                 console.error('Error:', error);
             });
-        });
+            });
+        }
         return newNotification;
     }
 
@@ -209,14 +200,34 @@
             const notificationDiv = document.querySelector('.dropdown-notifications');
             notificationDiv.innerHTML = ''; //Se limpian las anteriores notificaciones
             let unreadCount = 0;
-            data.sort((a,b) => 
-            b.estado.localeCompare(a.estado)).forEach(notification => {
-                const newNotification = createNotificationElement(notification);
-                notificationDiv.appendChild(newNotification);
+            data.sort((a,b) => b.estado.localeCompare(a.estado)).forEach(notification => {
                 if(notification.estado == 'N'){
+                    const newNotification = createNotificationElement(notification);
+                    notificationDiv.appendChild(newNotification);
                     unreadCount++;
                 }
             });
+
+            //Validacion para cuando no hay notificaciones nuevas
+            if(unreadCount === 0){
+                const noNotificationDiv = document.createElement('div');
+                noNotificationDiv.className = 'show';
+                const noNotificationText = document.createElement('a');
+                noNotificationText.className = 'dropdown-item';
+                noNotificationText.textContent = '¡Hola! No tienes notificaciones nuevas';
+                noNotificationDiv.appendChild(noNotificationText);
+                notificationDiv.appendChild(noNotificationDiv);
+                const noNotificationImage = document.createElement('img');
+                noNotificationImage.src = '/SinNotificaciones.png';
+                noNotificationImage.alt = 'ImgSinNotificaciones';
+                noNotificationImage.style.width = '80px';
+                noNotificationImage.style.height = '80px';
+                noNotificationImage.style.display = 'block';
+                noNotificationImage.style.marginLeft = 'auto';
+                noNotificationImage.style.marginRight = 'auto';
+                noNotificationDiv.appendChild(noNotificationImage);
+            }
+            
             const badge = document.querySelector('.badge');
             if(unreadCount > 0){
                 badge.textContent = unreadCount;
