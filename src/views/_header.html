@@ -62,11 +62,6 @@
         <button onclick='window.location.href = "/formulario" ' class="btn btn-light ml-auto" id="button-publicar" style="font-size: 1.0rem; padding: 0.50rem 1.0rem; margin-right: 10px;">Publicar producto</button>
         {% if estaAuth === true %}
             {% set unreadCount = 0 %}
-            {% for notification in notifications %}
-                {% if notification.estado == 'N' %}
-                    {% set unreadCount = unreadCount + 1 %}
-                {% endif %}
-            {% endfor %}
             <div class="dropdown user">
                 <button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownUserButton" data-haspopup="true" aria-expanded="false" style="margin-right: 10px;">
                     <i class="fa-regular fa-circle-user"></i>
@@ -79,13 +74,11 @@
                 </div>
             </div>
             <div class="dropdown notifications">
-                <button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownNotificactionButton" data-haspopup="true" aria-expanded="false">
+                <button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownNotificationButton" data-haspopup="true" aria-expanded="false">
                     <i class="fa-regular fa-bell"></i>
-                    {% if unreadCount > 0 %}
-                        <span class="badge badge-danger">{{ unreadCount }}</span>
-                    {% endif %}
+                    <span class="badge badge-danger unread-count" style="display: none;">{{ unreadCount }}</span>
                 </button>
-                <div class="dropdown-menu dropdown-notifications" aria-labelledby="dropdownNotificactionButton" style="left: auto; right: 0; border: 0.5px solid #1A2234;">
+                <div class="dropdown-menu dropdown-notifications" aria-labelledby="dropdownNotificationButton" style="left: auto; right: 0; border: 0.5px solid #1A2234;">
                 {% if notifications|length >0 %}
                     {% for notification in notifications %}
                         <div class="show">
@@ -126,7 +119,7 @@
 <script>
     document.addEventListener("DOMContentLoaded", function() {
         var dropdownNotificationsMenu = document.querySelector(".dropdown-menu.dropdown-notifications");
-        var dropdownNotificationsButton = document.querySelector("#dropdownNotificactionButton");
+        var dropdownNotificationsButton = document.querySelector("#dropdownNotificationButton");
 
         var dropdownUserMenu = document.querySelector(".dropdown-menu.dropdown-userLog");
         var dropdownUserButton = document.querySelector("#dropdownUserButton");
@@ -161,3 +154,81 @@
         });
     });
 </script>
+
+<script>
+    function createNotificationElement(notification){
+        const newNotification = document.createElement('a');
+        newNotification.className = 'dropdown-item';
+        newNotification.textContent = notification.texto;
+        if(notification.estado == 'N'){
+            newNotification.style.backgroundColor = '#D0D4D6';
+        }else{
+            newNotification.style.backgroundColor = '#E8ECEC';
+        }
+        newNotification.addEventListener('click', function(){
+            fetch(`/notificaciones/${notification.id}`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+            })
+            .then(response => response.json())
+            .then(data => {
+                if(data.success){
+                    newNotification.style.backgroundColor = '#E8ECEC';
+                    loadNotifications();
+                    //Disminuir el contador
+                    const badge = document.querySelector('.badge');
+                    let unreadCount = Number(badge.textContent);
+                    if(unreadCount > 0){
+                        unreadCount--;
+                        badge.textContent = unreadCount;
+                        if(unreadCount === 0){
+                            badge.style.display = 'none';
+                        }
+                    }
+                }
+            })
+            .catch((error) => {
+                console.error('Error:', error);
+            });
+        });
+        return newNotification;
+    }
+
+    function loadNotifications(){
+        fetch('/notificaciones', {
+            method: 'GET',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+        })
+        .then(response => response.json())
+        .then(data => {
+            //Actualizar notifiaciones en el dom con los nuevos datos
+            const notificationDiv = document.querySelector('.dropdown-notifications');
+            notificationDiv.innerHTML = ''; //Se limpian las anteriores notificaciones
+            let unreadCount = 0;
+            data.sort((a,b) => 
+            b.estado.localeCompare(a.estado)).forEach(notification => {
+                const newNotification = createNotificationElement(notification);
+                notificationDiv.appendChild(newNotification);
+                if(notification.estado == 'N'){
+                    unreadCount++;
+                }
+            });
+            const badge = document.querySelector('.badge');
+            if(unreadCount > 0){
+                badge.textContent = unreadCount;
+                badge.style.display = 'inline';
+            }else{
+                badge.style.display = 'none';
+            }
+        })
+        .catch((error) => {
+            console.error('Error:', error);
+        });
+    }
+    loadNotifications();
+</script>
+
