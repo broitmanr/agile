@@ -85,6 +85,8 @@ router.post('/alquilar/:productId',estaAutenticado, async (req, res) => {
     const product = await ProductModel.findById(productId);
     const locador = product.usuario_id;
     const locatario = req.user;
+    //Agregar el detalle de la tarjeta
+    //const detalleTarjeta = req.
     const interaccion = await Interaccion.findByUsersProduct(locador, locatario, productId);
     await Alquiler.createAlquiler(interaccion.id);
     product.estado = 'A';
