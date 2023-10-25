@@ -28,7 +28,6 @@ Interaccion.init(
         key: 'id',
         },
     },
-
     producto_id: {
       field: 'producto_id',
       type: DataTypes.INTEGER,

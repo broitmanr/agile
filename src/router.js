@@ -11,7 +11,8 @@ const { upload } = require('./models/product.js');
 const {createNotificacionChat,getNotifications,marcarComoLeido} = require('./models/notificacion');
 const {createAlquiler} = require('./models/alquiler');
 const { estaAutenticado } = require('./models/product.js');
-const Interaccion = require('./models/interaccion.js');
+const  Mensaje = require('./models/mensaje.js')
+const  Interaccion  =require('./models/interaccion.js')
 const Alquiler = require('./models/alquiler');
 
 const router = express.Router();
@@ -114,7 +115,6 @@ router.get('/product/details/:id', async function (req, res) {
 });
 
 router.get('/product/delete/:id', async (req, res) =>{
-    console.log("Entro al metodo");
     try{
         const productID = +req.params.id;
         const result = await ProductModel.deleteProduct(productID);
@@ -145,13 +145,63 @@ router.get('/_header', async (req, res) => {
     })
 })
 
-router.get('/chat/:productId',estaAutenticado, async (req, res) => {
-    // Obtén el ID del producto desde la URL
+router.get('/chat/:productId',estaAutenticado,async(req,res) => {
     const productId = req.params.productId;
+    res.render('_chatProducto.html',{
+        product_id:productId
+    });
+});
+
+router.post('/chat/:productId',estaAutenticado, async (req, res) => {
+    const userId = req.user;
+    const productId= req.params.productId
+    const idOwnerProduct= await ProductModel.getOwner(productId);
+
     const product = await ProductModel.findById(productId);
     await createNotificacionChat(product, req.user);
-    // Renderiza la vista del chat y pasa el ID del producto
-    res.render('_chatProducto.html', { productId });
+    
+    console.log('Valor de userId:', userId);
+    console.log('Valor de productId:', productId);
+    console.log('Valor del id del dueño del producto:', idOwnerProduct);
+
+    // Verificar si ya existe un chat entre los mismos usuarios y con el mismo producto
+    const existingChat = await Interaccion.findExistingChat(userId, idOwnerProduct, productId)
+    
+    if (existingChat) {
+        const chatId = existingChat.id;
+        console.log('Chat existente - ID del chat:', chatId);
+        res.render('_chatProducto.html', { emisor: userId, chatId });
+    }else {
+        console.log('Chat nuevo - Creando un chat');
+        // Crear un chat nuevo porque no existe uno existente
+        const newChat = await Interaccion.createInteraccion(userId, idOwnerProduct, productId);
+        const chatId = newChat.id;
+        console.log('Nuevo chat - ID del chat:', chatId);
+        res.render('_chatProducto.html', { emisor: userId, chatId });
+    }
+});
+
+// Agrega esta ruta para obtener mensajes anteriores
+router.get('/messages/:interaccionId', async (req, res) => {
+    const interaccionId = req.params.interaccionId;
+    console.log('Endpoint get/messages/:interaccionId con un valor de:', interaccionId);
+    const messages = await Mensaje.getMessagesByIDChat(interaccionId)
+    res.json(messages);
+});
+
+router.post('/enviarMensaje/:chatId', estaAutenticado, async (req, res) => {
+    const userId = req.user;
+    const chatId = req.params.chatId
+    const texto = req.body.texto;
+    console.log('Valores antes de crear el mensaje:');
+    console.log('Valor del userId antes de crear el mensaje:', userId);
+    console.log('Valor del chatId antes de crear el mensaje::', chatId);
+    console.log('Valor del texto antes de crear el mensaje::', req.body.texto);
+        // Aquí, puedes crear un un uevo mensaje en la base de datos
+        const newMessage = await Mensaje.createMessage(chatId,userId,texto)
+        console.log('valor de chatId post crear el mensaje y persistirlo:', chatId);
+        console.log('texto del newMessage :', newMessage.texto);
+        res.json(newMessage);
 });
 
 router.get('/sign-up',async function (req, res, next){
@@ -196,4 +246,16 @@ function isAuth(req,res,next){
     res.redirect('/');
 
 }
+
+router.post('/favorito/:productId', async (req, res) =>{
+    //agregar el id del producto a la lista de favortios del usuario
+    try {
+        
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ message: "¡Error! No se ha podido agregar a favoritos el producto" });
+    } 
+});
+
+
 module.exports = router;

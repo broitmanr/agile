@@ -145,7 +145,7 @@
             <a href="/" class="btn btn-primary"><i class="fa-solid fa-arrow-left fa-bounce"></i>    Volver</a>
         </div>
         <div class="col p-3 d-flex justify-content-center">
-            <form action="/chat/{{ product.id }}" method="GET">
+            <form action="/chat/{{ product.id }}" method="POST">
                 <button type="submit" class="btn btn-primary">
                     <i class="fab fa-facebook-messenger"></i> Enviar mensaje
                 </button>
@@ -160,6 +160,14 @@
             </form>
         </div>
         {% endif %}
+         <!-- Falta agregar la logica de favorito, 1 usuario puede tener muchos productos favoritos, una lista de favoritos-->
+        <div class="col p-3 d-flex justify-content-start">
+            <button type="submit" class="btn btn-primary">
+                <!-- otra opciones https://www.neoguias.com/mostrar-ocultar-elementos-html/#Atributo_Hidden_de_HTML-->
+                <i class="fa-regular fa-heart" style="display: block;"></i>
+                <i class="fa-solid fa-heart" style="display: none;"></i>
+            </button>
+        </div>
     </div>
 </div>
 {% endblock %}
