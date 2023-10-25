@@ -87,10 +87,13 @@ router.get('/alquilar/:productId',estaAutenticado,async(req,res) => {
 
 router.post('/alquilar/:productId',estaAutenticado, async (req, res) => {
     const productId = req.params.productId;
+    const productData = req.body;
     console.log(productId)
     const product = await ProductModel.findById(productId);
     const locador = product.usuario_id;
     const locatario = req.user;
+    //Agregar el detalle de la tarjeta
+    //const detalleTarjeta = req.
     const interaccion = await Interaccion.findByUsersProduct(locador, locatario, productId);
     await Alquiler.createAlquiler(interaccion.id);
     product.estado = 'A';
@@ -121,7 +124,6 @@ router.get('/product/details/:id', async function (req, res) {
 });
 
 router.get('/product/delete/:id', async (req, res) =>{
-    console.log("Entro al metodo");
     try{
         const productID = +req.params.id;
         const result = await ProductModel.deleteProduct(productID);

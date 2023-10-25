@@ -56,3 +56,14 @@ body {
 #btnDelete{
     display: none;
 }
+
+.fechaCal{
+    background-color: #515966;
+    color:white;
+    width: 80%;
+    border: none;
+    padding-bottom: 10px;
+    padding-top: 10px;
+    padding-left: 15px;
+    padding-right: 15px;
+}

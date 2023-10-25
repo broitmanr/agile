@@ -14,19 +14,24 @@
                 <div class="input-group" id="inputPost">
                     <div class="input-field" id="nombreApellidoInput">
                         <i class="fa-solid fa-user"></i>
-                        <input type="text" name="nombreApellido" placeholder="Nombre Apellido">
+                        <input type="text" placeholder="Nombre Apellido" style="text-transform:uppercase;" name="nombreApellido" >
                     </div>
                     <div class="input-field" id="nroTarjetaInput">
                         <i class="fa-solid fa-credit-card"></i>
-                        <input type="text" name="nroTarjeta" placeholder="Número de tarjeta">
+                        <input type="text" name="nroTarjeta" placeholder="Número de tarjeta" required minlength="16" maxlength="16">
                     </div>
                     <div class="input-field" id="codSegInput">
                         <i class="fa-solid fa-lock"></i>
-                        <input type="password" name="codSeg" placeholder="Código de seguridad">
+                        <input type="password" name="codSeg" placeholder="Código de seguridad" required minlength="3" maxlength="3">
                     </div>
-                    <div class="col">
-                        <label for="Fecha">Fecha</label>
-                        <input type="month" name="fecha" id="fecha" class="form-control" value="2019-08" style="background-color: #515966; color:white">
+                    <div class="input-field">
+                        <label for="Fecha" style="display: none;">Fecha</label>
+                        <i class="fa-regular fa-calendar"></i>
+                        <input type="month" name="fecha" id="fecha" class="fechaCal form-control" value="2019-08" >
+                    </div>
+                    <div class="input-field" id="nroDcumentoInput">
+                        <i class="fa-solid fa-id-card"></i>
+                        <input type="text" name="nroDNI" placeholder="Número de DNI" required minlength="8" maxlength="8">
                     </div>
                 </div>
                 <br>
