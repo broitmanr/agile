@@ -37,7 +37,9 @@
             {% endif %}
             </h5>
             <p class="card-text">
+                <span><i class="fa fa-lg {{product.categoria.icono_fa}}"></i></span>
                 <small class="text-muted">{{ product.categoria.nombre }}</small>
+
             </p>
 
             <p class="fs-3">$ {{ product.precio }}</p>
