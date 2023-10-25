@@ -24,9 +24,14 @@
                         <i class="fa-solid fa-lock"></i>
                         <input type="password" name="codSeg" placeholder="Código de seguridad">
                     </div>
-                    <div class="col">
-                        <label for="Fecha">Fecha</label>
-                        <input type="month" name="fecha" id="fecha" class="form-control" value="2019-08" style="background-color: #515966; color:white">
+                    <div class="input-field">
+                        <label for="Fecha" style="display: none;">Fecha</label>
+                        <i class="fa-regular fa-calendar"></i>
+                        <input type="month" name="fecha" id="fecha" class="fechaCal form-control" value="2019-08" >
+                    </div>
+                    <div class="input-field" id="nroDcumentoInput">
+                        <i class="fa-solid fa-id-card"></i>
+                        <input type="text" name="nroDNI" placeholder="Número de DNI" required minlength="8" maxlength="8">
                     </div>
                 </div>
                 <br>
