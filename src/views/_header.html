@@ -9,15 +9,14 @@
         border-radius: 0.25rem;
         box-shadow: none;
         margin-top: 0.25rem;
-        /*padding: 0.5rem 0;;*/
     }
     .dropdown-item {
         color: #212529;
         display: block;
-        font-size: 1rem;
+        font-size: 1.0rem;
         font-weight: normal;
-        line-height: 1.5rem;
-        padding: 0.25rem 1.5rem;
+        line-height: 2rem;
+        padding: 0.4rem 1rem;
     }
     .dropdown-item:hover, .dropdown-item:focus {
         background-color: #e9ecef;
@@ -33,6 +32,11 @@
         border: black;
         height: 1px;
         margin: 10px 0;
+    }
+    .notification-time{
+        display: block;
+        font-size: 0.8rem;
+        color: #888;
     }
 </style>
 
@@ -61,25 +65,12 @@
         </form>
         <button onclick='window.location.href = "/formulario" ' class="btn btn-light ml-auto" id="button-publicar" style="font-size: 1.0rem; padding: 0.50rem 1.0rem; margin-right: 10px;">Publicar producto</button>
         {% if estaAuth === true %}
-            {% set unreadCount = 0 %}
             <div class="dropdown notifications">
                 <button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownNotificationButton" data-haspopup="true" aria-expanded="false" style="margin-right: 10px;">
                     <i class="fa-regular fa-bell"></i>
                     <span class="badge badge-danger unread-count" style="display: none;">{{ unreadCount }}</span>
                 </button>
                 <div class="dropdown-menu dropdown-notifications" aria-labelledby="dropdownNotificationButton" style="left: auto; right: 0; border: 0.5px solid #1A2234;">
-                {% if notifications|length >0 %}
-                    {% for notification in notifications %}
-                        <div class="show">
-                            {% if notification.estado == 'N' %}
-                                <a class="dropdown-item" style="background-color: #D0D4D6;" href="?notificationId={{notification.id}}">{{ notification.texto }}</a>
-                                {% if not loop.last %}
-                                    <hr>
-                                {% endif %}
-                            {% endif %}
-                        </div>
-                    {% endfor %}
-                {% endif %}
                 </div>
             </div>
             <div class="dropdown user">
@@ -153,9 +144,54 @@
         const newNotification = document.createElement('a');
         newNotification.className = 'dropdown-item';
         newNotification.textContent = notification.texto;
+
+        //Agregar fecha de creación
+        const createdAt = new Date(notification.createdAt);
+        const now = new Date();
+        let timeText;
+        let timeNotify = Math.abs(now - createdAt);
+        if(timeNotify < 1000*60*60){
+            //En menos de una hora
+            const minutes = Math.floor(timeNotify / (1000*60));
+            timeText = `Hace ${minutes} minutos`;
+        }else if(timeNotify < 1000*60*60*24){
+            //En menos de 24 horas
+            const hours = Math.floor(timeNotify / (1000*60*60));
+            timeText = `Hace ${hours} horas`;
+        }else{
+            //Más de 24 horas
+            const dateFormat = {year: 'numeric', month: 'numeric', day: 'numeric'};
+            const timeFormat = {hour: '2-digit', minute: '2-digit'};
+            const date = createdAt.toLocaleDateString('es-ES', dateFormat);
+            const time = createdAt.toLocaleTimeString('es-ES', timeFormat);
+            timeText = `${date} ${time}`
+        }
+        const timeElement = document.createElement('span');
+        timeElement.className = 'notification-time';
+        timeElement.textContent = timeText;
+
+        //Separar Notificacion e icono de la fecha
+        const textAndIcon = document.createElement('div');
+        
+        const onlyText = document.createElement('span');
+        onlyText.textContent = notification.texto;
+        newNotification.textContent = ''; //Vacío el texto ya creado de la notificación
+        textAndIcon.appendChild(onlyText);
+        
+        //Icono de leido
+        const iconRead = document.createElement('i');
+        iconRead.className = 'fa-regular fa-circle-check fa-xl';
+        iconRead.style.cursor = 'pointer';
+        iconRead.title = 'Marcar como leído';
+        iconRead.style.color = '#6982E8';  
+        iconRead.style.marginLeft = '10px';
+        textAndIcon.appendChild(iconRead);
+        
+        newNotification.appendChild(textAndIcon);
+        newNotification.appendChild(timeElement);
+
         if(notification.estado == 'N'){
-            newNotification.style.backgroundColor = '#D0D4D6';
-            newNotification.addEventListener('click', function(){
+            iconRead.addEventListener('click', function(){
                 fetch(`/notificaciones/${notification.id}`, {
                     method: 'POST',
                     headers: {
@@ -200,7 +236,7 @@
             const notificationDiv = document.querySelector('.dropdown-notifications');
             notificationDiv.innerHTML = ''; //Se limpian las anteriores notificaciones
             let unreadCount = 0;
-            data.sort((a,b) => b.estado.localeCompare(a.estado)).forEach(notification => {
+            data.sort((a,b) => new Date(b.createdAt) - new Date(a.createdAt)).forEach(notification => {
                 if(notification.estado == 'N'){
                     const newNotification = createNotificationElement(notification);
                     notificationDiv.appendChild(newNotification);
@@ -214,7 +250,7 @@
                 noNotificationDiv.className = 'show';
                 const noNotificationText = document.createElement('a');
                 noNotificationText.className = 'dropdown-item';
-                noNotificationText.textContent = '¡Hola! No tienes notificaciones nuevas';
+                noNotificationText.textContent = 'No tienes notificaciones nuevas';
                 noNotificationDiv.appendChild(noNotificationText);
                 notificationDiv.appendChild(noNotificationDiv);
                 const noNotificationImage = document.createElement('img');
