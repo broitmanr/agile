@@ -81,6 +81,7 @@ router.get('/alquilar/:productId',estaAutenticado,async(req,res) => {
 
 router.post('/alquilar/:productId',estaAutenticado, async (req, res) => {
     const productId = req.params.productId;
+    const productData = req.body;
     console.log(productId)
     const product = await ProductModel.findById(productId);
     const locador = product.usuario_id;
