@@ -60,7 +60,7 @@ const createNotificacionChat = async(product, userId) => {
 const getNotifications = async(userId) => {
     return await Notificacion.findAll({
         where: { usuario_id: userId },
-        attributes: ['id', 'texto', 'estado']
+        attributes: ['id', 'texto', 'estado', 'createdAt']
     });
 };
 
