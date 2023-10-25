@@ -167,7 +167,7 @@ function findById(id) {
         },
         include: [
             // Incluye la relación 'categoria' y muestra solo el campo 'nombre'
-            { model: Categoria, as: 'categoria', attributes: ['nombre'] },
+            { model: Categoria, as: 'categoria'},
 
             // Incluye la relación 'moneda' y muestra solo el campo 'nombre'
             { model: Moneda, as: 'moneda', attributes: ['simbolo', 'sigla'] },

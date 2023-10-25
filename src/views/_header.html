@@ -90,12 +90,12 @@
                     {% for notification in notifications %}
                         <div class="show">
                             {% if notification.estado == 'N' %}
-                                <a class="dropdown-item" style="background-color: #D0D4D6;" href="?notificationId={{notification.id}}">{{ notification.texto }}</a>
+                                <a class="dropdown-item" style="background-color: #D0D4D6;" href="?notificationId={{notification.id}}"><i class="fa {{notification.icono_fa}}"></i> {{ notification.texto }}</a>
                                 {% if not loop.last %}
                                     <hr>
                                 {% endif %}
                             {% else %}
-                                <a class="dropdown-item" style="background-color: #E8ECEC;">{{ notification.texto }}</a>
+                                <a class="dropdown-item" style="background-color: #E8ECEC;"><i class="fa {{notification.icono_fa}}"></i> {{ notification.texto }}</a>
 
                             {% endif %}
                         </div>
