@@ -255,4 +255,16 @@ function isAuth(req,res,next){
     res.redirect('/');
 
 }
+
+router.post('/favorito/:productId', async (req, res) =>{
+    //agregar el id del producto a la lista de favortios del usuario
+    try {
+        
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ message: "¡Error! No se ha podido agregar a favoritos el producto" });
+    } 
+});
+
+
 module.exports = router;

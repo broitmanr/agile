@@ -18,6 +18,10 @@ Categoria.init({
             type: Sequelize.STRING,
             allowNull: false,
         },
+        icono_fa:{
+            type: Sequelize.STRING,
+            allowNull:true,
+        }
     },
     {sequelize: db, modelName: 'Categoria',timestamps:false}
 );
