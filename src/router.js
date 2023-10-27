@@ -8,7 +8,7 @@ const Categoria = require("./models/categoria");
 const Municipio = require("./models/municipio");
 const passport = require('passport');
 const { upload } = require('./models/product.js');
-const {createNotificacionChat,getNotifications,marcarComoLeido} = require('./models/notificacion');
+const {createNotificacion,getNotifications,marcarComoLeido} = require('./models/notificacion');
 const {createAlquiler} = require('./models/alquiler');
 const { estaAutenticado } = require('./models/product.js');
 const  Mensaje = require('./models/mensaje.js')
@@ -96,6 +96,7 @@ router.post('/alquilar/:productId',estaAutenticado, async (req, res) => {
     //const detalleTarjeta = req.
     const interaccion = await Interaccion.findByUsersProduct(locador, locatario, productId);
     await Alquiler.createAlquiler(interaccion.id);
+    await createNotificacion(product, locatario, 'alquiler');
     product.estado = 'A';
     await product.save();
     res.redirect(`/`);
@@ -167,7 +168,7 @@ router.post('/chat/:productId',estaAutenticado, async (req, res) => {
     const idOwnerProduct= await ProductModel.getOwner(productId);
 
     const product = await ProductModel.findById(productId);
-    await createNotificacionChat(product, req.user);
+    await createNotificacion(product, req.user, 'chat');
     
     console.log('Valor de userId:', userId);
     console.log('Valor de productId:', productId);
