@@ -1,0 +1,19 @@
+{% macro chatCard(chat, emisor) %}
+  <li class="chat card" style="margin-bottom: 0.13rem;" data-chatid="{{ chat.dataValues.id }}" onclick="window.location.href = '/continuarChat/{{ chat.dataValues.id}}'">
+    <div class="card-body d-flex flex-row justify-content-start align-items-center">
+      <div class="contact-profile-image" style="margin-right: 1rem;">
+        <img src="/icono_user2.png" width="85" height="auto" alt="Avatar"/>
+      </div>
+      <div class="contact-info-container" data-locadorId="{{ chat.dataValues.locatario.id }}" dataEmisorLog="{{emisor}}">
+        {% if chat.dataValues.locador.id != emisor %}
+          <h5 class="contact-name-text"> {{ chat.dataValues.locador.nombre }} - Su producto: {{ chat.dataValues.producto.nombre }}</h5>
+          <h6 class="contact-date-text"> {{chat.dataValues.fecha}}</h6>
+          {% else %}
+          <h5 class="contact-name-text"> {{ chat.dataValues.locatario.nombre }} - Mi producto: {{ chat.dataValues.producto.nombre }}</h5>
+          <h6 class="contact-date-text"> {{chat.dataValues.fecha}}</h6>
+        {% endif %}
+        <p class="message-text-info">{{ chat.dataValues.ultimoMensaje.texto }}</p>
+      </div>
+    </div>
+  </li>
+{% endmacro %}
