@@ -2,6 +2,7 @@ const {  Model, DataTypes, Op } = require('sequelize');
 const Bd = require('../db.js');
 const Usuario = require('./usuario.js');
 const {Product} = require('./product.js');
+/*const DetalleTarjeta = require('./detalleTarjeta.js');*/
 
 class Interaccion extends Model {}
 
@@ -37,6 +38,15 @@ Interaccion.init(
         key: 'id',
       },
     },
+    /*detalleTar_id:{
+      field: 'detalleTar_id',
+      type: DataTypes.INTEGER,
+      allowNull: false,
+      references: {
+        model: DetalleTarjeta,
+        key: 'id',
+      },
+    },*/
   },
   { sequelize: Bd, modelName: 'Interaccion', tableName: 'Interaccion' }
 );
@@ -44,13 +54,15 @@ Interaccion.init(
 Interaccion.belongsTo(Usuario, { foreignKey: 'locatario_id', as: 'locatario' });
 Interaccion.belongsTo(Usuario, { foreignKey: 'locador_id', as: 'locador' });
 Interaccion.belongsTo(Product, { foreignKey: 'producto_id', as: 'producto'});
+/*Interaccion.belongsTo(DetalleTarjeta, { foreignKey: 'detalleTar_id', as: 'detalleTar'})*/
 
 
-const createInteraccion = async (locatario_id, locador_id, producto_id) => {
+const createInteraccion = async (locatario_id, locador_id, producto_id/*, detalleTar_id*/) => {
       const interaccion = await Interaccion.create({
           locatario_id,
           locador_id,
         producto_id,
+        /*detalleTar_id,*/
       });
       return interaccion;
 }
@@ -88,13 +100,14 @@ const findByUsersProduct = async (locador_id,locatario_id,producto_id)=>{
         where: {
             locatario_id: locatario_id,
             locador_id: locador_id,
-            producto_id: producto_id
+            producto_id: producto_id,
+            /*detalleTar_id: detalleTar_id,*/
         }
     });
     if (interaccion){
         return interaccion;
     }else{
-        return createInteraccion(locatario_id,locador_id,producto_id);
+        return createInteraccion(locatario_id,locador_id,producto_id/*,detalleTar_id*/);
     }
 
 }

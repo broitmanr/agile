@@ -27,11 +27,6 @@ router.get('/', async function (req, res) {
     const usuario_id = req.user;
     const categorias = await ProductModel.getCategorias();
     const { rows, count } = await ProductModel.getAll(pageSize, skip,category, usuario_id);
-    const notifications = req.isAuthenticated() ? await getNotifications(usuario_id) : null;
-    const notificationId = req.query.notificationId;
-    if(notificationId){
-        await marcarComoLeido(notificationId);
-    }
     res.render('home.html', {
         products: rows,
         categories: categorias,
@@ -40,8 +35,19 @@ router.get('/', async function (req, res) {
             currentPage: currentPage,
         },
         estaAutenticado: req.isAuthenticated(),
-        notifications
     });
+});
+
+router.get('/notificaciones', async function(req, res){
+    const usuario_id = req.user;
+    const notifications = req.isAuthenticated() ? await getNotifications(usuario_id) : null;
+    res.json(notifications);
+})
+
+router.post('/notificaciones/:id', async function(req, res){
+    const notificationId = req.params.id;
+    await marcarComoLeido(notificationId);
+    res.json({ success: true });
 });
 
 router.get('/formulario',estaAutenticado,async(req,res) => {
@@ -81,10 +87,13 @@ router.get('/alquilar/:productId',estaAutenticado,async(req,res) => {
 
 router.post('/alquilar/:productId',estaAutenticado, async (req, res) => {
     const productId = req.params.productId;
+    const productData = req.body;
     console.log(productId)
     const product = await ProductModel.findById(productId);
     const locador = product.usuario_id;
     const locatario = req.user;
+    //Agregar el detalle de la tarjeta
+    //const detalleTarjeta = req.
     const interaccion = await Interaccion.findByUsersProduct(locador, locatario, productId);
     await Alquiler.createAlquiler(interaccion.id);
     product.estado = 'A';
@@ -289,6 +298,17 @@ function isAuth(req,res,next){
     res.redirect('/');
 
 }
+
+router.post('/favorito/:productId', async (req, res) =>{
+    //agregar el id del producto a la lista de favortios del usuario
+    try {
+        
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ message: "¡Error! No se ha podido agregar a favoritos el producto" });
+    } 
+});
+
 function formatFechaUltimoMensaje(fechaUltimoMensaje) {
     if (!fechaUltimoMensaje) {
       return 'No hay mensajes';
@@ -311,4 +331,5 @@ function formatFechaUltimoMensaje(fechaUltimoMensaje) {
       return `${day}/${month}/${year}`;
     }
   }
+
 module.exports = router;
