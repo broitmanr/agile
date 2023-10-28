@@ -145,46 +145,96 @@ router.get('/_header', async (req, res) => {
     })
 })
 
-router.get('/chat/:productId',estaAutenticado,async(req,res) => {
-    const productId = req.params.productId;
-    res.render('_chatProducto.html',{
-        product_id:productId
+router.get('/continuarChat/:chatId', estaAutenticado,async(req,res)=>{
+    const userId = req.user;
+    const chatId= req.params.chatId
+    console.log('Valor de userId en el endpoint /continuarChat/:chatId:', userId);
+    console.log('Valor de chatId en el endpoint /continuarChat/:chatId:', chatId);
+    const chatList = await Interaccion.getChatsByUserID(userId)
+    const chatsWithLastMessages = [];
+    for (const chat of chatList) {
+        const ultimoMensaje = await Mensaje.getLastMessageByIdChat(chat.id)
+        chat.dataValues.ultimoMensaje = ultimoMensaje;
+    
+        console.log('Valor del endPoint /mis-chats de chatList:');
+        console.log('Interacción ID:', chat.dataValues.id);
+        console.log('Locatario ID:', chat.dataValues.locatario_id);
+        console.log('Locador ID:', chat.dataValues.locador_id);
+        console.log('Producto ID:', chat.dataValues.producto_id);
+
+        const locatario = chat.dataValues.locatario ? chat.dataValues.locatario.nombre : 'No definido';
+        const locador = chat.dataValues.locador ? chat.dataValues.locador.nombre : 'No definido';
+        console.log('Nombre del Locatario:', locatario);
+        console.log('Nombre del Locador:', locador);
+
+        const ultimoMensajeTexto = chat.dataValues.ultimoMensaje
+            ? chat.dataValues.ultimoMensaje.texto
+            : 'No hay mensajes';
+        console.log('Último Mensaje:', ultimoMensajeTexto);
+        console.log('-----------------------------------');
+    // Agrega la fecha del último mensaje (supongamos que la fecha está en una propiedad llamada "fecha")
+        const fechaUltimoMensaje = chat.dataValues.ultimoMensaje ? new Date(chat.dataValues.ultimoMensaje.fecha) : null;
+        const fechaFormateada = formatFechaUltimoMensaje(fechaUltimoMensaje);
+        chat.dataValues.fecha= fechaFormateada
+    chatsWithLastMessages.push({
+        ...chat,
+        ultimoMensaje: ultimoMensajeTexto,
     });
+    }
+    console.log('Chats con últimos mensajes:', chatsWithLastMessages);
+    res.render('_chatProducto.html', { emisor: userId, chatId, chats: chatsWithLastMessages});
+});
+
+router.get('/mis-chats',estaAutenticado, async (req, res) => {
+    const userId = req.user;
+    console.log('Valor de userId:', userId);
+    const chatList = await Interaccion.getChatsByUserID(userId)
+    const chatsWithLastMessages = [];
+    for (const chat of chatList) {
+        const ultimoMensaje = await Mensaje.getLastMessageByIdChat(chat.id)
+        chat.dataValues.ultimoMensaje = ultimoMensaje;
+        const fechaUltimoMensaje = chat.dataValues.ultimoMensaje ? new Date(chat.dataValues.ultimoMensaje.fecha) : null;
+        const fechaFormateada = formatFechaUltimoMensaje(fechaUltimoMensaje);
+        chat.dataValues.fecha= fechaFormateada
+    chatsWithLastMessages.push({
+        ...chat,
+        ultimoMensaje,
+    });
+    }
+    res.render('_chatProducto.html', { emisor: userId, chats: chatsWithLastMessages});
 });
 
 router.post('/chat/:productId',estaAutenticado, async (req, res) => {
     const userId = req.user;
     const productId= req.params.productId
     const idOwnerProduct= await ProductModel.getOwner(productId);
-
+    const chatCompleto = await Interaccion.getChat(userId,idOwnerProduct,productId);
+    const chatId= chatCompleto.id;
     const product = await ProductModel.findById(productId);
-    await createNotificacionChat(product, req.user);
-    
-    console.log('Valor de userId:', userId);
-    console.log('Valor de productId:', productId);
-    console.log('Valor del id del dueño del producto:', idOwnerProduct);
 
-    // Verificar si ya existe un chat entre los mismos usuarios y con el mismo producto
-    const existingChat = await Interaccion.findExistingChat(userId, idOwnerProduct, productId)
-    
-    if (existingChat) {
-        const chatId = existingChat.id;
-        console.log('Chat existente - ID del chat:', chatId);
-        res.render('_chatProducto.html', { emisor: userId, chatId });
-    }else {
-        console.log('Chat nuevo - Creando un chat');
-        // Crear un chat nuevo porque no existe uno existente
-        const newChat = await Interaccion.createInteraccion(userId, idOwnerProduct, productId);
-        const chatId = newChat.id;
-        console.log('Nuevo chat - ID del chat:', chatId);
-        res.render('_chatProducto.html', { emisor: userId, chatId });
+    await createNotificacionChat(product, req.user);
+
+    const chatList = await Interaccion.getChatsByUserID(userId)
+    const chatsWithLastMessages = [];
+    for (const chat of chatList) {
+        const ultimoMensaje = await Mensaje.getLastMessageByIdChat(chat.id)
+        chat.dataValues.ultimoMensaje = ultimoMensaje;
+        const fechaUltimoMensaje = chat.dataValues.ultimoMensaje
+        ? new Date(chat.dataValues.ultimoMensaje.fecha)
+        : null;
+        const fechaFormateada = formatFechaUltimoMensaje(fechaUltimoMensaje);
+        console.log('Fecha del Último Mensaje:', fechaFormateada)
+        chat.dataValues.fecha= fechaFormateada
+        chatsWithLastMessages.push({
+        ...chat,
+        ultimoMensaje,
+    });
     }
+    res.render('_chatProducto.html', { emisor: userId, chatId, chats: chatsWithLastMessages});
 });
 
-// Agrega esta ruta para obtener mensajes anteriores
 router.get('/messages/:interaccionId', async (req, res) => {
     const interaccionId = req.params.interaccionId;
-    console.log('Endpoint get/messages/:interaccionId con un valor de:', interaccionId);
     const messages = await Mensaje.getMessagesByIDChat(interaccionId)
     res.json(messages);
 });
@@ -193,15 +243,8 @@ router.post('/enviarMensaje/:chatId', estaAutenticado, async (req, res) => {
     const userId = req.user;
     const chatId = req.params.chatId
     const texto = req.body.texto;
-    console.log('Valores antes de crear el mensaje:');
-    console.log('Valor del userId antes de crear el mensaje:', userId);
-    console.log('Valor del chatId antes de crear el mensaje::', chatId);
-    console.log('Valor del texto antes de crear el mensaje::', req.body.texto);
-        // Aquí, puedes crear un un uevo mensaje en la base de datos
-        const newMessage = await Mensaje.createMessage(chatId,userId,texto)
-        console.log('valor de chatId post crear el mensaje y persistirlo:', chatId);
-        console.log('texto del newMessage :', newMessage.texto);
-        res.json(newMessage);
+    const newMessage = await Mensaje.createMessage(chatId,userId,texto)
+    res.json(newMessage);
 });
 
 router.get('/sign-up',async function (req, res, next){
@@ -246,4 +289,26 @@ function isAuth(req,res,next){
     res.redirect('/');
 
 }
+function formatFechaUltimoMensaje(fechaUltimoMensaje) {
+    if (!fechaUltimoMensaje) {
+      return 'No hay mensajes';
+    }
+  
+    const now = new Date();
+    const messageDate = new Date(fechaUltimoMensaje);
+  
+    const diffInDays = Math.floor((now - messageDate) / (1000 * 60 * 60 * 24));
+  
+    if (diffInDays === 0) {
+      return 'Hoy';
+    } else if (diffInDays === 1) {
+      return 'Ayer';
+    } else {
+      const day = messageDate.getDate().toString().padStart(2, '0');
+      const month = (messageDate.getMonth() + 1).toString().padStart(2, '0');
+      const year = messageDate.getFullYear();
+  
+      return `${day}/${month}/${year}`;
+    }
+  }
 module.exports = router;
