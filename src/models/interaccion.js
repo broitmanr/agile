@@ -2,7 +2,7 @@ const {  Model, DataTypes, Op } = require('sequelize');
 const Bd = require('../db.js');
 const Usuario = require('./usuario.js');
 const {Product} = require('./product.js');
-const DetalleTarjeta = require('./detalleTarjeta.js');
+//const DetalleTarjeta = require('./detalleTarjeta.js');
 
 class Interaccion extends Model {}
 
@@ -38,7 +38,7 @@ Interaccion.init(
         key: 'id',
       },
     },
-    detalleTar_id:{
+    /*detalleTar_id:{
       field: 'detalleTar_id',
       type: DataTypes.INTEGER,
       allowNull: false,
@@ -46,7 +46,7 @@ Interaccion.init(
         model: DetalleTarjeta,
         key: 'id',
       },
-    },
+    },*/
   },
   { sequelize: Bd, modelName: 'Interaccion', tableName: 'Interaccion' }
 );
@@ -54,15 +54,18 @@ Interaccion.init(
 Interaccion.belongsTo(Usuario, { foreignKey: 'locatario_id', as: 'usuario1' });
 Interaccion.belongsTo(Usuario, { foreignKey: 'locador_id', as: 'usuario2' });
 Interaccion.belongsTo(Product, { foreignKey: 'producto_id', as: 'producto'});
-Interaccion.belongsTo(DetalleTarjeta, { foreignKey: 'detalleTar_id', as: 'detalleTar'})
+//Interaccion.belongsTo(DetalleTarjeta, { foreignKey: 'detalleTar_id', as: 'detalleTar'})
 
-
-const createInteraccion = async (locatario_id, locador_id, producto_id, detalleTar_id) => {
+/*
+, detalleTar_id
+detalleTar_id,
+ */
+const createInteraccion = async (locatario_id, locador_id, producto_id) => {
       const interaccion = await Interaccion.create({
           locatario_id,
           locador_id,
         producto_id,
-        detalleTar_id,
+        
       });
       return interaccion;
 }
@@ -79,20 +82,22 @@ const findExistingChat = async (userId, idOwnerProduct, productId) => {
     return existingChat;
 };
 
-const findByUsersProduct = async (locador_id,locatario_id,producto_id,detalleTar_id)=>{
+/* ,detalleTar_id 
+            detalleTar_id: detalleTar_id,
+            ,detalleTar_id*/
+const findByUsersProduct = async (locador_id,locatario_id,producto_id)=>{
     const interaccion = await Interaccion.findOne(
         {
         where: {
             locatario_id: locatario_id,
             locador_id: locador_id,
             producto_id: producto_id,
-            detalleTar_id: detalleTar_id,
         }
     });
     if (interaccion){
         return interaccion;
     }else{
-        return createInteraccion(locatario_id,locador_id,producto_id,detalleTar_id);
+        return createInteraccion(locatario_id,locador_id,producto_id);
     }
 
 }
