@@ -12,8 +12,11 @@ const {createNotificacionChat,getNotifications,marcarComoLeido} = require('./mod
 const {createAlquiler} = require('./models/alquiler');
 const { estaAutenticado } = require('./models/product.js');
 const  Mensaje = require('./models/mensaje.js')
-const  Interaccion  =require('./models/interaccion.js')
+const  Interaccion = require('./models/interaccion.js')
 const Alquiler = require('./models/alquiler');
+const PaymentController = require('./controllers/paymentsController.js');
+const PaymentService = require('./services/paymentsService.js');
+const PaymentInstance = new PaymentController(new PaymentService());
 
 const router = express.Router();
 
@@ -92,8 +95,6 @@ router.post('/alquilar/:productId',estaAutenticado, async (req, res) => {
     const product = await ProductModel.findById(productId);
     const locador = product.usuario_id;
     const locatario = req.user;
-    //Agregar el detalle de la tarjeta
-    //const detalleTarjeta = req.
     const interaccion = await Interaccion.findByUsersProduct(locador, locatario, productId);
     await Alquiler.createAlquiler(interaccion.id);
     product.estado = 'A';
@@ -255,4 +256,71 @@ function isAuth(req,res,next){
     res.redirect('/');
 
 }
+
+//Metodos de pago
+
+/**
+ * router.get('/alquilar/:productId',estaAutenticado,async(req,res) => {
+    const productId = req.params.productId;
+
+    res.render('alquilar.html',{
+        product_id:productId
+    });
+});
+
+
+router.post('/alquilar/:productId',estaAutenticado, async (req, res) => {
+    const productId = req.params.productId;
+    const productData = req.body;
+    console.log(productId)
+    const product = await ProductModel.findById(productId);
+    const locador = product.usuario_id;
+    const locatario = req.user;
+    const interaccion = await Interaccion.findByUsersProduct(locador, locatario, productId);
+    await Alquiler.createAlquiler(interaccion.id);
+    product.estado = 'A';
+    await product.save();
+    res.redirect(`/`);
+});
+
+ */
+
+router.post('/payment/:productId', estaAutenticado, async (req, res, next) => {
+    //Datos del producto
+    const productId = req.params.productId;
+    const product = await ProductModel.findById(productId);
+    const categoriaId = product.categoriaId;
+    const categoria = await ProductModel.getCategoriaId(categoriaId);
+    //console.log(product);
+    try {
+        const interaccion = await PaymentInstance.getPaymentLink(req, res, product, categoria);
+    } catch (error) {
+        console.log(error);
+    }
+    //const resultJson = JSON.parse(interaccion);
+    
+    //const rutaPago = interaccion.res.init_point;
+});
+
+/**
+ * router.post('/alquilar/:productId',estaAutenticado, async (req, res) => {
+    const productId = req.params.productId;
+    const productData = req.body;
+    console.log(productId)
+    const product = await ProductModel.findById(productId);
+    const locador = product.usuario_id;
+    const locatario = req.user;
+    const interaccion = await Interaccion.findByUsersProduct(locador, locatario, productId);
+    await Alquiler.createAlquiler(interaccion.id);
+    product.estado = 'A';
+    await product.save();
+    res.redirect(`/`);
+});
+ */
+
+router.get('/webhook', async (req, res) => {
+    console.log('webhook');
+    res.redirect(`/`);
+})
+
 module.exports = router;
