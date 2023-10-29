@@ -260,28 +260,27 @@ function isAuth(req,res,next){
 //Metodos de pago
 
 /**
- * router.get('/alquilar/:productId',estaAutenticado,async(req,res) => {
-    const productId = req.params.productId;
+ * 
+ * Link: 
+ * -Para el vendedor https://www.mercadopago.com.ar/home (hay que iniciar sesion con el email y el password) En este home se ven los pagos
+ * 
+ * -Para el comprador https://www.mercadopago.com.ar/developers/ (hay que iniciar sesion para pagar)
+ * Datos de prueba:
+ * 
+ * Usuario de prueba 01	VENDEDOR
 
-    res.render('alquilar.html',{
-        product_id:productId
-    });
-});
+{"id":1526605858,"email":"test_user_785561243@testuser.com","nickname":"TESTUSER785561243","site_status":"active","password":"LzORaFgxhj"}
+----------------------------------------------------------------------
+Api prueba de rentar para generar el access_token
 
+nombre
+	Api-Prueba-Rentar
+	APP_USR-4624116435845049-102711-63a84c8704c091863384d686ec5248ff-1526605858
+	TEST-4624116435845049-102711-83d2f62fcbe8178a4d8daf8acff3bb91-1526605858
+--------------------------------------------------------------------------------
+Usuario de prueba 02	COMPRADOR
 
-router.post('/alquilar/:productId',estaAutenticado, async (req, res) => {
-    const productId = req.params.productId;
-    const productData = req.body;
-    console.log(productId)
-    const product = await ProductModel.findById(productId);
-    const locador = product.usuario_id;
-    const locatario = req.user;
-    const interaccion = await Interaccion.findByUsersProduct(locador, locatario, productId);
-    await Alquiler.createAlquiler(interaccion.id);
-    product.estado = 'A';
-    await product.save();
-    res.redirect(`/`);
-});
+{"id":1525097059,"email":"test_user_1685160373@testuser.com","nickname":"TESTUSER1685160373","site_status":"active","password":"C4R6YLrFI1"}
 
  */
 
@@ -289,38 +288,20 @@ router.post('/payment/:productId', estaAutenticado, async (req, res, next) => {
     //Datos del producto
     const productId = req.params.productId;
     const product = await ProductModel.findById(productId);
-    const categoriaId = product.categoriaId;
-    const categoria = await ProductModel.getCategoriaId(categoriaId);
-    //console.log(product);
     try {
-        const interaccion = await PaymentInstance.getPaymentLink(req, res, product, categoria);
+        const interaccion = await PaymentInstance.getPaymentLink(req, res, product);
+        //Cambio y guardo el estado del producto
+        product.estado = 'A';
+        await product.save();
     } catch (error) {
         console.log(error);
     }
-    //const resultJson = JSON.parse(interaccion);
-    
-    //const rutaPago = interaccion.res.init_point;
 });
 
-/**
- * router.post('/alquilar/:productId',estaAutenticado, async (req, res) => {
-    const productId = req.params.productId;
-    const productData = req.body;
-    console.log(productId)
-    const product = await ProductModel.findById(productId);
-    const locador = product.usuario_id;
-    const locatario = req.user;
-    const interaccion = await Interaccion.findByUsersProduct(locador, locatario, productId);
-    await Alquiler.createAlquiler(interaccion.id);
-    product.estado = 'A';
-    await product.save();
-    res.redirect(`/`);
-});
- */
-
-router.get('/webhook', async (req, res) => {
+/*router.get('/webhook', async (req, res) => {
     console.log('webhook');
     res.redirect(`/`);
 })
+*/
 
 module.exports = router;
