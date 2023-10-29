@@ -143,7 +143,15 @@
     function createNotificationElement(notification){
         const newNotification = document.createElement('a');
         newNotification.className = 'dropdown-item';
-        newNotification.textContent = notification.texto;
+
+        const iconNotification = document.createElement('i');
+        iconNotification.style.marginRight= '10px';
+
+        if(notification.tipoNotificacion === 'alquiler'){
+            iconNotification.className = 'fa-solid fa-handshake';
+        } else if (notification.tipoNotificacion === 'chat'){
+            iconNotification.className = 'fa-solid fa-envelope-open-text';
+        }
 
         //Agregar fecha de creación
         const createdAt = new Date(notification.createdAt);
@@ -173,9 +181,11 @@
         //Separar Notificacion e icono de la fecha
         const textAndIcon = document.createElement('div');
         
+        textAndIcon.appendChild(iconNotification);
+
         const onlyText = document.createElement('span');
         onlyText.textContent = notification.texto;
-        newNotification.textContent = ''; //Vacío el texto ya creado de la notificación
+        onlyText.style.marginRight = '28px';
         textAndIcon.appendChild(onlyText);
         
         //Icono de leido
@@ -184,8 +194,13 @@
         iconRead.style.cursor = 'pointer';
         iconRead.title = 'Marcar como leído';
         iconRead.style.color = '#6982E8';  
-        iconRead.style.marginLeft = '10px';
+        iconRead.style.marginRight = '10px';
+        iconRead.style.position = 'absolute';
+        iconRead.style.right = '0';
         textAndIcon.appendChild(iconRead);
+        
+        textAndIcon.style.display = 'flex';
+        textAndIcon.style.alignItems = 'center';
         
         newNotification.appendChild(textAndIcon);
         newNotification.appendChild(timeElement);

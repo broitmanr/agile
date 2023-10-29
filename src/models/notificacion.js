@@ -22,6 +22,10 @@ Notificacion.init({
         type: DataTypes.STRING,
         allowNull: false,
     },
+    icono_fa: {
+        type: DataTypes.STRING,
+        allowNull: true,
+    },
     usuario_id: {
         field:'usuario_id',
         type: DataTypes.INTEGER,
@@ -30,6 +34,10 @@ Notificacion.init({
             model: Usuario,
             key: 'id',
         },
+    },
+    tipoNotificacion: {
+        type: DataTypes.STRING,
+        allowNull: false,
     },
     createdAt: {
         type: DataTypes.DATE,
@@ -45,14 +53,27 @@ Notificacion.init({
 {sequelize: Bd, modelName: 'Notificacion', tableName: 'Notificacion'}
 );
 
-const createNotificacionChat = async(product, userId) => {
+function notificacionFormato(tipo, user, product) {
+    if(tipo === 'chat') {
+        return `${user.nombre} ${user.apellido} ha iniciado una conversación contigo por tu ${product.nombre}`;
+    } else if (tipo === 'alquiler'){
+        return `${user.nombre} ${user.apellido} ha alquilado tu ${product.nombre}`;
+    } else {
+        throw new Error (`No se reconoce el tipo de notificación ${tipo}`);
+    }
+}
+
+const createNotificacion = async(product, userId, tipo) => {
+
     const userReceptor = product.usuario_id;
     const user = await Usuario.findByPk(userId);
-    const texto = `${user.nombre} ${user.apellido} esta interesad@ en tu ${product.nombre}`;
+    const texto = notificacionFormato(tipo, user, product);
     const notificacion = await Notificacion.create({
-        texto:texto,
+        texto: texto,
         estado:'N',
-        usuario_id:userReceptor
+        icono_fa:product.categoria.icono_fa,
+        usuario_id:userReceptor,
+        tipoNotificacion: tipo
     });
     await notificacion.save();
 };
@@ -60,7 +81,7 @@ const createNotificacionChat = async(product, userId) => {
 const getNotifications = async(userId) => {
     return await Notificacion.findAll({
         where: { usuario_id: userId },
-        attributes: ['id', 'texto', 'estado', 'createdAt']
+        attributes: ['id', 'texto', 'estado', 'createdAt','icono_fa', 'tipoNotificacion']
     });
 };
 
@@ -69,12 +90,12 @@ const marcarComoLeido = async(notificationId) => {
     if(notification) {
         notification.estado = 'L';
         await notification.save();
-    } 
+    }
 }
 
 module.exports = {
     Notificacion: Notificacion,
-    createNotificacionChat:createNotificacionChat,
+    createNotificacion:createNotificacion,
     getNotifications:getNotifications,
     marcarComoLeido: marcarComoLeido
 }

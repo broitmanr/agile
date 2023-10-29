@@ -37,7 +37,9 @@
             {% endif %}
             </h5>
             <p class="card-text">
+                <span><i class="fa fa-lg {{product.categoria.icono_fa}}"></i></span>
                 <small class="text-muted">{{ product.categoria.nombre }}</small>
+
             </p>
 
             <p class="fs-3">$ {{ product.precio }}</p>
@@ -55,11 +57,10 @@
                 <form action="product/details/{{ product.id }}" method="GET">
                     <input type="text" class="d-none" name="productid" value="{{ product.id }}">
                     <button type="submit" id="interestButton" class="btn btn-outline-dark mb-2"
-                    style="position: absolute;right: 2em"|
-                    >Me interesa</button>
+                    style="position: absolute;right: 6em;bottom: 5em;"|
+                    ><i class="fa-solid fa-eye"></i></button>
                 </form>
                 <!-- Boton para eliminar un producto-->
-
                 <form action="" method="GET" id="btnDelete">
                     <button type="button" id="eliminar-{{ product.id }}" class="btn btn-outline-danger mb-2 eliminar-button"
                             data-product-id="{{ product.id }}"
