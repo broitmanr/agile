@@ -3,10 +3,10 @@ class PaymentController {
         this.subscriptionService = subscriptionService;
     }
 
-    async getPaymentLink(req, res, product, categoria){
+    async getPaymentLink(req, res, product){
         try {
             //Request de los pagos unicos
-            const payment = await this.subscriptionService.createPayment(product, categoria);
+            const payment = await this.subscriptionService.createPayment(product);
 
             return res.send(payment);
         } catch (error) {
