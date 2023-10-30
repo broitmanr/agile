@@ -6,7 +6,7 @@
     justify-content: center;
     align-items: initial;
     min-height: 100vh;
-    margin: 2.5rem;
+    margin-bottom: 2.5rem;
   }
   
   .chat_window {
@@ -59,7 +59,7 @@
     list-style: none;
     padding: 20px 10px 0 10px;
     margin: 0;
-    height: 347px;
+    height: 380px;
     overflow: scroll;
   }
   .messages .message {
@@ -189,4 +189,57 @@
   
   .message_template {
     display: none;
+  }
+  /*////////////////////////////////////////////////////////*/
+  .container-general-Chat {
+    display: flex;
+    flex-direction: row;
+    height: 100vh;
+    width: 100%;
+    background: #f8f9fb;
+  }
+
+  /* Estilos para el contenido genérico */
+  .generic_content {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100%;
+  }
+
+  .welcome_message {
+    text-align: center;
+  }
+
+  .welcome_message h1 {
+    font-size: 24px;
+  }
+
+  .welcome_message p {
+    font-size: 16px;
+    color: #666;
+  }
+
+  .start_chat_button {
+    background-color: #007bff;
+    color: #fff;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 5px;
+    cursor: pointer;
+    margin-top: 20px;
+  }
+
+  .start_chat_button:hover {
+    background-color: #0056b3;
+  }
+
+  .chat-icon {
+    width: 100px;
+    height: auto;  
+  }
+
+  li.chat.card:hover {
+    background-color: #f2f2f2; /* Cambia el color de fondo en hover */
+    cursor: pointer; /* Cambia el cursor a una mano señalando en hover */
   }
