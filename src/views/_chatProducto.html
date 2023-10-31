@@ -53,9 +53,9 @@
   {% else %}
     <div class="generic_content">
       <div class="welcome_message">
-        <h1>Bienvenido al Chat</h1>
-        <p>¡Comienza tus conversaciones aquí!</p>
-        <button class="start_chat_button">Comenzar una Conversación</button>
+        <h1>Bienvenido a tus chats</h1>
+        <p>Chatea, alquila, disfruta</p>
+        <img src="/ChatDefault1.png" alt="generic_view" width="auto" height="auto">
       </div>
     </div>
   </div>
@@ -95,8 +95,6 @@
       function addMessage(msg) {
           const isCurrentUser = msg.emisor
           const text= msg.texto
-          console.log("Valor del text extraido del objeto msg :", text);
-          console.log("Valor del isCurrenteUser osea el usuario :", isCurrentUser);
           const messageClass = isCurrentUser == userId ? 'right' : 'left';
           const messageWrapper = document.createElement('li');
           messageWrapper.className = `message ${messageClass} appeared`;
@@ -113,7 +111,6 @@
       async function sendMessage() {
       const messageText = messageInput.value;
       if (messageText.trim() !== '') {
-          console.log("Enviando mensaje:", messageText);
           const response = await fetch(`/enviarMensaje/${chatId}`, {
           method: 'POST',
           headers: {

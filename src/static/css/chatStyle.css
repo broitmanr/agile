@@ -212,31 +212,13 @@
   }
 
   .welcome_message h1 {
-    font-size: 24px;
+    font-size: 35px;
   }
 
   .welcome_message p {
-    font-size: 16px;
+    margin-bottom: 0;
+    font-size: 18px;
     color: #666;
-  }
-
-  .start_chat_button {
-    background-color: #007bff;
-    color: #fff;
-    border: none;
-    padding: 10px 20px;
-    border-radius: 5px;
-    cursor: pointer;
-    margin-top: 20px;
-  }
-
-  .start_chat_button:hover {
-    background-color: #0056b3;
-  }
-
-  .chat-icon {
-    width: 100px;
-    height: auto;  
   }
 
   li.chat.card:hover {
