@@ -159,40 +159,19 @@ router.get('/_header', async (req, res) => {
 router.get('/continuarChat/:chatId', estaAutenticado,async(req,res)=>{
     const userId = req.user;
     const chatId= req.params.chatId
-    console.log('Valor de userId en el endpoint /continuarChat/:chatId:', userId);
-    console.log('Valor de chatId en el endpoint /continuarChat/:chatId:', chatId);
     const chatList = await Interaccion.getChatsByUserID(userId)
     const chatsWithLastMessages = [];
     for (const chat of chatList) {
         const ultimoMensaje = await Mensaje.getLastMessageByIdChat(chat.id)
         chat.dataValues.ultimoMensaje = ultimoMensaje;
-    
-        console.log('Valor del endPoint /mis-chats de chatList:');
-        console.log('Interacción ID:', chat.dataValues.id);
-        console.log('Locatario ID:', chat.dataValues.locatario_id);
-        console.log('Locador ID:', chat.dataValues.locador_id);
-        console.log('Producto ID:', chat.dataValues.producto_id);
-
-        const locatario = chat.dataValues.locatario ? chat.dataValues.locatario.nombre : 'No definido';
-        const locador = chat.dataValues.locador ? chat.dataValues.locador.nombre : 'No definido';
-        console.log('Nombre del Locatario:', locatario);
-        console.log('Nombre del Locador:', locador);
-
-        const ultimoMensajeTexto = chat.dataValues.ultimoMensaje
-            ? chat.dataValues.ultimoMensaje.texto
-            : 'No hay mensajes';
-        console.log('Último Mensaje:', ultimoMensajeTexto);
-        console.log('-----------------------------------');
-    // Agrega la fecha del último mensaje (supongamos que la fecha está en una propiedad llamada "fecha")
         const fechaUltimoMensaje = chat.dataValues.ultimoMensaje ? new Date(chat.dataValues.ultimoMensaje.fecha) : null;
         const fechaFormateada = formatFechaUltimoMensaje(fechaUltimoMensaje);
         chat.dataValues.fecha= fechaFormateada
     chatsWithLastMessages.push({
         ...chat,
-        ultimoMensaje: ultimoMensajeTexto,
+        ultimoMensaje
     });
     }
-    console.log('Chats con últimos mensajes:', chatsWithLastMessages);
     res.render('_chatProducto.html', { emisor: userId, chatId, chats: chatsWithLastMessages});
 });
 
@@ -223,11 +202,6 @@ router.post('/chat/:productId',estaAutenticado, async (req, res) => {
     const chatId= chatCompleto.id;
     const product = await ProductModel.findById(productId);
     await createNotificacion(product, req.user, 'chat');
-    
-    console.log('Valor de userId:', userId);
-    console.log('Valor de productId:', productId);
-    console.log('Valor del id del dueño del producto:', idOwnerProduct);
-
     const chatList = await Interaccion.getChatsByUserID(userId)
     const chatsWithLastMessages = [];
     for (const chat of chatList) {
@@ -237,7 +211,6 @@ router.post('/chat/:productId',estaAutenticado, async (req, res) => {
         ? new Date(chat.dataValues.ultimoMensaje.fecha)
         : null;
         const fechaFormateada = formatFechaUltimoMensaje(fechaUltimoMensaje);
-        console.log('Fecha del Último Mensaje:', fechaFormateada)
         chat.dataValues.fecha= fechaFormateada
         chatsWithLastMessages.push({
         ...chat,

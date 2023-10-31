@@ -48,9 +48,6 @@ async function startServer(port = process.env.PORT) {
           socket.join(`chat-${chatId}`);
         });
         socket.on('chat message', (msg) => {
-            // Reenviar el mensaje a la sala de chat específica
-            console.log('Valor de msg del lado del server index.js antes del io.to:', msg);
-            console.log('Valor de msg.IDdelChat del lado del server index.js antes del io.to:', msg.chatId);
             io.to(`chat-${msg.chatId}`).emit('chat message', msg);
           });
         socket.on('disconnect', () => {
