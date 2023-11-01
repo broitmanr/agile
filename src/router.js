@@ -13,6 +13,7 @@ const {createAlquiler} = require('./models/alquiler');
 const { estaAutenticado } = require('./models/product.js');
 const  Mensaje = require('./models/mensaje.js')
 const  Interaccion  =require('./models/interaccion.js')
+const  FavoritoModel  = require('./models/favorito.js')
 const Alquiler = require('./models/alquiler');
 
 const router = express.Router();
@@ -111,6 +112,32 @@ router.get('/my_products', estaAutenticado, async (req, res) => {
     } catch (error) {
         console.error(error);
         res.status(500).json ({ message: "¡Error! No se han encontrado los productos del usuario"});
+    }
+});
+
+//Para mostrar los productos favoritos
+router.get('/my_favs', estaAutenticado, async (req, res) => {
+    
+    try{
+        const userId = req.user;
+        const products = await FavoritoModel.getAllFavorites(userId);
+        res.render('_my_favs.html', { products: products });
+    } catch (error) {
+        console.error(error);
+        res.status(500).json ({ message: "¡Error! No se han encontrado los productos favoritos del usuario"});
+    }
+});
+
+//Para marcar los productos favoritos
+router.post('/my_favs/:productId', estaAutenticado, async (req, res) => {
+    try{
+        const userId = req.user;
+        const productId = +req.params.productId;
+        await FavoritoModel.createFavorito(userId, productId);
+        res.json({ success: true });
+    } catch (error) {
+        console.error(error);
+        res.status(500).json ({ message: "¡Error! No se logró marcar el producto como favorito"});
     }
 });
 
