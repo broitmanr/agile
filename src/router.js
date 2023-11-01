@@ -280,6 +280,20 @@ function isAuth(req,res,next){
 //Metodos de pago
 
 /**
+ * Pasos para iniciar el pago
+ * 
+ * 1- En la consola instalar todas las dependencias del package con la instruccion
+ *  opcion01:  npm i 
+ *  opcion02:  nom install 
+ * 
+ * 2- En la carpeta general del proyecto fuera de cualquier carpeta agregar un archivo llamado .env
+ *  En dicho archivo escribir 
+ *      ACCESS_TOKEN=APP_USR-4624116435845049-102711-63a84c8704c091863384d686ec5248ff-1526605858
+ * 
+ * Es el token para conectar con api de pruebas
+ */
+
+/**
  * 
  * Link: 
  * -Para el vendedor https://www.mercadopago.com.ar/home (hay que iniciar sesion con el email y el password) En este home se ven los pagos
