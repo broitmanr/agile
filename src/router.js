@@ -141,6 +141,20 @@ router.post('/my_favs/:productId', estaAutenticado, async (req, res) => {
     }
 });
 
+router.delete('/my_favs/delete/:productId', estaAutenticado, async (req, res) =>{
+    try{
+        const userId = req.user;
+        const productId = +req.params.productId;
+        console.log(productId);
+        await FavoritoModel.deleteFavorito(userId, productId);
+        //res.redirect('/my_favs');
+        res.json({ success: true });
+    } catch (error){
+        console.error(error);
+        res.status(500).json({ message: "¡Error! No se ha podido eliminar el favorito" });
+    }
+});
+
 router.get('/product/details/:id', async function (req, res) {
     const productId = +req.params.id; // Obtenemos el ID del producto desde la URL
     const productDetails = await ProductModel.findById(productId);

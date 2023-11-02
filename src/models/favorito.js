@@ -91,7 +91,7 @@ const getAllFavorites = async (userId) => {
     return results;
 };
 
-/*
+
 const deleteFavorito = async (userId, productId) => {
     const favorito = await Bd.query(`
         DELETE FROM Favorito
@@ -102,13 +102,13 @@ const deleteFavorito = async (userId, productId) => {
         type: Bd.QueryTypes.DELETE
     });
     return favorito;
-}*/
+}
 
 const FavoritoModel = {
     Favorito: Favorito,
     createFavorito: createFavorito,
     getAllFavorites: getAllFavorites,
-    //deleteFavorito: deleteFavorito
+    deleteFavorito: deleteFavorito,
 }
 
 module.exports = FavoritoModel;
