@@ -10,6 +10,9 @@ const nunjucks = require('./utils/nunjucks.js');
 const env = require('./utils/env.js');
 const flash = require('connect-flash');
 
+//Mercado Pago
+const cookieParser = require('cookie-parser');
+const dotenv = require('dotenv');
 //Color de consola
 const pc = require('picocolors');
 
@@ -45,9 +48,6 @@ async function startServer(port = process.env.PORT) {
           socket.join(`chat-${chatId}`);
         });
         socket.on('chat message', (msg) => {
-            // Reenviar el mensaje a la sala de chat específica
-            console.log('Valor de msg del lado del server index.js antes del io.to:', msg);
-            console.log('Valor de msg.IDdelChat del lado del server index.js antes del io.to:', msg.chatId);
             io.to(`chat-${msg.chatId}`).emit('chat message', msg);
           });
         socket.on('disconnect', () => {
@@ -108,6 +108,15 @@ async function startServer(port = process.env.PORT) {
         express: app,
         viewsPath,
     });
+
+    //Control para los pagos y autenticacion
+    dotenv.config();
+
+    app.use(morgan('dev'));
+    app.use(express.json());
+    app.use(express.urlencoded({ extended: false }));
+    app.use(cookieParser());
+    app.use(express.static(path.join(__dirname, 'public')));
 
     // rutas de la vista
     app.use('/', router);

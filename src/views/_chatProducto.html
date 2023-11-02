@@ -1,138 +1,155 @@
 {% extends "_base.html" %}
+{% import "_chat-Card.html" as chatCard %}
 
 {% block stylesheet %} 
 <link rel="stylesheet" href="../static/css/chatStyle.css">
 {%endblock%}
 
 {% block main %}
-<div class="chat_container">
-  <div class="chat_window">
-    <div class="top_menu">
-      <div class="buttons">
-        <div class="button close"></div>
-        <div class="button minimize"></div>
-        <div class="button maximize"></div>
-      </div>
-      
-      <div class="title">Chat
-      </div>
+  <div class="row mt-4 mb-4">
+    <div class="col md-6">
+      <ul class="list-group overflow-auto ">
+        {% for chat in chats %}
+          {% if chat.dataValues.ultimoMensaje %}
+            {{ chatCard.chatCard(chat, emisor) }}
+          {% endif %}
+        {% endfor %}
+      </ul>
     </div>
-    <ul class="messages"></ul>
-    <div class="bottom_wrapper clearfix">
-      <div class="message_input_wrapper">
-        <input class="message_input"  autocomplete= "off" placeholder="Type your message here..." />
-      </div>
-      <div class="send_message" data-userid="{{emisor}}" data-chatid="{{chatId}}">
-        <div class="icon"></div>
-        <div class="text">Enviar</div>
-      </div>
-    </div>
-  </div>
-  <div class="message_template">
-    <li class="message">
-      <div class="avatar"></div>
-      <div class="text_wrapper">
-        <div class="text"></div>
-      </div>
-    </li>
-  </div>
-</div>
-<script src="/socket.io/socket.io.js"></script>
-
-<script>
-  document.addEventListener('DOMContentLoaded', () => {
-    const socket = io();
-    const messageInput = document.querySelector('.message_input');
-    const messagesList = document.querySelector('.messages');
-    const sentMessages = {};
-    const sendButton = document.querySelector('.send_message');
-    const userId = sendButton.getAttribute('data-userid');
-    const chatId = sendButton.getAttribute('data-chatid');
-    console.log("ChatId del LADO DEL CLIENTE ANTES DE INICIAR:", chatId);
-    console.log("UserId del LADO DEL CLIENTE ANTES DE INICIAR:", userId);
-
-    async function cargarMensajesAnteriores(chatId) {
-      try {
-        const response = await fetch(`/messages/${chatId}`);
-        const data = await response.json();
-
-        if (data && data.length > 0) {
-          data.forEach((message) => {
-            addMessage(message);;
-          });
-        }
-      } catch (error) {
-        console.error('Error al cargar mensajes anteriores:', error);
-      }
-      socket.emit('joinChat', chatId);
-    }
-    cargarMensajesAnteriores(chatId);
-  
-    function addMessage(msg) {
-        const isCurrentUser = msg.emisor
-        const text= msg.texto
-        console.log("Valor del text extraido del objeto msg :", text);
-        console.log("Valor del isCurrenteUser osea el usuario :", isCurrentUser);
-        const messageClass = isCurrentUser ? 'right' : 'left'; // Determina si el mensaje es del usuario actual (derecha) o del otro usuario (izquierda)
-        const messageWrapper = document.createElement('li');
-        messageWrapper.className = `message ${messageClass} appeared`;
-        messageWrapper.innerHTML = `
-          <div class="avatar"></div>
-          <div class="text_wrapper">
-            <div class="text">${text}</div> <!-- Agrega el texto del mensaje al elemento -->
+    <div class="col-md-6">
+    {% if chatId != null %}
+    <div class="chat_container">
+        <div class="chat_window">
+          <div class="top_menu">
+            <div class="buttons">
+              <div class="button close"></div>
+              <div class="button minimize"></div>
+              <div class="button maximize"></div>
+            </div>
+            
+            <div class="title">Chat
+            </div>
           </div>
-        `;
-        messagesList.appendChild(messageWrapper);
-        messagesList.scrollTop = messagesList.scrollHeight;
-    }
+          <ul class="messages"></ul>
+          <div class="bottom_wrapper clearfix">
+            <div class="message_input_wrapper">
+              <input class="message_input"  autocomplete= "off" placeholder="Escribe tu mensaje aquí..." />
+            </div>
+            <div class="send_message" data-userid="{{emisor}}" data-chatid="{{chatId}}">
+              <div class="icon"></div>
+              <div class="text">Enviar</div>
+            </div>
+          </div>
+        </div>
+        <div class="message_template">
+          <li class="message">
+            <div class="avatar"></div>
+            <div class="text_wrapper">
+              <div class="text"></div>
+            </div>
+          </li>
+        </div>
+      </div>
+  {% else %}
+    <div class="generic_content">
+      <div class="welcome_message">
+        <h1>Bienvenido a tus chats</h1>
+        <p>Chatea, alquila, disfruta</p>
+        <img src="/ChatDefault1.png" alt="generic_view" width="auto" height="auto">
+      </div>
+    </div>
+  </div>
+  {% endif %}
+  </div>
+  <script src="/socket.io/socket.io.js"></script>
 
-    async function sendMessage() {
-    const messageText = messageInput.value;
-    if (messageText.trim() !== '') {
-        console.log("Enviando mensaje:", messageText);
-        const response = await fetch(`/enviarMensaje/${chatId}`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          texto: messageText
-        }),
-      });
-        console.log("Respuesta del servidor:", response);
-        if (response.status === 200) {
-            console.log('Mensaje enviado con éxito');
-            // Emitir el mensaje a la sala de chat específica
-            socket.emit('chat message', {
-                texto: messageText,
-                emisor: userId,
-                chatId: chatId,
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      const socket = io();
+      const messageInput = document.querySelector('.message_input');
+      const messagesList = document.querySelector('.messages');
+      const sentMessages = {};
+      const sendButton = document.querySelector('.send_message');
+      const userId = sendButton.getAttribute('data-userid');
+      const chatId = sendButton.getAttribute('data-chatid');
+
+      async function cargarMensajesAnteriores(chatId) {
+        try {
+          const response = await fetch(`/messages/${chatId}`);
+          const data = await response.json();
+
+          if (data && data.length > 0) {
+            data.forEach((message) => {
+              addMessage(message);;
             });
-        } else {
-            console.error('Error al enviar el mensaje');
+          }
+        } catch (error) {
+          console.error('Error al cargar mensajes anteriores:', error);
         }
-
-        messageInput.value = '';
-    }
-}
-    document.querySelector('.send_message').addEventListener('click', () => {
-      sendMessage();
-    });
-
-    messageInput.addEventListener('keypress', (event) => {
-      if (event.key === 'Enter') {
-        event.preventDefault();
-        sendMessage();
+        socket.emit('joinChat', chatId);
       }
-    });
+      if (chatId){
+        cargarMensajesAnteriores(chatId);
+      }
+      
+      function addMessage(msg) {
+          const isCurrentUser = msg.emisor
+          const text= msg.texto
+          const messageClass = isCurrentUser == userId ? 'right' : 'left';
+          const messageWrapper = document.createElement('li');
+          messageWrapper.className = `message ${messageClass} appeared`;
+          messageWrapper.innerHTML = `
+            <div class="avatar"></div>
+            <div class="text_wrapper">
+              <div class="text">${text}</div> <!-- Agrega el texto del mensaje al elemento -->
+            </div>
+          `;
+          messagesList.appendChild(messageWrapper);
+          messagesList.scrollTop = messagesList.scrollHeight;
+      }
 
-    socket.on('chat message', (data) => {
-      console.log('Valor de data del cliente:', data);
-      console.log('Valor del chatID del data del cliente:', data.chatId);
-      console.log('Valor del message del data del cliente:', data.texto);
-      console.log('Valor del senderID del data del cliente:', data.emisor);
-      addMessage(data , data.senderId);
+      async function sendMessage() {
+      const messageText = messageInput.value;
+      if (messageText.trim() !== '') {
+          const response = await fetch(`/enviarMensaje/${chatId}`, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            texto: messageText
+          }),
+        });
+          console.log("Respuesta del servidor:", response);
+          if (response.status === 200) {
+              console.log('Mensaje enviado con éxito');
+              // Emitir el mensaje a la sala de chat específica
+              socket.emit('chat message', {
+                  texto: messageText,
+                  emisor: userId,
+                  chatId: chatId,
+              });
+          } else {
+              console.error('Error al enviar el mensaje');
+          }
+
+          messageInput.value = '';
+      }
+  }
+      document.querySelector('.send_message').addEventListener('click', () => {
+        sendMessage();
+      });
+
+      messageInput.addEventListener('keypress', (event) => {
+        if (event.key === 'Enter') {
+          event.preventDefault();
+          sendMessage();
+        }
+      });
+
+      socket.on('chat message', (data) => {
+        addMessage(data , data.senderId);
+      });
     });
-  });
-</script>
+  </script>
 {% endblock %}

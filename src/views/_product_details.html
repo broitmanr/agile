@@ -164,8 +164,8 @@
         </div>
         {% if product.estado !== 'A' and estaAuth === true%}
         <div class="col p-3 d-flex justify-content-start">
-            <form action="/alquilar/{{ product.id }}" method="GET">
-                <button type="submit" class="btn btn-success">
+            <form>
+                <button type="button" class="btn btn-success" id="formPayment">
                     Alquilar Producto
                 </button>
             </form>
@@ -203,5 +203,18 @@
             console.error('Error:', error);
         });
     });
+    
+    const payment = document.getElementById('formPayment')
+
+    payment.addEventListener('click', async () => {
+        const response = await fetch('/payment/{{ product.id }}', {
+            method: 'POST'
+        })
+
+        const data = await response.json()
+        console.log(data)
+        window.location.href = data.init_point;
+    })
+
 </script>
 {% endblock %}

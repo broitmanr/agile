@@ -62,8 +62,18 @@ const getMessagesByIDChat = async (interaccionId) => {
   });
   return messages;
 };
+const getLastMessageByIdChat= async(chatID) =>{
+  const lastMsg = Mensaje.findOne({
+    where: { interaccion_id: chatID },
+    order: [['fecha', 'DESC']],
+  });
+  if (lastMsg){
+    return lastMsg;
+  }
+}
 module.exports = {
   Mensaje: Mensaje,
   createMessage: createMessage,
-  getMessagesByIDChat: getMessagesByIDChat
+  getMessagesByIDChat: getMessagesByIDChat,
+  getLastMessageByIdChat: getLastMessageByIdChat
 }

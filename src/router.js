@@ -15,6 +15,9 @@ const  Mensaje = require('./models/mensaje.js')
 const  Interaccion  =require('./models/interaccion.js')
 const  FavoritoModel  = require('./models/favorito.js')
 const Alquiler = require('./models/alquiler');
+const PaymentController = require('./controllers/paymentsController.js');
+const PaymentService = require('./services/paymentsService.js');
+const PaymentInstance = new PaymentController(new PaymentService());
 
 const router = express.Router();
 
@@ -93,8 +96,6 @@ router.post('/alquilar/:productId',estaAutenticado, async (req, res) => {
     const product = await ProductModel.findById(productId);
     const locador = product.usuario_id;
     const locatario = req.user;
-    //Agregar el detalle de la tarjeta
-    //const detalleTarjeta = req.
     const interaccion = await Interaccion.findByUsersProduct(locador, locatario, productId);
     await Alquiler.createAlquiler(interaccion.id);
     await createNotificacion(product, locatario, 'alquiler');
@@ -196,46 +197,72 @@ router.get('/_header', async (req, res) => {
     })
 })
 
-router.get('/chat/:productId',estaAutenticado,async(req,res) => {
-    const productId = req.params.productId;
-    res.render('_chatProducto.html',{
-        product_id:productId
+router.get('/continuarChat/:chatId', estaAutenticado,async(req,res)=>{
+    const userId = req.user;
+    const chatId= req.params.chatId
+    const chatList = await Interaccion.getChatsByUserID(userId)
+    const chatsWithLastMessages = [];
+    for (const chat of chatList) {
+        const ultimoMensaje = await Mensaje.getLastMessageByIdChat(chat.id)
+        chat.dataValues.ultimoMensaje = ultimoMensaje;
+        const fechaUltimoMensaje = chat.dataValues.ultimoMensaje ? new Date(chat.dataValues.ultimoMensaje.fecha) : null;
+        const fechaFormateada = formatFechaUltimoMensaje(fechaUltimoMensaje);
+        chat.dataValues.fecha= fechaFormateada
+    chatsWithLastMessages.push({
+        ...chat,
+        ultimoMensaje
     });
+    }
+    res.render('_chatProducto.html', { emisor: userId, chatId, chats: chatsWithLastMessages});
+});
+
+router.get('/mis-chats',estaAutenticado, async (req, res) => {
+    const userId = req.user;
+    console.log('Valor de userId:', userId);
+    const chatList = await Interaccion.getChatsByUserID(userId)
+    const chatsWithLastMessages = [];
+    for (const chat of chatList) {
+        const ultimoMensaje = await Mensaje.getLastMessageByIdChat(chat.id)
+        chat.dataValues.ultimoMensaje = ultimoMensaje;
+        const fechaUltimoMensaje = chat.dataValues.ultimoMensaje ? new Date(chat.dataValues.ultimoMensaje.fecha) : null;
+        const fechaFormateada = formatFechaUltimoMensaje(fechaUltimoMensaje);
+        chat.dataValues.fecha= fechaFormateada
+    chatsWithLastMessages.push({
+        ...chat,
+        ultimoMensaje,
+    });
+    }
+    res.render('_chatProducto.html', { emisor: userId, chats: chatsWithLastMessages});
 });
 
 router.post('/chat/:productId',estaAutenticado, async (req, res) => {
     const userId = req.user;
     const productId= req.params.productId
     const idOwnerProduct= await ProductModel.getOwner(productId);
-
+    const chatCompleto = await Interaccion.getChat(userId,idOwnerProduct,productId);
+    const chatId= chatCompleto.id;
     const product = await ProductModel.findById(productId);
     await createNotificacion(product, req.user, 'chat');
-    
-    console.log('Valor de userId:', userId);
-    console.log('Valor de productId:', productId);
-    console.log('Valor del id del dueño del producto:', idOwnerProduct);
-
-    // Verificar si ya existe un chat entre los mismos usuarios y con el mismo producto
-    const existingChat = await Interaccion.findExistingChat(userId, idOwnerProduct, productId)
-    
-    if (existingChat) {
-        const chatId = existingChat.id;
-        console.log('Chat existente - ID del chat:', chatId);
-        res.render('_chatProducto.html', { emisor: userId, chatId });
-    }else {
-        console.log('Chat nuevo - Creando un chat');
-        // Crear un chat nuevo porque no existe uno existente
-        const newChat = await Interaccion.createInteraccion(userId, idOwnerProduct, productId);
-        const chatId = newChat.id;
-        console.log('Nuevo chat - ID del chat:', chatId);
-        res.render('_chatProducto.html', { emisor: userId, chatId });
+    const chatList = await Interaccion.getChatsByUserID(userId)
+    const chatsWithLastMessages = [];
+    for (const chat of chatList) {
+        const ultimoMensaje = await Mensaje.getLastMessageByIdChat(chat.id)
+        chat.dataValues.ultimoMensaje = ultimoMensaje;
+        const fechaUltimoMensaje = chat.dataValues.ultimoMensaje
+        ? new Date(chat.dataValues.ultimoMensaje.fecha)
+        : null;
+        const fechaFormateada = formatFechaUltimoMensaje(fechaUltimoMensaje);
+        chat.dataValues.fecha= fechaFormateada
+        chatsWithLastMessages.push({
+        ...chat,
+        ultimoMensaje,
+    });
     }
+    res.render('_chatProducto.html', { emisor: userId, chatId, chats: chatsWithLastMessages});
 });
 
-// Agrega esta ruta para obtener mensajes anteriores
 router.get('/messages/:interaccionId', async (req, res) => {
     const interaccionId = req.params.interaccionId;
-    console.log('Endpoint get/messages/:interaccionId con un valor de:', interaccionId);
     const messages = await Mensaje.getMessagesByIDChat(interaccionId)
     res.json(messages);
 });
@@ -244,15 +271,8 @@ router.post('/enviarMensaje/:chatId', estaAutenticado, async (req, res) => {
     const userId = req.user;
     const chatId = req.params.chatId
     const texto = req.body.texto;
-    console.log('Valores antes de crear el mensaje:');
-    console.log('Valor del userId antes de crear el mensaje:', userId);
-    console.log('Valor del chatId antes de crear el mensaje::', chatId);
-    console.log('Valor del texto antes de crear el mensaje::', req.body.texto);
-        // Aquí, puedes crear un un uevo mensaje en la base de datos
-        const newMessage = await Mensaje.createMessage(chatId,userId,texto)
-        console.log('valor de chatId post crear el mensaje y persistirlo:', chatId);
-        console.log('texto del newMessage :', newMessage.texto);
-        res.json(newMessage);
+    const newMessage = await Mensaje.createMessage(chatId,userId,texto)
+    res.json(newMessage);
 });
 
 router.get('/sign-up',async function (req, res, next){
@@ -298,15 +318,75 @@ function isAuth(req,res,next){
 
 }
 
-router.post('/favorito/:productId', async (req, res) =>{
-    //agregar el id del producto a la lista de favortios del usuario
+//Metodos de pago
+
+/**
+ * 
+ * Link: 
+ * -Para el vendedor https://www.mercadopago.com.ar/home (hay que iniciar sesion con el email y el password) En este home se ven los pagos
+ * 
+ * -Para el comprador https://www.mercadopago.com.ar/developers/ (hay que iniciar sesion para pagar)
+ * Datos de prueba:
+ * 
+ * Usuario de prueba 01	VENDEDOR
+
+{"id":1526605858,"email":"test_user_785561243@testuser.com","nickname":"TESTUSER785561243","site_status":"active","password":"LzORaFgxhj"}
+----------------------------------------------------------------------
+Api prueba de rentar para generar el access_token
+
+nombre
+	Api-Prueba-Rentar
+	APP_USR-4624116435845049-102711-63a84c8704c091863384d686ec5248ff-1526605858
+	TEST-4624116435845049-102711-83d2f62fcbe8178a4d8daf8acff3bb91-1526605858
+--------------------------------------------------------------------------------
+Usuario de prueba 02	COMPRADOR
+
+{"id":1525097059,"email":"test_user_1685160373@testuser.com","nickname":"TESTUSER1685160373","site_status":"active","password":"C4R6YLrFI1"}
+
+ */
+
+router.post('/payment/:productId', estaAutenticado, async (req, res, next) => {
+    //Datos del producto
+    const productId = req.params.productId;
+    const product = await ProductModel.findById(productId);
+    console.log(product);
     try {
-        
+        await PaymentInstance.getPaymentLink(req, res, product);
+        //Cambio y guardo el estado del producto
+        product.estado = 'A';
+        await product.save();
     } catch (error) {
-        console.error(error);
-        res.status(500).json({ message: "¡Error! No se ha podido agregar a favoritos el producto" });
-    } 
+        console.log(error);
+    }
 });
 
+/*router.get('/webhook', async (req, res) => {
+    console.log('webhook');
+    res.redirect(`/`);
+})
+*/
+
+function formatFechaUltimoMensaje(fechaUltimoMensaje) {
+    if (!fechaUltimoMensaje) {
+      return 'No hay mensajes';
+    }
+  
+    const now = new Date();
+    const messageDate = new Date(fechaUltimoMensaje);
+  
+    const diffInDays = Math.floor((now - messageDate) / (1000 * 60 * 60 * 24));
+  
+    if (diffInDays === 0) {
+      return 'Hoy';
+    } else if (diffInDays === 1) {
+      return 'Ayer';
+    } else {
+      const day = messageDate.getDate().toString().padStart(2, '0');
+      const month = (messageDate.getMonth() + 1).toString().padStart(2, '0');
+      const year = messageDate.getFullYear();
+  
+      return `${day}/${month}/${year}`;
+    }
+  }
 
 module.exports = router;
