@@ -66,6 +66,12 @@
                             data-product-id="{{ product.id }}"
                             style="position: absolute;right: 3em"><i class="fa-solid fa-trash-can fa-xl"></i></button>
                 </form>
+                <!-- Boton para eliminar un producto marcado como favorito-->
+                <form action="" method="GET" id="btnDeleteFav">
+                    <button type="submit" id="eliminarFav-{{ product.Id }}" class="btn btn-outline-warning mb-2 eliminar-favorito-button"
+                            data-product-id="{{ product.Id }}"
+                            style="position: absolute;right: 3em; top: 4.2em;"><i class="fa-solid fa-star"></i></button>
+                </form>
             </div>
         </div>
     </div>
@@ -96,6 +102,31 @@
                             window.location.href = '/product/delete/' + productId;
                         });
                     }
+                });
+            });
+        });
+    });
+</script>
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const eliminarFavoritoButtons = document.querySelectorAll('.eliminar-favorito-button');
+        eliminarFavoritoButtons.forEach(button => {
+            button.addEventListener('click', function(event) {
+                const productId = button.getAttribute('data-product-id');
+                fetch('/my_favs/delete/' + productId, {
+                    method: 'DELETE',
+                })
+                .then(response => response.json())
+                .then(data => {
+                    console.log(data);
+                    if(data.success) {
+                        location.reload();
+                    }else{
+                        console.error(data.message);
+                    }
+                })
+                .catch((error) => {
+                    console.error('Error:', error);
                 });
             });
         });
