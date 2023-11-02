@@ -56,6 +56,12 @@ body {
 #btnDelete{
     display: none;
 }
+#btnDeleteFav{
+    display: none;
+}
+#btnDeleteFav:hover{
+    background-color: transparent;
+}
 
 .fechaCal{
     background-color: #515966;
