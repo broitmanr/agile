@@ -12,7 +12,8 @@ const {createNotificacion,getNotifications,marcarComoLeido} = require('./models/
 const {createAlquiler} = require('./models/alquiler');
 const { estaAutenticado } = require('./models/product.js');
 const  Mensaje = require('./models/mensaje.js')
-const  Interaccion = require('./models/interaccion.js')
+const  Interaccion  =require('./models/interaccion.js')
+const  FavoritoModel  = require('./models/favorito.js')
 const Alquiler = require('./models/alquiler');
 const PaymentController = require('./controllers/paymentsController.js');
 const PaymentService = require('./services/paymentsService.js');
@@ -112,6 +113,46 @@ router.get('/my_products', estaAutenticado, async (req, res) => {
     } catch (error) {
         console.error(error);
         res.status(500).json ({ message: "¡Error! No se han encontrado los productos del usuario"});
+    }
+});
+
+//Para mostrar los productos favoritos
+router.get('/my_favs', estaAutenticado, async (req, res) => {
+    
+    try{
+        const userId = req.user;
+        const products = await FavoritoModel.getAllFavorites(userId);
+        res.render('_my_favs.html', { products: products });
+    } catch (error) {
+        console.error(error);
+        res.status(500).json ({ message: "¡Error! No se han encontrado los productos favoritos del usuario"});
+    }
+});
+
+//Para marcar los productos favoritos
+router.post('/my_favs/:productId', estaAutenticado, async (req, res) => {
+    try{
+        const userId = req.user;
+        const productId = +req.params.productId;
+        await FavoritoModel.createFavorito(userId, productId);
+        res.json({ success: true });
+    } catch (error) {
+        console.error(error);
+        res.status(500).json ({ message: "¡Error! No se logró marcar el producto como favorito"});
+    }
+});
+
+router.delete('/my_favs/delete/:productId', estaAutenticado, async (req, res) =>{
+    try{
+        const userId = req.user;
+        const productId = +req.params.productId;
+        console.log(productId);
+        await FavoritoModel.deleteFavorito(userId, productId);
+        //res.redirect('/my_favs');
+        res.json({ success: true });
+    } catch (error){
+        console.error(error);
+        res.status(500).json({ message: "¡Error! No se ha podido eliminar el favorito" });
     }
 });
 
@@ -322,8 +363,9 @@ router.post('/payment/:productId', estaAutenticado, async (req, res, next) => {
     //Datos del producto
     const productId = req.params.productId;
     const product = await ProductModel.findById(productId);
+    console.log(product);
     try {
-        const interaccion = await PaymentInstance.getPaymentLink(req, res, product);
+        await PaymentInstance.getPaymentLink(req, res, product);
         //Cambio y guardo el estado del producto
         product.estado = 'A';
         await product.save();
@@ -337,29 +379,6 @@ router.post('/payment/:productId', estaAutenticado, async (req, res, next) => {
     res.redirect(`/`);
 })
 */
-
-
-router.post('/favorito/:productId', async (req, res) =>{
-    //agregar el id del producto a la lista de favortios del usuario
-    try {
-        
-    } catch (error) {
-        console.error(error);
-        res.status(500).json({ message: "¡Error! No se ha podido agregar a favoritos el producto" });
-    } 
-});
-
-
-
-router.post('/favorito/:productId', async (req, res) =>{
-    //agregar el id del producto a la lista de favortios del usuario
-    try {
-        
-    } catch (error) {
-        console.error(error);
-        res.status(500).json({ message: "¡Error! No se ha podido agregar a favoritos el producto" });
-    } 
-});
 
 function formatFechaUltimoMensaje(fechaUltimoMensaje) {
     if (!fechaUltimoMensaje) {

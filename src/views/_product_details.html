@@ -18,6 +18,7 @@
         padding: 20px 20px 20px;
         text-align: center;
         border-radius: 25px;
+        position: relative;
     }
 
     h1{
@@ -77,6 +78,16 @@
         cursor: pointer;
         transition: background 1s;
         margin-right: 10px;
+    }
+    #btnFavs:hover{
+        background-color: transparent;
+    }
+    #btnFavs{
+        position: absolute;
+        top: 0;
+        right: 0;
+        margin-top: 27px;
+        margin-right: 20px;
     }
 
 </style>
@@ -160,18 +171,39 @@
             </form>
         </div>
         {% endif %}
-         <!-- Falta agregar la logica de favorito, 1 usuario puede tener muchos productos favoritos, una lista de favoritos-->
+        {% if estaAuth === true %}
         <div class="col p-3 d-flex justify-content-start">
-            <button type="submit" class="btn btn-primary">
+            <button id="btnFavs" data-product-id="{{ product.id }}" type="submit" class="btn btn-outline-warning mb-2 favorito-button">
                 <!-- otra opciones https://www.neoguias.com/mostrar-ocultar-elementos-html/#Atributo_Hidden_de_HTML-->
-                <i class="fa-regular fa-heart" style="display: block;"></i>
-                <i class="fa-solid fa-heart" style="display: none;"></i>
+                <i class="fa-regular fa-star" style="display: block;"></i>
             </button>
         </div>
+        {% endif %}
     </div>
 </div>
 
 <script>
+    document.querySelector('#btnFavs').addEventListener('click', function() {
+        var productId = this.getAttribute('data-product-id');
+        fetch(`/my_favs/${productId}`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({ producto_id: productId }),
+        })
+        .then(response => response.json())
+        .then(data => {
+            console.log(data.mensaje);
+            var cambiarIcono = this.querySelector('i');
+            cambiarIcono.classList.remove('fa-regular');
+            cambiarIcono.classList.add('fa-solid');
+        })
+        .catch((error) => {
+            console.error('Error:', error);
+        });
+    });
+    
     const payment = document.getElementById('formPayment')
 
     payment.addEventListener('click', async () => {
