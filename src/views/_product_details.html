@@ -1,4 +1,5 @@
 {% extends "_base.html" %}
+{% import "_pregunta.html" as preguntaMacro %}
 
 {% block css %}
 <style>
@@ -90,6 +91,103 @@
         margin-right: 20px;
     }
 
+    .preguntas {
+        margin-top: 20px;
+    }
+
+    .preguntas h2 {
+        font-size: 20px;
+        margin-bottom: 10px;
+    }
+
+    .preguntas .btn {
+        width: 100%;
+        margin-bottom: 10px;
+    }
+
+    .preguntas-contenido {
+        display: none;
+        background-color: #252F46;
+        padding: 20px;
+        border-radius: 5px;
+    }
+
+    .preguntas-contenido ul {
+        list-style: none;
+        margin: 0;
+        padding: 0;
+    }
+
+    .preguntas-contenido li {
+        margin-bottom: 10px;
+    }
+
+    .preguntas-contenido li .pregunta-respuesta{
+        margin-bottom: 1em;
+        position: relative;
+        width: 100%;
+        float: left;
+        padding: 10px;
+        border-radius: 5px;
+    }
+
+
+    .pregunta{
+        width: 80%;
+        border-radius: 25px;
+        padding: 12px;
+        background: gray;
+        color: white;
+        padding: 10px;
+        position: relative;
+        font-family: sans-serif;
+        z-index: 1;
+    }
+    .pregunta::after {
+        content: '';
+        position: absolute;
+        bottom: 0;
+        left: -20px;
+        background: transparent;
+        width: 0px; height: 0px;
+        border-bottom: 40px solid gray;
+        border-right: 40px solid transparent;
+        border-left: 40px solid transparent;
+        transform: rotate(180deg);
+        z-index: -1;
+    }
+
+
+    .respuesta{
+        margin-top: 0.5em;
+        float: right;
+        border-radius: 25px;
+        padding: 12px;
+        background: lightcoral;
+        color: white;
+        padding: 10px;
+        position: relative;
+        width: 80%;
+        font-family: sans-serif;
+        z-index: 1;
+    }
+    .respuesta::after {
+
+        content: '';
+        position: absolute;
+        bottom: 0;
+        right: -20px;
+        background: transparent;
+        width: 0px; height: 0px;
+        border-bottom: 40px solid lightcoral;
+        border-right: 40px solid transparent;
+        border-left: 40px solid transparent;
+        transform: rotate(180deg);
+        z-index: -1;
+    }
+
+
+
 </style>
 {%endblock%}
 
@@ -180,9 +278,42 @@
         </div>
         {% endif %}
     </div>
+    <div class="row">
+
+        <div class="preguntas">
+            <h2>Preguntas</h2>
+            <button class="btn btn-primary">Ver preguntas</button>
+        </div>
+
+        <div class="preguntas-contenido">
+            <ul>
+                {% if preguntas | length > 0 %}
+                {% for pregunta in preguntas %}
+                {{ preguntaMacro.preguntaMacro(pregunta) }}
+                {% endfor %}
+                {% endif %}
+            </ul>
+            {% if estaAuth === true %}
+                <form action="/ask-ans/{{ product.id }}" method="POST" id="formQuest">
+                    <input type="text" name="questAnswer" placeholder="Pregunta" class="form-control" style="width: 80%; display: inline">
+                    <button type="submit" id="btn-send" class="btn btn-outline-info"
+                            style="display: inline"><i class="fa-solid fa-paper-plane fa-xl"></i>Enviar</button>
+                </form>
+            {% endif %}
+        </div>
+
+    </div>
+
+
 </div>
 
 <script>
+    $(document).ready(function() {
+        $('.preguntas .btn').click(function() {
+            $('.preguntas-contenido').toggle();
+        });
+    });
+
     document.querySelector('#btnFavs').addEventListener('click', function() {
         var productId = this.getAttribute('data-product-id');
         fetch(`/my_favs/${productId}`, {
@@ -203,7 +334,7 @@
             console.error('Error:', error);
         });
     });
-    
+
     const payment = document.getElementById('formPayment')
 
     payment.addEventListener('click', async () => {

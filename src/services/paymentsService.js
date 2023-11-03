@@ -8,8 +8,9 @@ class PaymentService {
             payer_email: 'test_user_1685160373@testuser.com',
             items: [
                 {
-                    title: `${product.nombre}`,
+                    title: `Alquiler rentAR de ${product.nombre}`,
                     description: `${product.detalle}`,
+                    currency_id: `${product.moneda.sigla}`,
                     picture_url: `${product.urlImagen}`,
                     category_id: `${product.categoria.nombre}`,
                     quantity: 1,

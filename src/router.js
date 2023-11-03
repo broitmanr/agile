@@ -18,6 +18,7 @@ const Alquiler = require('./models/alquiler');
 const PaymentController = require('./controllers/paymentsController.js');
 const PaymentService = require('./services/paymentsService.js');
 const PaymentInstance = new PaymentController(new PaymentService());
+const {makeQuest,listQuest} = require('./models/pregunta');
 
 const router = express.Router();
 
@@ -118,7 +119,7 @@ router.get('/my_products', estaAutenticado, async (req, res) => {
 
 //Para mostrar los productos favoritos
 router.get('/my_favs', estaAutenticado, async (req, res) => {
-    
+
     try{
         const userId = req.user;
         const products = await FavoritoModel.getAllFavorites(userId);
@@ -159,10 +160,11 @@ router.delete('/my_favs/delete/:productId', estaAutenticado, async (req, res) =>
 router.get('/product/details/:id', async function (req, res) {
     const productId = +req.params.id; // Obtenemos el ID del producto desde la URL
     const productDetails = await ProductModel.findById(productId);
+    const preguntas = await listQuest(productId);
     if (productDetails != null) {
     }
      // Renderiza la vista de detalles del producto y pasa los datos del producto
-    res.render('_product_details.html', { product: productDetails });
+    res.render('_product_details.html', { product: productDetails, preguntas:preguntas });
 
 });
 
@@ -286,6 +288,16 @@ router.post('/sign-up',passport.authenticate('local-signup',{
     passReqToCallback:true,
 }));
 
+router.post('/ask-ans/:productid',estaAutenticado,async function (req, res, next){
+    const text = req.body.questAnswer;
+    const productId = req.params.productid;
+    try {
+        await makeQuest(text,req.user,productId);
+    }catch (e){
+        res.json(e);
+    }
+    res.redirect(`/product/details/${productId}`);
+});
 
 router.get('/logout', function(req, res){
     req.logout(function(err) {
@@ -322,26 +334,26 @@ function isAuth(req,res,next){
 
 /**
  * Pasos para iniciar el pago
- * 
+ *
  * 1- En la consola instalar todas las dependencias del package con la instruccion
- *  opcion01:  npm i 
- *  opcion02:  nom install 
- * 
+ *  opcion01:  npm i
+ *  opcion02:  nom install
+ *
  * 2- En la carpeta general del proyecto fuera de cualquier carpeta agregar un archivo llamado .env
- *  En dicho archivo escribir 
+ *  En dicho archivo escribir
  *      ACCESS_TOKEN=APP_USR-4624116435845049-102711-63a84c8704c091863384d686ec5248ff-1526605858
- * 
+ *
  * Es el token para conectar con api de pruebas
  */
 
 /**
- * 
- * Link: 
+ *
+ * Link:
  * -Para el vendedor https://www.mercadopago.com.ar/home (hay que iniciar sesion con el email y el password) En este home se ven los pagos
- * 
+ *
  * -Para el comprador https://www.mercadopago.com.ar/developers/ (hay que iniciar sesion para pagar)
  * Datos de prueba:
- * 
+ *
  * Usuario de prueba 01	VENDEDOR
 
 {"id":1526605858,"email":"test_user_785561243@testuser.com","nickname":"TESTUSER785561243","site_status":"active","password":"LzORaFgxhj"}
@@ -384,12 +396,12 @@ function formatFechaUltimoMensaje(fechaUltimoMensaje) {
     if (!fechaUltimoMensaje) {
       return 'No hay mensajes';
     }
-  
+
     const now = new Date();
     const messageDate = new Date(fechaUltimoMensaje);
-  
+
     const diffInDays = Math.floor((now - messageDate) / (1000 * 60 * 60 * 24));
-  
+
     if (diffInDays === 0) {
       return 'Hoy';
     } else if (diffInDays === 1) {
@@ -398,7 +410,7 @@ function formatFechaUltimoMensaje(fechaUltimoMensaje) {
       const day = messageDate.getDate().toString().padStart(2, '0');
       const month = (messageDate.getMonth() + 1).toString().padStart(2, '0');
       const year = messageDate.getFullYear();
-  
+
       return `${day}/${month}/${year}`;
     }
   }
