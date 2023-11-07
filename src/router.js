@@ -30,10 +30,42 @@ router.get('/', async function (req, res) {
     const skip = pageSize * (currentPage - 1);
     const usuario_id = req.user;
     const categorias = await ProductModel.getCategorias();
-    const { rows, count } = await ProductModel.getAll(pageSize, skip,category, usuario_id);
+    let { rows, count } = await ProductModel.getAll(pageSize, skip,category, usuario_id);
+
+    if(rows.length % 3 != 0){
+        rows = rows.slice(0, -(rows.length % 3));
+    }
+    
     res.render('home.html', {
         products: rows,
         categories: categorias,
+        pagination: {
+            totalPages: Math.ceil(count / pageSize),
+            currentPage: currentPage,
+        },
+        estaAutenticado: req.isAuthenticated(),
+    });
+});
+
+router.post('/', async function (req, res) {
+    const pageSize = 10;
+    const currentPage = +req.query.page || 1;
+    const category = req.body.category || undefined;
+    const skip = pageSize * (currentPage - 1);
+    const usuario_id = req.user;
+    const categorias = await ProductModel.getCategorias();
+    let { rows, count } = await ProductModel.getAll(pageSize, skip,category, usuario_id);
+
+    if(rows.length % 3 != 0){
+        rows = rows.slice(0, -(rows.length % 3));
+    }
+
+    let selectedCategories = req.body.category || '';
+    
+    res.render('home.html', {
+        products: rows,
+        categories: categorias,
+        selectedCategories: selectedCategories,
         pagination: {
             totalPages: Math.ceil(count / pageSize),
             currentPage: currentPage,
