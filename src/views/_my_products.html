@@ -3,7 +3,7 @@
 
 
 {% block main %}
-    <div class="my products" style="margin-top: 12px;">
+    <div class="my products" style="margin-top: 12px; display: grid; grid-template-columns: repeat(3, 1fr); justify-content: center;">
         <!--<h2>Acá va la lista de productos</h2>-->
         {% for product in products %}
             {{ productCard.productCard(product) }}
@@ -13,9 +13,6 @@
 
 {% block css %} 
 <style>
-    #interestButton{
-        display: none;
-    }
     #btnDelete{
         display: block;
     }

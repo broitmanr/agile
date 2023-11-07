@@ -3,7 +3,7 @@
 
 
 {% block main %}
-    <div class="my favs" style="margin-top: 12px; margin-bottom: 12px;">
+    <div class="my favs" style="margin-top: 12px; margin-bottom: 12px; display: grid; grid-template-columns: repeat(3, 1fr); justify-content: center;">
         {% if products | length > 0 %}
             {% for product in products %}
                 {{ productCard.productCard(product) }}
