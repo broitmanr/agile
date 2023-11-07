@@ -153,6 +153,8 @@
             iconNotification.className = 'fa-solid fa-handshake';
         } else if (notification.tipoNotificacion === 'chat'){
             iconNotification.className = 'fa-solid fa-envelope-open-text';
+        }else if (notification.tipoNotificacion === 'pregunta'){
+            iconNotification.className = 'fa-solid fa-question-circle';
         }
 
         //Agregar fecha de creación
@@ -182,28 +184,28 @@
 
         //Separar Notificacion e icono de la fecha
         const textAndIcon = document.createElement('div');
-        
+
         textAndIcon.appendChild(iconNotification);
 
         const onlyText = document.createElement('span');
         onlyText.textContent = notification.texto;
         onlyText.style.marginRight = '28px';
         textAndIcon.appendChild(onlyText);
-        
+
         //Icono de leido
         const iconRead = document.createElement('i');
         iconRead.className = 'fa-regular fa-circle-check fa-xl';
         iconRead.style.cursor = 'pointer';
         iconRead.title = 'Marcar como leído';
-        iconRead.style.color = '#6982E8';  
+        iconRead.style.color = '#6982E8';
         iconRead.style.marginRight = '10px';
         iconRead.style.position = 'absolute';
         iconRead.style.right = '0';
         textAndIcon.appendChild(iconRead);
-        
+
         textAndIcon.style.display = 'flex';
         textAndIcon.style.alignItems = 'center';
-        
+
         newNotification.appendChild(textAndIcon);
         newNotification.appendChild(timeElement);
 
@@ -280,7 +282,7 @@
                 noNotificationImage.style.marginRight = 'auto';
                 noNotificationDiv.appendChild(noNotificationImage);
             }
-            
+
             const badge = document.querySelector('.badge');
             if(unreadCount > 0){
                 badge.textContent = unreadCount;

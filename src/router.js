@@ -291,8 +291,10 @@ router.post('/sign-up',passport.authenticate('local-signup',{
 router.post('/ask-ans/:productid',estaAutenticado,async function (req, res, next){
     const text = req.body.questAnswer;
     const productId = req.params.productid;
+    const product = await ProductModel.findById(productId);
     try {
         await makeQuest(text,req.user,productId);
+        await createNotificacion(product,req.user,'pregunta');
     }catch (e){
         res.json(e);
     }
