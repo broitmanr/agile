@@ -1,19 +1,19 @@
 const axios = require('axios');
 
 class PaymentService {
-    async createPayment(product) {
+    async createPayment(product, diasAlquiler) {
         const url = 'https://api.mercadopago.com/checkout/preferences';
 
         const body = {
             payer_email: 'test_user_1685160373@testuser.com',
             items: [
                 {
-                    title: `Alquiler rentAR de ${product.nombre}`,
+                    title: `Alquiler rentAR de ${product.nombre} por ${diasAlquiler} dias`,
                     description: `${product.detalle}`,
                     currency_id: `${product.moneda.sigla}`,
                     picture_url: `${product.urlImagen}`,
                     category_id: `${product.categoria.nombre}`,
-                    quantity: 1,
+                    quantity: diasAlquiler,
                     unit_price: product.precio
                 }
             ],

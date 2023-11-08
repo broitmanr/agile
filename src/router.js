@@ -162,10 +162,9 @@ router.get('/product/details/:id', async function (req, res) {
     const productDetails = await ProductModel.findById(productId);
     const preguntas = await listQuest(productId);
     if (productDetails != null) {
-    }
-     // Renderiza la vista de detalles del producto y pasa los datos del producto
+        // Renderiza la vista de detalles del producto y pasa los datos del producto
     res.render('_product_details.html', { product: productDetails, preguntas:preguntas });
-
+    }
 });
 
 router.get('/product/delete/:id', async (req, res) =>{
@@ -373,20 +372,28 @@ Usuario de prueba 02	COMPRADOR
 
  */
 
-router.post('/payment/:productId', estaAutenticado, async (req, res, next) => {
+router.post('/payment/:productId/:diasAlquiler', estaAutenticado, async (req, res, next) => {
     //Datos del producto
     const productId = req.params.productId;
+    const diasAlquiler = parseFloat(req.params.diasAlquiler);
     const product = await ProductModel.findById(productId);
-    console.log(product);
     try {
-        await PaymentInstance.getPaymentLink(req, res, product);
-        //Cambio y guardo el estado del producto
+        await PaymentInstance.getPaymentLink(req, res, product, diasAlquiler);
         product.estado = 'A';
         await product.save();
     } catch (error) {
         console.log(error);
     }
 });
+
+//Ruta para cambiar el estado de alquiler de un producto por id
+router.get('/null/:productId', async (req, res) => {
+    const productId = req.params.productId;
+    const product = await ProductModel.findById(productId);
+    product.estado = null;
+    await product.save();
+    res.redirect(`/`);
+})
 
 /*router.get('/webhook', async (req, res) => {
     console.log('webhook');
