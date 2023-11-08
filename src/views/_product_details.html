@@ -263,7 +263,7 @@
         {% if product.estado !== 'A' and estaAuth === true%}
         <div class="col p-3 d-flex justify-content-start">
             <form>
-                <button type="button" class="btn btn-success" id="formPayment">
+                <button id="openRentalForm" class="btn btn-success">
                     Alquilar Producto
                 </button>
             </form>
@@ -334,18 +334,60 @@
             console.error('Error:', error);
         });
     });
-
-    const payment = document.getElementById('formPayment')
-
-    payment.addEventListener('click', async () => {
-        const response = await fetch('/payment/{{ product.id }}', {
-            method: 'POST'
-        })
-
-        const data = await response.json()
-        console.log(data)
-        window.location.href = data.init_point;
-    })
+</script>
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+    var openRentalFormButton = document.querySelector('#openRentalForm');
+    if (!openRentalFormButton) {
+        console.log('Botón openRentalForm no encontrado.');
+        return;
+    }
+    openRentalFormButton.addEventListener('click', function (event) {
+        event.preventDefault();
+        Swal.fire({
+            title: 'Selecciona la fecha de devolución',
+            html: '<input type="date" id="fechaDevolucion" class="swal2-input">',
+            showCancelButton: true,
+            confirmButtonText: 'Confirmar',
+            cancelButtonText: 'Cancelar',
+            showLoaderOnConfirm: true,
+            preConfirm: () => {
+                const fechaDevolucionInput = Swal.getPopup().querySelector('#fechaDevolucion');
+                if (fechaDevolucionInput) {
+                    const fechaDevolucion = new Date(fechaDevolucionInput.value);
+                    const fechaActual = new Date();
+                    const diasAlquiler = Math.ceil((fechaDevolucion - fechaActual) / (1000 * 60 * 60 * 24));
+                    if (!diasAlquiler || diasAlquiler < 1 || diasAlquiler > 30) {
+                        Swal.showValidationMessage('Por favor, ingresa una fecha válida (entre 1 y 30 días a partir de hoy).');
+                    }
+                    return diasAlquiler;
+                } else {    
+                    console.error('Elemento de entrada no encontrado en el diálogo modal.');
+                }
+            }
+            }).then((result) => {
+        if (result.isConfirmed) {
+                const diasAlquiler = result.value;
+                Swal.fire({
+                    title: 'Días de alquiler confirmados',
+                    text: `Has seleccionado ${diasAlquiler} días para alquilar el producto.`,
+                    icon: 'success',
+                });
+                fetch(`/payment/{{ product.id }}/${diasAlquiler}`, {
+                    method: 'POST'
+                })
+                .then(response => response.json())
+                .then(data => {
+                    console.log('Respuesta de pago recibida:', data);
+                    window.location.href = data.init_point;
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                });
+            }
+        });
+    });
+});
 
 </script>
 {% endblock %}
