@@ -180,7 +180,6 @@ router.delete('/my_favs/delete/:productId', estaAutenticado, async (req, res) =>
         const productId = +req.params.productId;
         console.log(productId);
         await FavoritoModel.deleteFavorito(userId, productId);
-        //res.redirect('/my_favs');
         res.json({ success: true });
     } catch (error){
         console.error(error);
@@ -198,12 +197,12 @@ router.get('/product/details/:id', async function (req, res) {
 
 });
 
-router.get('/product/delete/:id', async (req, res) =>{
+router.delete('/product/delete/:id', async (req, res) =>{
     try{
         const productID = +req.params.id;
         const result = await ProductModel.deleteProduct(productID);
         console.info({message: "¡Eliminado! Se elimino con exito el producto ",result});
-        res.redirect('/my_products');
+        res.json({ success: true });
     } catch (error){
         console.error(error);
         res.status(500).json({ message: "¡Error! No se ha podido eliminar el producto" });

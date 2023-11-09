@@ -104,24 +104,36 @@
         const eliminarButtons = document.querySelectorAll('.eliminar-button');
         eliminarButtons.forEach(button => {
             button.addEventListener('click', function(event) {
+                event.preventDefault();
+
                 const productId = button.getAttribute('data-product-id');
 
                 Swal.fire({
                     title: '¿Estás seguro de que quiere Eliminar el producto?',
                     icon: 'warning',
                     showCancelButton: true,
-                    confirmButtonColor: '#d33',
                     cancelButtonColor: '#6982E8',
+                    cancelButtonText: 'No ¡Me equivoqué!',
+                    confirmButtonColor: '#d33',
                     confirmButtonText: 'Eliminar',
-                    cancelButtonText: 'No, Me equivoqué!',
+                    reverseButtons: true,
                 }).then((result) => {
                     if (result.isConfirmed) {
-                        Swal.fire(
-                            '¡Cancelada!',
-                            'La operación ha sido cancelada.',
-                            'success'
-                        ).then(() => {
-                            window.location.href = '/product/delete/' + productId;
+                        fetch('/product/delete/' + productId, {
+                            method: 'DELETE',
+                        })
+                        .then(response => response.json())
+                        .then(data => {
+                            if(data.success){
+                                Swal.fire(
+                                    '¡Eliminado!',
+                                    'El producto ha sido eliminado.',
+                                    'success'
+                                ); 
+                                document.getElementById('eliminar-' + productId).closest('.product').remove();
+                            }else{
+                                console.error(data.message);
+                            }
                         });
                     }
                 });
