@@ -17,9 +17,9 @@ class PaymentService {
                 }
             ],
             back_urls: {
-                success: 'http://localhost:3000/',
-                failure: 'http://localhost:3000/',
-                pending: 'http://localhost:3000/'
+                success: 'http://localhost:3000/_product_details_success.html',
+                failure: 'http://localhost:3000/_product_details_failure.html',
+                pending: 'http://localhost:3000/_product_details_pending.html'
             },
         };
 
