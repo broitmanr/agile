@@ -54,6 +54,7 @@ Interaccion.init(
 Interaccion.belongsTo(Usuario, { foreignKey: 'locatario_id', as: 'locatario' });
 Interaccion.belongsTo(Usuario, { foreignKey: 'locador_id', as: 'locador' });
 Interaccion.belongsTo(Product, { foreignKey: 'producto_id', as: 'producto'});
+
 /*Interaccion.belongsTo(DetalleTarjeta, { foreignKey: 'detalleTar_id', as: 'detalleTar'})*/
 
 
@@ -93,7 +94,7 @@ const getChat= async (userId, idOwnerProduct, productId) => {
       return createInteraccion(locatarioId, locadorId, productId);
     }
   }
-} 
+}
 const findByUsersProduct = async (locador_id,locatario_id,producto_id)=>{
     const interaccion = await Interaccion.findOne(
         {

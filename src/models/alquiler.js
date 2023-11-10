@@ -3,6 +3,8 @@ const {Sequelize, Model, DataTypes} = require('sequelize');
 const Bd = require('../db.js');
 const sequelize = require('../db.js');
 const Interaccion = require('./interaccion.js');
+const Usuario = require("./usuario");
+const {Product} = require("./product");
 
 class Alquiler extends Model {}
 
@@ -21,7 +23,7 @@ Alquiler.init({
         type: DataTypes.INTEGER,
         allowNull: false,
         references: {
-            model: Interaccion,
+            model: Interaccion.Interaccion,
             key: 'id',
         },
     },
@@ -39,6 +41,8 @@ Alquiler.init({
 {sequelize: Bd, modelName: 'Alquiler', tableName: 'Alquiler'}
 );
 
+
+Alquiler.belongsTo(Interaccion.Interaccion, { foreignKey: 'interaccion_id', as: 'interaccion' });
 const createAlquiler = async(interaccion_id) => {
     const alquiler = await Alquiler.create({
         estado:'PR',
@@ -56,8 +60,35 @@ const cambioEstado = async(alquilerId, estado) => {
     }
 }
 
+const getAlquiler = async(locatario,producto)=>{
+
+    console.log(locatario,producto);
+    const alquiler = await Alquiler.findOne({
+        where: {
+            estado: 'F',
+        },
+        include: [{
+            model: Interaccion.Interaccion,
+            as:'interaccion',
+            where: {
+                locatario_id: locatario,
+                producto_id: producto,
+            },
+        }],
+    })
+    console.log(alquiler);
+   /* const interaccion = await Interaccion.Interaccion.findAll({
+        where: {
+            locatario_id: locatario,
+            producto_id: producto,
+        },
+    });
+    console.log('interaccion',interaccion,'locador',locatario,'producto',producto);*/
+}
+
 module.exports = {
     Alquiler: Alquiler,
     createAlquiler:createAlquiler,
-    cambioEstado:cambioEstado
+    cambioEstado:cambioEstado,
+    getAlquiler:getAlquiler,
 }

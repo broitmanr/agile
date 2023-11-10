@@ -186,6 +186,16 @@
         z-index: -1;
     }
 
+    .calificacion-container {
+        display: inline-block;
+        font-size: 24px;
+        color: #ffd700; /* Color amarillo para las estrellas llenas */
+    }
+
+    .calificacion-container .fa-star {
+        color: #ccc; /* Color gris para las estrellas vacías */
+    }
+
 
 
 </style>
@@ -194,7 +204,8 @@
 {% block main %}
 <div class="container container-central mt-4">
         <div class="col">
-            <h1>{{product.nombre}}</h1>
+            <h1 class="mb-0">{{product.nombre}}</h1>
+            <div class="calificacion-container" data-calificacion="{{product.calificacion}}"></div>
         </div>
     <div class="row mt-4">
         <div class="col-md-4 d-flex justify-content-center">
@@ -312,6 +323,25 @@
         $('.preguntas .btn').click(function() {
             $('.preguntas-contenido').toggle();
         });
+
+
+        // Obtener la calificación del contenedor
+        var calificacion = $('.calificacion-container').data('calificacion');
+
+        // Rellenar las estrellas según la calificación
+        if (calificacion > 0){
+            for (var i = 1; i <= 5; i++) {
+                if (i <= calificacion) {
+                    // Estrella llena
+                    $('.calificacion-container').append('<i class="fas fa-star"></i>');
+                } else {
+                    // Estrella vacía
+                    $('.calificacion-container').append('<i class="far fa-star"></i>');
+                }
+            }
+        }
+
+
     });
 
     document.querySelector('#btnFavs').addEventListener('click', function() {
@@ -361,7 +391,7 @@
                         Swal.showValidationMessage('Por favor, ingresa una fecha válida (entre 1 y 30 días a partir de hoy).');
                     }
                     return diasAlquiler;
-                } else {    
+                } else {
                     console.error('Elemento de entrada no encontrado en el diálogo modal.');
                 }
             }
@@ -387,6 +417,8 @@
             }
         });
     });
+
+
 });
 
 </script>
