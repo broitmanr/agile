@@ -356,7 +356,7 @@ router.post('/payment/:productId', estaAutenticado, async (req, res, next) => {
     }
 });
 
-router.get('/estado_alquilar/:productId', estaAutenticado, async (req, res) => {
+router.get('/details_success/:productId', estaAutenticado, async (req, res) => {
     const productId = req.params.productId;
     const producto = await ProductModel.findById(productId);
     res.render('_product_details_success.html', {product: producto});
