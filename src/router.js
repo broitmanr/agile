@@ -349,15 +349,29 @@ router.post('/payment/:productId', estaAutenticado, async (req, res, next) => {
     //Datos del producto
     const productId = req.params.productId;
     const product = await ProductModel.findById(productId);
-    console.log(product);
     try {
         await PaymentInstance.getPaymentLink(req, res, product);
-        //Cambio y guardo el estado del producto
+    } catch (error) {
+        console.log(error);
+    }
+});
+
+router.get('/estado_alquilar/:productId', estaAutenticado, async (req, res) => {
+    const productId = req.params.productId;
+    const producto = await ProductModel.findById(productId);
+    res.render('_product_details_success.html', {product: producto});
+});
+
+router.post('/estado_alquilar/:productId', estaAutenticado, async (req, res) => {
+    const productId = req.params.productId;
+    const product = await ProductModel.findById(productId);
+    try {
         product.estado = 'A';
         await product.save();
     } catch (error) {
         console.log(error);
     }
+    res.redirect('/');
 });
 
 /*router.get('/webhook', async (req, res) => {
