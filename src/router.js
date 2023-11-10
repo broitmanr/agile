@@ -16,6 +16,7 @@ const  Interaccion  =require('./models/interaccion.js')
 const  FavoritoModel  = require('./models/favorito.js')
 const Alquiler = require('./models/alquiler');
 const PaymentController = require('./controllers/paymentsController.js');
+const CalificacionController = require('./controllers/calificacionController.js');
 const PaymentService = require('./services/paymentsService.js');
 const PaymentInstance = new PaymentController(new PaymentService());
 const {makeQuest,listQuest} = require('./models/pregunta');
@@ -161,10 +162,10 @@ router.get('/product/details/:id', async function (req, res) {
     const productId = +req.params.id; // Obtenemos el ID del producto desde la URL
     const productDetails = await ProductModel.findById(productId);
     const preguntas = await listQuest(productId);
-    // await Alquiler.getAlquiler(req.user,productId);
+    const calificar = await CalificacionController.puedeCalificar(req.user, productId);
     if (productDetails != null) {
         // Renderiza la vista de detalles del producto y pasa los datos del producto
-    res.render('_product_details.html', { product: productDetails, preguntas:preguntas });
+    res.render('_product_details.html', { product: productDetails, preguntas:preguntas,calificar:calificar });
     }
 });
 
@@ -321,9 +322,14 @@ router.post('/sign-in',passport.authenticate('local-signin',{
 
 
 
-router.get('/prueba',isAuth,async function (req, res, next){
-    res.render('prueba.html');
+router.post('/calificar',estaAutenticado, async function(req, res){
+    const alquilerid = req.body.alquiler;
+    const calificacion = req.body.calificacion;
+    console.log('cali',calificacion);
+    const peticion = await CalificacionController.calificar(alquilerid,calificacion);
+    res.json(peticion);
 });
+
 function isAuth(req,res,next){
     if (req.isAuthenticated()){
         return next();

@@ -198,6 +198,24 @@
 
 
 
+    .rating {
+        direction: rtl;
+        unicode-bidi: bidi-override;
+    }
+    .rating input {
+        display: none;
+    }
+    .rating label {
+        font-size: 2em;
+        color: #ddd;
+        cursor: pointer;
+    }
+    .rating input:checked ~ label {
+        color: #ffd700; /* Color amarillo para las estrellas seleccionadas */
+    }
+
+
+
 </style>
 {%endblock%}
 
@@ -288,6 +306,10 @@
             </button>
         </div>
         {% endif %}
+
+        {% if estaAuth === true and calificar !== false %}
+            <data value="{{ calificar | default('') | safe }}" id="calificar"></data>
+        {% endif %}
     </div>
     <div class="row">
 
@@ -319,31 +341,6 @@
 </div>
 
 <script>
-    $(document).ready(function() {
-        $('.preguntas .btn').click(function() {
-            $('.preguntas-contenido').toggle();
-        });
-
-
-        // Obtener la calificación del contenedor
-        var calificacion = $('.calificacion-container').data('calificacion');
-
-        // Rellenar las estrellas según la calificación
-        if (calificacion > 0){
-            for (var i = 1; i <= 5; i++) {
-                if (i <= calificacion) {
-                    // Estrella llena
-                    $('.calificacion-container').append('<i class="fas fa-star"></i>');
-                } else {
-                    // Estrella vacía
-                    $('.calificacion-container').append('<i class="far fa-star"></i>');
-                }
-            }
-        }
-
-
-    });
-
     document.querySelector('#btnFavs').addEventListener('click', function() {
         var productId = this.getAttribute('data-product-id');
         fetch(`/my_favs/${productId}`, {
@@ -421,5 +418,110 @@
 
 });
 
+</script>
+{% endblock %}
+
+{%block js %}
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+<script>
+    $(document).ready(function() {
+        $('.preguntas .btn').click(function() {
+            $('.preguntas-contenido').toggle();
+        });
+
+
+        // Obtener la calificación del contenedor
+        var calificacion = $('.calificacion-container').data('calificacion');
+
+        // Rellenar las estrellas según la calificación
+        if (calificacion > 0){
+            for (var i = 1; i <= 5; i++) {
+                if (i <= calificacion) {
+                    // Estrella llena
+                    $('.calificacion-container').append('<i class="fas fa-star"></i>');
+                } else {
+                    // Estrella vacía
+                    $('.calificacion-container').append('<i class="far fa-star"></i>');
+                }
+            }
+        }
+
+        //     Prueba del swwt alert
+
+        // Código JavaScript para abrir SweetAlert según el parámetro recibido
+        const alquiler = $('#calificar') ? $('#calificar').val() : false;
+
+
+        // Verificar si se debe mostrar el SweetAlert
+        if (alquiler) {
+            mostrarSweetAlert();
+        }
+
+        function mostrarSweetAlert() {
+            Swal.fire({
+                title: 'Calificar alquiler',
+                icon: 'question',
+                html: `
+        <div class="rating">
+          <input type="radio" id="star5" name="rating" value="5" />
+          <label for="star5" title="5 stars"><i class="fas fa-star"></i></label>
+          <input type="radio" id="star4" name="rating" value="4" />
+          <label for="star4" title="4 stars"><i class="fas fa-star"></i></label>
+          <input type="radio" id="star3" name="rating" value="3" />
+          <label for="star3" title="3 stars"><i class="fas fa-star"></i></label>
+          <input type="radio" id="star2" name="rating" value="2" />
+          <label for="star2" title="2 stars"><i class="fas fa-star"></i></label>
+          <input type="radio" id="star1" name="rating" value="1" />
+          <label for="star1" title="1 star"><i class="fas fa-star"></i></label>
+        </div>
+      `,
+                showCancelButton: true,
+                confirmButtonText: 'Calificar',
+                cancelButtonText: 'Cancelar',
+                allowOutsideClick: false,
+                preConfirm: () => {
+                    const rating = document.querySelector('input[name="rating"]:checked');
+                    return rating ? rating.value : null;
+                }
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    const calificacion = result.value;
+                    if (calificacion) {
+                        console.log(calificacion)
+                        fetch('/calificar', {
+                            method: 'POST',
+                            headers: {
+                                'Content-Type': 'application/json',
+                            },
+                            body: JSON.stringify({ alquiler: alquiler, calificacion:calificacion }),
+                        })
+                            .then(response => response.json())
+                            .then(data => {
+                                if (data === 200){
+                                    Swal.fire({
+                                        title: '¡Usted ha calificado el producto!',
+                                        text: 'Gracias por aportar a la comunidad',
+                                        icon: 'success',
+                                        showConfirmButton: false,
+                                        timer: 2400,
+                                    })
+                                }
+                            })
+                            .catch((error) => {
+                                console.error('Error:', error);
+                            });
+
+
+
+                    } else {
+                        Swal.fire('Error', 'Selecciona una calificación antes de confirmar.', 'error');
+                    }
+                }
+            });
+        }
+
+
+
+    });
 </script>
 {% endblock %}

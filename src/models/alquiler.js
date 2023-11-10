@@ -37,6 +37,10 @@ Alquiler.init({
         allowNull: false,
         defaultValue: Sequelize.literal('CURRENT_TIMESTAMP')
     },
+    calificacion:{
+        type:DataTypes.FLOAT,
+        allowNull:true
+    }
 },
 {sequelize: Bd, modelName: 'Alquiler', tableName: 'Alquiler'}
 );
@@ -62,11 +66,11 @@ const cambioEstado = async(alquilerId, estado) => {
 
 const getAlquiler = async(locatario,producto)=>{
 
-    console.log(locatario,producto);
     const alquiler = await Alquiler.findOne({
         where: {
             estado: 'F',
         },
+        attributes:['id','calificacion'],
         include: [{
             model: Interaccion.Interaccion,
             as:'interaccion',
@@ -76,7 +80,7 @@ const getAlquiler = async(locatario,producto)=>{
             },
         }],
     })
-    console.log(alquiler);
+    return alquiler;
    /* const interaccion = await Interaccion.Interaccion.findAll({
         where: {
             locatario_id: locatario,
