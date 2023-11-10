@@ -3,13 +3,14 @@
 
 
 {% block main %}
-    <div class="my products" style="margin-top: 12px; display: grid; grid-template-columns: repeat(3, 1fr); justify-content: center;">
-        <!--<h2>Acá va la lista de productos</h2>-->
+    <div class="my products">
+        <div class="col-9" style="margin-top: 12px; display: grid; grid-template-columns: repeat(3, 1fr); justify-content: center;">
         {% if products | length > 0 %}
             {% for product in products %}
                 {{ productCard.productCard(product) }}
             {% endfor %}
         {% else %}
+        </div>
             <div class="alert alert-warning" role="alert">
                 <div class="d-flex align-items-center">
                     <div class="ui-search-rescue__icon mr-3">

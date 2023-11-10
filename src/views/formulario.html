@@ -7,12 +7,12 @@
 {%endblock%}
 
 {% block main %}
-    <div class="container" id="containerPost">
+    <div class="container" id="containerPostSegundo">
         <div class="form-content">
-            <h1 id="title">Publicar producto</h1>
+            <h1 id="title" style="color: black;">Publicar producto</h1>
             <form action="/formulario" method="post" id="formPostProduct" enctype="multipart/form-data">
                 <div class="input-group" id="inputPost">
-                    <div class="input-field" id="nameInput">
+                    <div class="input-field" id="nameInput" style="margin-top: 1px;">
                         <i class="fa-solid fa-toolbox"></i>
                         <input type="text" name="nombre" placeholder="Nombre">
                     </div>
@@ -61,7 +61,7 @@
                         </div>
                     </div>
                     <br>
-                    <div class="file-select input-field" id="src-file1" >
+                    <div class="file-select input-field" id="src-file1" style="margin-top: 1px;">
                                             <input type="file" id="urlImagen" name="urlImagen">
 <!--                        <input type="file" name="src-file1" aria-label="Archivo">-->
                     </div>
@@ -75,7 +75,7 @@
                     </div>-->
                 </div>
                 <br>
-                <div class="btn-field">
+                <div class="btn-field" style="margin-top: 2px;">
                     <button id="cancel" type="button" style="background-color: #d33;">Cancelar</button>
                     <button id="post" type="submit">Publicar</button>
                 </div>

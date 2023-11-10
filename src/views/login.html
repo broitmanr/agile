@@ -9,8 +9,11 @@
 
 {% block main %}
     <div class="container" id="containerPost">
+        <div class="image-container">
+            <img src="/fondo-login.jpg" id="fondoLogin" alt="fondoLogin">
+        </div>
         <div class="form-content">
-            <h1 id="title">Hola de nuevo!</h1>
+            <h1 id="title" style="color: black;">¡Hola, te extrañábamos!</h1>
             <form action="/sign-in" method="post">
                 <div class="input-group" id="inputPost">
                     <div class="input-field">
@@ -23,12 +26,12 @@
                     </div>
                 </div>
                 <br>
-                <div class="btn-field">
-                    <button id="cancel" type="button" style="background-color: #d33;">Cancelar</button>
+                <div class="btn-field" style="margin-top: 1px;">
+                    <!--<button id="cancel" type="button" style="background-color: #d33;">Cancelar</button>-->
                     <button id="post" type="submit">Entrar</button>
                 </div>
                 <div class="row">
-                    <div class="col">
+                    <div class="col" style="margin-top: 6px;">
                         <a href="/sign-up">¿No tienes una cuenta? Registrate</a>
                     </div>
                 </div>
@@ -61,7 +64,7 @@
             });
         });
     </script>
-
+    <!--
     <script>
         document.querySelector('#cancel').addEventListener('click', function(event) {
             Swal.fire({
@@ -84,7 +87,7 @@
                 }
             });
         });
-    </script>
+    </script>-->
 
     <script>
         $('.select2').select2({
