@@ -30,10 +30,42 @@ router.get('/', async function (req, res) {
     const skip = pageSize * (currentPage - 1);
     const usuario_id = req.user;
     const categorias = await ProductModel.getCategorias();
-    const { rows, count } = await ProductModel.getAll(pageSize, skip,category, usuario_id);
+    let { rows, count } = await ProductModel.getAll(pageSize, skip,category, usuario_id);
+
+    if(rows.length % 3 != 0){
+        rows = rows.slice(0, -(rows.length % 3));
+    }
+    
     res.render('home.html', {
         products: rows,
         categories: categorias,
+        pagination: {
+            totalPages: Math.ceil(count / pageSize),
+            currentPage: currentPage,
+        },
+        estaAutenticado: req.isAuthenticated(),
+    });
+});
+
+router.post('/', async function (req, res) {
+    const pageSize = 10;
+    const currentPage = +req.query.page || 1;
+    const category = req.body.category || undefined;
+    const skip = pageSize * (currentPage - 1);
+    const usuario_id = req.user;
+    const categorias = await ProductModel.getCategorias();
+    let { rows, count } = await ProductModel.getAll(pageSize, skip,category, usuario_id);
+
+    if(rows.length % 3 != 0){
+        rows = rows.slice(0, -(rows.length % 3));
+    }
+
+    let selectedCategories = req.body.category || '';
+    
+    res.render('home.html', {
+        products: rows,
+        categories: categorias,
+        selectedCategories: selectedCategories,
         pagination: {
             totalPages: Math.ceil(count / pageSize),
             currentPage: currentPage,
@@ -148,7 +180,6 @@ router.delete('/my_favs/delete/:productId', estaAutenticado, async (req, res) =>
         const productId = +req.params.productId;
         console.log(productId);
         await FavoritoModel.deleteFavorito(userId, productId);
-        //res.redirect('/my_favs');
         res.json({ success: true });
     } catch (error){
         console.error(error);
@@ -166,12 +197,12 @@ router.get('/product/details/:id', async function (req, res) {
 
 });
 
-router.get('/product/delete/:id', async (req, res) =>{
+router.delete('/product/delete/:id', async (req, res) =>{
     try{
         const productID = +req.params.id;
         const result = await ProductModel.deleteProduct(productID);
         console.info({message: "¡Eliminado! Se elimino con exito el producto ",result});
-        res.redirect('/my_products');
+        res.json({ success: true });
     } catch (error){
         console.error(error);
         res.status(500).json({ message: "¡Error! No se ha podido eliminar el producto" });
@@ -319,6 +350,20 @@ function isAuth(req,res,next){
 }
 
 //Metodos de pago
+
+/**
+ * Pasos para iniciar el pago
+ * 
+ * 1- En la consola instalar todas las dependencias del package con la instruccion
+ *  opcion01:  npm i 
+ *  opcion02:  nom install 
+ * 
+ * 2- En la carpeta general del proyecto fuera de cualquier carpeta agregar un archivo llamado .env
+ *  En dicho archivo escribir 
+ *      ACCESS_TOKEN=APP_USR-4624116435845049-102711-63a84c8704c091863384d686ec5248ff-1526605858
+ * 
+ * Es el token para conectar con api de pruebas
+ */
 
 /**
  * 

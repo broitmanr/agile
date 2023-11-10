@@ -9,9 +9,12 @@
 
 {% block main %}
     <div class="container" id="containerPost">
+        <div class="image-container">
+            <img src="/fondoRegistro.jpg" id="fondoRegistro" alt="fondoRegistro">
+        </div>
         <div class="form-content">
-            <h1 id="title">Bienvenid@</h1>
-            <form action="/sign-up" method="post">
+            <h1 id="title" style="color: black;">Bienvenid@</h1>
+            <form action="/sign-up" method="post" id="formRegistro">
                 <div class="input-group" id="inputPost">
                     <div class="input-field" id="nameInput">
                         <i class="fa-regular fa-user"></i>
@@ -48,12 +51,11 @@
 
                 </div>
                 <br>
-                <div class="btn-field">
-                    <button id="cancel" type="button" style="background-color: #d33;">Cancelar</button>
+                <div class="btn-field" style="margin-top: 1px;">
                     <button id="post" type="submit">Registrarme</button>
                 </div>
                 <div class="row">
-                    <div class="col">
+                    <div class="col" style="margin-top: 6px;">
                         <a href="/sign-in">¿Ya tienes una cuenta? Iniciá sesión</a>
                     </div>
                 </div>
@@ -62,11 +64,11 @@
     </div>
 
     <script>
-        document.getElementById('formPostProduct').addEventListener('submit', function(event){
+        document.getElementById('formRegistro').addEventListener('submit', function(event){
             event.preventDefault();
 
             Swal.fire({
-                title: '¿Desea publicar el producto?',
+                title: '¿Desea crear una cuenta?',
                 showDenyButton: true,
                 confirmButtonColor: '#6982E8',
                 confirmButtonText: 'Confirmar',
@@ -75,7 +77,7 @@
             }).then((result) => {
                 if (result.isConfirmed) {
                     Swal.fire({
-                        title: '¡Usted ha publicado su producto!',
+                        title: '¡Usted ha creado su cuenta!',
                         icon: 'success',
                         showConfirmButton: false,
                         timer: 1200,
@@ -83,30 +85,6 @@
                         event.target.submit();
                     });
                 };
-            });
-        });
-    </script>
-
-    <script>
-        document.querySelector('#cancel').addEventListener('click', function(event) {
-            Swal.fire({
-                title: '¿Estás seguro de que quiere abandonar el lugar?',
-                icon: 'warning',
-                showCancelButton: true,
-                confirmButtonColor: '#d33',
-                cancelButtonColor: '#6982E8',
-                confirmButtonText: 'Salir',
-                cancelButtonText: 'Seguir aquí',
-            }).then((result) => {
-                if (result.isConfirmed) {
-                    Swal.fire(
-                        '¡Cancelada!',
-                        'La operación ha sido cancelada.',
-                        'success'
-                    ).then(() => {
-                        window.location.href = '/';
-                    });
-                }
             });
         });
     </script>
