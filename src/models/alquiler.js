@@ -65,6 +65,7 @@ const cambioEstado = async(alquilerId, estado) => {
     }
 }
 
+<<<<<<< HEAD
 const buscarAlquiler = async(alquilerId) => {
     const alquiler = await Alquiler.findOne({
         where: { id: alquilerId }
@@ -75,9 +76,41 @@ const buscarAlquiler = async(alquilerId) => {
         return null;
     }
 }
+=======
+const getAlquiler = async(locatario,producto)=>{
+
+    const alquiler = await Alquiler.findOne({
+        where: {
+            estado: 'F',
+        },
+        attributes:['id','calificacion'],
+        include: [{
+            model: Interaccion.Interaccion,
+            as:'interaccion',
+            where: {
+                locatario_id: locatario,
+                producto_id: producto,
+            },
+        }],
+    })
+    return alquiler;
+   /* const interaccion = await Interaccion.Interaccion.findAll({
+        where: {
+            locatario_id: locatario,
+            producto_id: producto,
+        },
+    });
+    console.log('interaccion',interaccion,'locador',locatario,'producto',producto);*/
+}
+
+>>>>>>> main
 module.exports = {
     Alquiler: Alquiler,
     createAlquiler:createAlquiler,
     cambioEstado:cambioEstado,
+<<<<<<< HEAD
     buscarAlquiler:buscarAlquiler
+=======
+    getAlquiler:getAlquiler,
+>>>>>>> main
 }

@@ -58,8 +58,18 @@ function notificacionFormato(tipo, user, product) {
         return `${user.nombre} ${user.apellido} ha iniciado una conversación contigo por tu ${product.nombre}`;
     } else if (tipo === 'alquiler'){
         return `${user.nombre} ${user.apellido} ha alquilado tu ${product.nombre}`;
+    } else if (tipo === 'pregunta'){
+        return `${user.nombre} ${user.apellido} te hizo una pregunta sobre ${product.nombre}`;
     } else {
         throw new Error (`No se reconoce el tipo de notificación ${tipo}`);
+    }
+}
+
+function getIcono(tipo){
+    switch (tipo){
+        case 'chat': return 'fa-comment';
+        case 'alquiler': return 'fa-shopping-cart';
+        case 'pregunta': return'fa-question-circle';
     }
 }
 
@@ -68,10 +78,11 @@ const createNotificacion = async(product, userId, tipo) => {
     const userReceptor = product.usuario_id;
     const user = await Usuario.findByPk(userId);
     const texto = notificacionFormato(tipo, user, product);
+    const icono = getIcono(tipo);
     const notificacion = await Notificacion.create({
         texto: texto,
         estado:'N',
-        icono_fa:product.categoria.icono_fa,
+        icono_fa:icono,
         usuario_id:userReceptor,
         tipoNotificacion: tipo
     });

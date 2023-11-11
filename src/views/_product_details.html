@@ -1,4 +1,5 @@
 {% extends "_base.html" %}
+{% import "_pregunta.html" as preguntaMacro %}
 
 {% block css %}
 <style>
@@ -94,14 +95,141 @@
         margin-top: 27px;
         margin-right: 20px;
     }
+
+    .preguntas {
+        margin-top: 20px;
+    }
+
+    .preguntas h2 {
+        font-size: 20px;
+        margin-bottom: 10px;
+    }
+
+    .preguntas .btn {
+        width: 100%;
+        margin-bottom: 10px;
+    }
+
+    .preguntas-contenido {
+        display: none;
+        background-color: #252F46;
+        padding: 20px;
+        border-radius: 5px;
+    }
+
+    .preguntas-contenido ul {
+        list-style: none;
+        margin: 0;
+        padding: 0;
+    }
+
+    .preguntas-contenido li {
+        margin-bottom: 10px;
+    }
+
+    .preguntas-contenido li .pregunta-respuesta{
+        margin-bottom: 1em;
+        position: relative;
+        width: 100%;
+        float: left;
+        padding: 10px;
+        border-radius: 5px;
+    }
+
+
+    .pregunta{
+        width: 80%;
+        border-radius: 25px;
+        padding: 12px;
+        background: gray;
+        color: white;
+        padding: 10px;
+        position: relative;
+        font-family: sans-serif;
+        z-index: 1;
+    }
+    .pregunta::after {
+        content: '';
+        position: absolute;
+        bottom: 0;
+        left: -20px;
+        background: transparent;
+        width: 0px; height: 0px;
+        border-bottom: 40px solid gray;
+        border-right: 40px solid transparent;
+        border-left: 40px solid transparent;
+        transform: rotate(180deg);
+        z-index: -1;
+    }
+
+
+    .respuesta{
+        margin-top: 0.5em;
+        float: right;
+        border-radius: 25px;
+        padding: 12px;
+        background: lightcoral;
+        color: white;
+        padding: 10px;
+        position: relative;
+        width: 80%;
+        font-family: sans-serif;
+        z-index: 1;
+    }
+    .respuesta::after {
+
+        content: '';
+        position: absolute;
+        bottom: 0;
+        right: -20px;
+        background: transparent;
+        width: 0px; height: 0px;
+        border-bottom: 40px solid lightcoral;
+        border-right: 40px solid transparent;
+        border-left: 40px solid transparent;
+        transform: rotate(180deg);
+        z-index: -1;
+    }
+
+    .calificacion-container {
+        display: inline-block;
+        font-size: 24px;
+        color: #ffd700; /* Color amarillo para las estrellas llenas */
+    }
+
+    .calificacion-container .fa-star {
+        color: #ccc; /* Color gris para las estrellas vacías */
+    }
+
+
+
+    .rating {
+        direction: rtl;
+        unicode-bidi: bidi-override;
+    }
+    .rating input {
+        display: none;
+    }
+    .rating label {
+        font-size: 2em;
+        color: #ddd;
+        cursor: pointer;
+    }
+    .rating input:checked ~ label {
+        color: #ffd700; /* Color amarillo para las estrellas seleccionadas */
+    }
+
+
+
 </style>
 {%endblock%}
 
 {% block main %}
 <div class="container container-central mt-4">
-    <div class="col">
-        <h1>{{product.nombre}}</h1>
-    </div>
+        <div class="col">
+            <h1 class="mb-0">{{product.nombre}}</h1>
+            <div class="calificacion-container" data-calificacion="{{product.calificacion}}"></div>
+        </div>
     <div class="row mt-4">
         <div class="col-md-4 d-flex justify-content-center">
             {% if product.urlImagen %}
@@ -211,7 +339,38 @@
             </button>
         </div>
         {% endif %}
+
+        {% if estaAuth === true and calificar !== false %}
+            <data value="{{ calificar | default('') | safe }}" id="calificar"></data>
+        {% endif %}
     </div>
+    <div class="row">
+
+        <div class="preguntas">
+            <h2>Preguntas</h2>
+            <button class="btn btn-primary">Ver preguntas</button>
+        </div>
+
+        <div class="preguntas-contenido">
+            <ul>
+                {% if preguntas | length > 0 %}
+                {% for pregunta in preguntas %}
+                {{ preguntaMacro.preguntaMacro(pregunta) }}
+                {% endfor %}
+                {% endif %}
+            </ul>
+            {% if estaAuth === true %}
+                <form action="/ask-ans/{{ product.id }}" method="POST" id="formQuest">
+                    <input type="text" name="questAnswer" placeholder="Pregunta" class="form-control" style="width: 80%; display: inline">
+                    <button type="submit" id="btn-send" class="btn btn-outline-info"
+                            style="display: inline"><i class="fa-solid fa-paper-plane fa-xl"></i>Enviar</button>
+                </form>
+            {% endif %}
+        </div>
+
+    </div>
+
+
 </div>
 
 <script>
@@ -235,20 +394,64 @@
                 console.error('Error:', error);
             });
     });
-
-    const payment = document.getElementById('formPayment')
-
-    payment.addEventListener('click', async () => {
-        const response = await fetch('/payment/{{ product.id }}', {
-            method: 'POST'
-        })
-
-        const data = await response.json()
-        console.log(data)
-        window.location.href = data.init_point;
-    })
-
 </script>
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+    var openRentalFormButton = document.querySelector('#openRentalForm');
+    if (!openRentalFormButton) {
+        console.log('Botón openRentalForm no encontrado.');
+        return;
+    }
+    openRentalFormButton.addEventListener('click', function (event) {
+        event.preventDefault();
+        Swal.fire({
+            title: 'Selecciona la fecha de devolución',
+            html: '<input type="date" id="fechaDevolucion" class="swal2-input">',
+            showCancelButton: true,
+            confirmButtonText: 'Confirmar',
+            cancelButtonText: 'Cancelar',
+            showLoaderOnConfirm: true,
+            preConfirm: () => {
+                const fechaDevolucionInput = Swal.getPopup().querySelector('#fechaDevolucion');
+                if (fechaDevolucionInput) {
+                    const fechaDevolucion = new Date(fechaDevolucionInput.value);
+                    const fechaActual = new Date();
+                    const diasAlquiler = Math.ceil((fechaDevolucion - fechaActual) / (1000 * 60 * 60 * 24));
+                    if (!diasAlquiler || diasAlquiler < 1 || diasAlquiler > 30) {
+                        Swal.showValidationMessage('Por favor, ingresa una fecha válida (entre 1 y 30 días a partir de hoy).');
+                    }
+                    return diasAlquiler;
+                } else {
+                    console.error('Elemento de entrada no encontrado en el diálogo modal.');
+                }
+            }
+            }).then((result) => {
+        if (result.isConfirmed) {
+                const diasAlquiler = result.value;
+                Swal.fire({
+                    title: 'Días de alquiler confirmados',
+                    text: `Has seleccionado ${diasAlquiler} días para alquilar el producto.`,
+                    icon: 'success',
+                });
+                fetch(`/payment/{{ product.id }}/${diasAlquiler}`, {
+                    method: 'POST'
+                })
+                .then(response => response.json())
+                .then(data => {
+                    console.log('Respuesta de pago recibida:', data);
+                    window.location.href = data.init_point;
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                });
+            }
+        });
+    });
+
+
+});
+</script>
+
 <script>
 
     $(document).ready(function(){
@@ -280,4 +483,109 @@
 
 })
 </script>
+
+
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+<script>
+    $(document).ready(function() {
+        $('.preguntas .btn').click(function() {
+            $('.preguntas-contenido').toggle();
+        });
+
+
+        // Obtener la calificación del contenedor
+        var calificacion = $('.calificacion-container').data('calificacion');
+
+        // Rellenar las estrellas según la calificación
+        if (calificacion > 0){
+            for (var i = 1; i <= 5; i++) {
+                if (i <= calificacion) {
+                    // Estrella llena
+                    $('.calificacion-container').append('<i class="fas fa-star"></i>');
+                } else {
+                    // Estrella vacía
+                    $('.calificacion-container').append('<i class="far fa-star"></i>');
+                }
+            }
+        }
+
+        //     Prueba del swwt alert
+
+        // Código JavaScript para abrir SweetAlert según el parámetro recibido
+        const alquiler = $('#calificar') ? $('#calificar').val() : false;
+
+
+        // Verificar si se debe mostrar el SweetAlert
+        if (alquiler) {
+            mostrarSweetAlert();
+        }
+
+        function mostrarSweetAlert() {
+            Swal.fire({
+                title: 'Calificar alquiler',
+                icon: 'question',
+                html: `
+        <div class="rating">
+          <input type="radio" id="star5" name="rating" value="5" />
+          <label for="star5" title="5 stars"><i class="fas fa-star"></i></label>
+          <input type="radio" id="star4" name="rating" value="4" />
+          <label for="star4" title="4 stars"><i class="fas fa-star"></i></label>
+          <input type="radio" id="star3" name="rating" value="3" />
+          <label for="star3" title="3 stars"><i class="fas fa-star"></i></label>
+          <input type="radio" id="star2" name="rating" value="2" />
+          <label for="star2" title="2 stars"><i class="fas fa-star"></i></label>
+          <input type="radio" id="star1" name="rating" value="1" />
+          <label for="star1" title="1 star"><i class="fas fa-star"></i></label>
+        </div>
+      `,
+                showCancelButton: true,
+                confirmButtonText: 'Calificar',
+                cancelButtonText: 'Cancelar',
+                allowOutsideClick: false,
+                preConfirm: () => {
+                    const rating = document.querySelector('input[name="rating"]:checked');
+                    return rating ? rating.value : null;
+                }
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    const calificacion = result.value;
+                    if (calificacion) {
+                        console.log(calificacion)
+                        fetch('/calificar', {
+                            method: 'POST',
+                            headers: {
+                                'Content-Type': 'application/json',
+                            },
+                            body: JSON.stringify({ alquiler: alquiler, calificacion:calificacion }),
+                        })
+                            .then(response => response.json())
+                            .then(data => {
+                                if (data === 200){
+                                    Swal.fire({
+                                        title: '¡Usted ha calificado el producto!',
+                                        text: 'Gracias por aportar a la comunidad',
+                                        icon: 'success',
+                                        showConfirmButton: false,
+                                        timer: 2400,
+                                    })
+                                }
+                            })
+                            .catch((error) => {
+                                console.error('Error:', error);
+                            });
+
+
+
+                    } else {
+                        Swal.fire('Error', 'Selecciona una calificación antes de confirmar.', 'error');
+                    }
+                }
+            });
+        }
+
+
+
+    });
+</script>
+
 {% endblock %}

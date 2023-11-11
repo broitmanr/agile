@@ -84,6 +84,9 @@ Product.init({
     },
     estado:{
         type: DataTypes.STRING, // A (alquilado), N (No disponible), null (disponible)
+    },
+    calificacion:{
+        type: DataTypes.FLOAT,
     }
 },
 {sequelize: Bd, modelName: 'Product', tableName: 'Producto'}
