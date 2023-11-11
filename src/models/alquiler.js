@@ -3,6 +3,8 @@ const {Sequelize, Model, DataTypes} = require('sequelize');
 const Bd = require('../db.js');
 const sequelize = require('../db.js');
 const Interaccion = require('./interaccion.js');
+const Usuario = require("./usuario");
+const {Product} = require("./product");
 
 class Alquiler extends Model {}
 
@@ -21,7 +23,7 @@ Alquiler.init({
         type: DataTypes.INTEGER,
         allowNull: false,
         references: {
-            model: Interaccion,
+            model: Interaccion.Interaccion,
             key: 'id',
         },
     },
@@ -35,10 +37,16 @@ Alquiler.init({
         allowNull: false,
         defaultValue: Sequelize.literal('CURRENT_TIMESTAMP')
     },
+    calificacion:{
+        type:DataTypes.FLOAT,
+        allowNull:true
+    }
 },
 {sequelize: Bd, modelName: 'Alquiler', tableName: 'Alquiler'}
 );
 
+
+Alquiler.belongsTo(Interaccion.Interaccion, { foreignKey: 'interaccion_id', as: 'interaccion' });
 const createAlquiler = async(interaccion_id) => {
     const alquiler = await Alquiler.create({
         estado:'PR',
