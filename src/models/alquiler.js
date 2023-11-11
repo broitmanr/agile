@@ -56,8 +56,19 @@ const cambioEstado = async(alquilerId, estado) => {
     }
 }
 
+const buscarAlquiler = async(alquilerId) => {
+    const alquiler = await Alquiler.findOne({
+        where: { id: alquilerId }
+    });
+    if (alquiler ){
+        return alquiler
+    } else {
+        return null;
+    }
+}
 module.exports = {
     Alquiler: Alquiler,
     createAlquiler:createAlquiler,
-    cambioEstado:cambioEstado
+    cambioEstado:cambioEstado,
+    buscarAlquiler:buscarAlquiler
 }
