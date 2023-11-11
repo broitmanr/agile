@@ -39,7 +39,7 @@ router.get('/', async function (req, res) {
     if(rows.length % 3 != 0){
         rows = rows.slice(0, -(rows.length % 3));
     }
-    
+
     res.render('home.html', {
         products: rows,
         categories: categorias,
@@ -65,7 +65,7 @@ router.post('/', async function (req, res) {
     }
 
     let selectedCategories = req.body.category || '';
-    
+
     res.render('home.html', {
         products: rows,
         categories: categorias,
@@ -196,9 +196,10 @@ router.get('/product/details/:id', async function (req, res) {
     const productDetails = await ProductModel.findById(productId);
     const preguntas = await listQuest(productId);
     const calificar = await CalificacionController.puedeCalificar(req.user, productId);
+    const devolver = req.user === productDetails.usuario_id ? await Alquiler.getAlquilerByProducto(productId) : false;
     if (productDetails != null) {
         // Renderiza la vista de detalles del producto y pasa los datos del producto
-    res.render('_product_details.html', { product: productDetails, preguntas:preguntas,calificar:calificar });
+    res.render('_product_details.html', { product: productDetails, preguntas:preguntas,calificar:calificar, devolver:devolver });
     }
 });
 
@@ -502,6 +503,18 @@ router.post('/_product_details_EAlquilado/:alquilerId', estaAutenticado, async (
     await Alquiler.cambioEstado(alquilerID,'A');
     res.json({ success: true });
 });
+
+router.post('/producto_devuelto/:alquilerId', estaAutenticado, async (req, res) => {
+    const alquilerID= req.params.alquilerId;
+    const producto = await Alquiler.buscarProductoByAlquiler(alquilerID);
+    console.log(producto);
+    await Alquiler.cambioEstado(alquilerID,'F');
+    producto.estado = null;
+    await producto.save();
+
+    res.json({ success: true });
+});
+
 
 /**
  * parametros de id producto y alquiler

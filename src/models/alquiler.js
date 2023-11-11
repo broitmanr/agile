@@ -5,6 +5,7 @@ const sequelize = require('../db.js');
 const Interaccion = require('./interaccion.js');
 const Usuario = require("./usuario");
 const {Product} = require("./product");
+const {bus} = require("nodemon/lib/utils");
 
 class Alquiler extends Model {}
 
@@ -75,6 +76,20 @@ const buscarAlquiler = async(alquilerId) => {
         return null;
     }
 }
+
+const buscarProductoByAlquiler = async(alquilerId) => {
+    const alquiler = await Alquiler.findOne({
+        where: { id: alquilerId }
+    });
+    if (alquiler){
+        const interaccion = await Interaccion.Interaccion.findByPk(alquiler.interaccion_id);
+        const productoid = interaccion.producto_id;
+        const product = await Product.findByPk(productoid);
+        return product;
+    } else {
+        return null;
+    }
+}
 const getAlquiler = async(locatario,producto)=>{
 
     const alquiler = await Alquiler.findOne({
@@ -92,13 +107,29 @@ const getAlquiler = async(locatario,producto)=>{
         }],
     })
     return alquiler;
-   /* const interaccion = await Interaccion.Interaccion.findAll({
+}
+
+
+const getAlquilerByProducto = async(producto)=>{
+
+    const alquiler = await Alquiler.findOne({
         where: {
-            locatario_id: locatario,
-            producto_id: producto,
+            estado: 'A',
         },
-    });
-    console.log('interaccion',interaccion,'locador',locatario,'producto',producto);*/
+        include: [{
+            model: Interaccion.Interaccion,
+            as:'interaccion',
+            where: {
+                producto_id: producto,
+            },
+        }],
+    })
+
+    if (alquiler){
+        return alquiler.id
+    }else{
+        return false
+    }
 }
 
 module.exports = {
@@ -107,4 +138,6 @@ module.exports = {
     cambioEstado:cambioEstado,
     buscarAlquiler:buscarAlquiler,
     getAlquiler:getAlquiler,
+    getAlquilerByProducto:getAlquilerByProducto,
+    buscarProductoByAlquiler:buscarProductoByAlquiler,
 }

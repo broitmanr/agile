@@ -297,7 +297,12 @@
                 </button>
             </form>
         </div>
-        {% if alquiler == null %} 
+
+        {% if estaAuth and devolver != false %}
+            <button id="devolver" class="btn btn-info" data-alquiler-id="{{devolver}}">Me lo devolvieron</button>
+        {% endif %}
+
+        {% if alquiler == null %}
             {% if product.estado !== 'A' and estaAuth === true%}
             <div class="col p-3 d-flex justify-content-start">
                 <form>
@@ -460,7 +465,7 @@
         console.log("El valor de alquilerID dentro de productDetails.html es: ", alquilerId)
         btnLoRetire.on('click', async () => {
             try {
-                const response = await fetch(`/_product_details_EAlquilado/${alquilerId}`, 
+                const response = await fetch(`/_product_details_EAlquilado/${alquilerId}`,
                 {
                     method: 'POST'
                  });
@@ -480,6 +485,35 @@
                 console.error('Error post el endopoint /_product_details_EstaAlquilado/${alquilerId}:', error);
             }
         });
+
+
+        const btnDevolvieron = $('#devolver');
+        if(btnDevolvieron){
+            const alquiler = btnDevolvieron.data('alquiler-id');
+            btnDevolvieron.on('click', async () => {
+                try {
+                    const response = await fetch(`/producto_devuelto/${alquiler}`,
+                        {
+                            method: 'POST'
+                        });
+                    const data = await response.json();
+                    console.log(data);
+                    if (data.success) {
+                        Swal.fire({
+                            title: 'Genial, te devolvieron el producto',
+                            text:'Gracias por aportar, se te acreditará el dinero en las proximas 48Hs',
+                            icon: 'success'
+                        }).then(() => {
+                            window.location.href = '/';
+                        });
+                    } else {
+                        console.error('Error:', data.error);
+                    }
+                } catch (error) {
+                    console.error(error);
+                }
+            });
+        }
 
 })
 </script>
