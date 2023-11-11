@@ -401,6 +401,9 @@ router.post('/payment/:productId', estaAutenticado, async (req, res, next) => {
     }
 });
 
+/**
+ * Ruta que se usa para que MP responda por success y redireccione a la pagina _product_details_success.html
+ */
 router.get('/details_success/:productId', estaAutenticado, async (req, res) => {
     const productId = req.params.productId;
     const producto = await ProductModel.findById(productId);
@@ -413,10 +416,11 @@ router.post('/estado_alquilar/:productId', estaAutenticado, async (req, res) => 
     try {
         product.estado = 'A';
         await product.save();
+        res.json({ success: true });
     } catch (error) {
-        console.log(error);
+        console.error(error);
+        res.status(500).json ({ message: "¡Error! No se logró cambiar a estado alquilado"});
     }
-    res.redirect('/');
 });
 
 /*router.get('/webhook', async (req, res) => {
