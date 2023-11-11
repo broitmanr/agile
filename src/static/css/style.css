@@ -3,7 +3,7 @@
 }
 
 body {
-    background-color: var(--bs-gray-400);
+    background-color: #EEEEEE;
 }
 .navbar {
     background-color: #000000;
@@ -26,7 +26,7 @@ body {
 .pagination .current {
     display: inline-block;
     padding: 0.5rem 1rem;
-    background:var(--bs-gray-400);
+    background-color: #EEEEEE;
 }
 
 .pagination ul {
