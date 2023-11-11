@@ -65,7 +65,6 @@ const cambioEstado = async(alquilerId, estado) => {
     }
 }
 
-<<<<<<< HEAD
 const buscarAlquiler = async(alquilerId) => {
     const alquiler = await Alquiler.findOne({
         where: { id: alquilerId }
@@ -76,7 +75,6 @@ const buscarAlquiler = async(alquilerId) => {
         return null;
     }
 }
-=======
 const getAlquiler = async(locatario,producto)=>{
 
     const alquiler = await Alquiler.findOne({
@@ -103,14 +101,10 @@ const getAlquiler = async(locatario,producto)=>{
     console.log('interaccion',interaccion,'locador',locatario,'producto',producto);*/
 }
 
->>>>>>> main
 module.exports = {
     Alquiler: Alquiler,
     createAlquiler:createAlquiler,
     cambioEstado:cambioEstado,
-<<<<<<< HEAD
-    buscarAlquiler:buscarAlquiler
-=======
+    buscarAlquiler:buscarAlquiler,
     getAlquiler:getAlquiler,
->>>>>>> main
 }
