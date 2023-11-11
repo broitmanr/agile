@@ -26,7 +26,7 @@ const router = express.Router();
 
 
 router.get('/', async function (req, res) {
-    const pageSize = 10;
+    const pageSize = 9;
     const currentPage = +req.query.page || 1;
     const category = req.query.type || undefined;
     const skip = pageSize * (currentPage - 1);
@@ -34,9 +34,6 @@ router.get('/', async function (req, res) {
     const categorias = await ProductModel.getCategorias();
     let { rows, count } = await ProductModel.getAll(pageSize, skip,category, usuario_id);
 
-    if(rows.length % 3 != 0){
-        rows = rows.slice(0, -(rows.length % 3));
-    }
 
     res.render('home.html', {
         products: rows,
@@ -50,17 +47,13 @@ router.get('/', async function (req, res) {
 });
 
 router.post('/', async function (req, res) {
-    const pageSize = 10;
+    const pageSize = 9;
     const currentPage = +req.query.page || 1;
     const category = req.body.category || undefined;
     const skip = pageSize * (currentPage - 1);
     const usuario_id = req.user;
     const categorias = await ProductModel.getCategorias();
     let { rows, count } = await ProductModel.getAll(pageSize, skip,category, usuario_id);
-
-    if(rows.length % 3 != 0){
-        rows = rows.slice(0, -(rows.length % 3));
-    }
 
     let selectedCategories = req.body.category || '';
 
