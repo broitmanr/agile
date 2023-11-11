@@ -410,6 +410,24 @@ router.get('/details_success/:productId', estaAutenticado, async (req, res) => {
     res.render('_product_details_success.html', {product: producto});
 });
 
+/**
+ * Ruta que se usa para que MP responda por pending y redireccione a la pagina _product_details_pending.html
+ */
+router.get('/details_pending/:productId', estaAutenticado, async (req, res) => {
+    const productId = req.params.productId;
+    const producto = await ProductModel.findById(productId);
+    res.render('_product_details_pending.html', {product: producto});
+});
+
+/**
+ * Ruta que se usa para que MP responda por failure y redireccione a la pagina _product_details_failure.html
+ */
+router.get('/details_failure/:productId', estaAutenticado, async (req, res) => {
+    const productId = req.params.productId;
+    const producto = await ProductModel.findById(productId);
+    res.render('_product_details_failure.html', {product: producto});
+});
+
 router.post('/estado_alquilar/:productId', estaAutenticado, async (req, res) => {
     const productId = req.params.productId;
     const product = await ProductModel.findById(productId);

@@ -149,6 +149,7 @@ const getAllProducts = (limit, skip, type, usuario_id) => {
         where: where,
         // Agregamos la instrucción para que la lista venga ordenada directamente para toda la app
         order: [
+            ['estado', 'ASC'],
             ['nombre', 'ASC'],
             ['precio', 'ASC'],
         ],

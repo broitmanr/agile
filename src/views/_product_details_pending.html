@@ -2,7 +2,6 @@
 
 {% block css %}
 <style>
-
     /**{*/
     /*    margin: 0;*/
     /*    padding: 0;*/
@@ -10,7 +9,7 @@
     /*    box-sizing: border-box;*/
     /*    text-decoration: none;*/
     /*}*/
-    .container-central{
+    .container-central {
         width: 90%;
         height: 90%;
         background-color: #1A2234;
@@ -21,29 +20,32 @@
         position: relative;
     }
 
-    h1{
+    h1 {
         font-size: 2em;
         margin-bottom: 60px;
         color: #FFFFFF;
         position: relative;
     }
-    .span-label{
+
+    .span-label {
         font-size: 1.4em;
         margin-bottom: 60px;
         color: #FFFFFF;
-        float:left;
+        float: left;
     }
-    .span-content{
+
+    .span-content {
         font-size: 1.2em;
         margin-bottom: 60px;
         color: #FFFFFF;
         position: relative;
     }
 
-    .row-detalle{
+    .row-detalle {
         height: 4em;
     }
-    .input-field select{
+
+    .input-field select {
         width: 25%;
         background-color: #828A97;
         color: #FFFFFF;
@@ -52,11 +54,11 @@
         outline: none;
     }
 
-    .input-field select option{
+    .input-field select option {
         color: #828A97;
     }
 
-    .btn-field{
+    .btn-field {
         width: 100%;
         display: flex;
         justify-content: center;
@@ -64,13 +66,14 @@
         top: -15px;
     }
 
-    .btn-field button{
+    .btn-field button {
         flex-basis: 48%;
         font-size: 14px;
         background-color: #6982E8;
         color: #FFFFFF;
         height: 35px;
-        border-radius: 8px; /*Eliminar en caso de que se quiera hacer el botón como un cuadrado*/
+        border-radius: 8px;
+        /*Eliminar en caso de que se quiera hacer el botón como un cuadrado*/
         border: 0;
         outline: 0;
         border: none;
@@ -79,31 +82,34 @@
         transition: background 1s;
         margin-right: 10px;
     }
-    #btnFavs:hover{
+
+    #btnFavs:hover {
         background-color: transparent;
     }
-    #btnFavs{
+
+    #btnFavs {
         position: absolute;
         top: 0;
         right: 0;
         margin-top: 27px;
         margin-right: 20px;
     }
-
 </style>
 {%endblock%}
 
 {% block main %}
 <div class="container container-central mt-4">
-        <div class="col">
-            <h1>{{product.nombre}}</h1>
-        </div>
+    <div class="col">
+        <h1>{{product.nombre}}</h1>
+    </div>
     <div class="row mt-4">
         <div class="col-md-4 d-flex justify-content-center">
             {% if product.urlImagen %}
-                <img src="{{ product.urlImagen }}" alt="Imagen de {{ product.nombre }}" width="200px" height="200px" class="rounded border b-2" loading="async" />
+            <img src="{{ product.urlImagen }}" alt="Imagen de {{ product.nombre }}" width="200px" height="200px"
+                class="rounded border b-2" loading="async" />
             {% else %}
-                <img src="/no-image.jpg" alt="Imagen de {{ product.nombre }}" width="200px" height="200px" class="rounded border b-2" loading="async" onerror="this.onerror=null; this.src='/no-image.jpg';"/>
+            <img src="/no-image.jpg" alt="Imagen de {{ product.nombre }}" width="200px" height="200px"
+                class="rounded border b-2" loading="async" onerror="this.onerror=null; this.src='/no-image.jpg';" />
             {% endif %}
         </div>
         <div class="col-md-8">
@@ -123,15 +129,14 @@
                     <span class="span-content"> {{ product.categoria.nombre }}</span>
                 </div>
             </div>
-
             <div class="row row-detalle">
                 <div class="col-md-3 m-1">
                     <strong class="span-label">Precio:</strong>
                 </div>
                 <div class="col-md-4 m-1">
-                    <span class="span-content"> {{ product.moneda.simbolo }} {{ product.precio }} {{ product.moneda.sigla }}</span>
+                    <span class="span-content"> {{ product.moneda.simbolo }} {{ product.precio }} {{
+                        product.moneda.sigla }}</span>
                 </div>
-
             </div>
             <div class="row row-detalle">
                 <div class="col-md-3 m-1">
@@ -147,29 +152,31 @@
                     <span style="color: #ced4da;float: left"> {{ product.detalle }}</span>
                 </div>
             </div>
-
         </div>
-        <div>
-            <p>
-                <i class="fa-solid fa-circle-info"></i>
-                El pago esta pendiente por favor comunicarse con el vendedor y con la organizacion. Gracias.
-            </p>
+    </div>
+    <hr style="border: 2px solid white; margin-left: 3px; margin-right: 3px; margin-top: 25px;">
+    <div class="row mt-4">
+        <div class="col-md-4 d-flex justify-content-center">
+            <img src="/iconWarning.png" alt="Imagen de success" width="200px" height="200px" class="rounded border b-2"
+                loading="async" onerror="this.onerror=null; this.src='/no-image.jpg';" />
         </div>
-
+        <div class="col-md-8">
+            <p style="color: white; font-size: larger; margin: 5% 5%;"> 
+                El pago esta pendiente por favor comunicarse con el vendedor y con la organizacion. 
+                O enviar el comprobante cuando se realice el pago pendiente. Gracias.</p>
+        </div>
     </div>
     <div class="row mt-4">
         <div class="col p-3 d-flex justify-content-start">
             <a href="/" class="btn btn-primary"><i class="fa-solid fa-arrow-left fa-bounce"></i>    Volver</a>
         </div>
-        <div class="col p-3 d-flex justify-content-center">
+        <!--div class="col p-3 d-flex justify-content-center">
             <form action="/chat/{{ product.id }}" method="POST">
                 <button type="submit" class="btn btn-primary">
                     <i class="fab fa-facebook-messenger"></i> Enviar mensaje
                 </button>
             </form>
-        </div>
+        </div-->
     </div>
 </div>
-
-
 {% endblock %}

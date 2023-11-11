@@ -215,32 +215,6 @@
                 console.error('Error al realizar la solicitud POST:', error);
             });
     });
-    /*const estadoAlquilar = document.getElementById('btnEstadoAlquilar')
-    estadoAlquilar.addEventListener('click', async () => {
-        const response = await fetch('/estado_alquilar/{{ product.id }}',{
-            method: 'POST'
-        })
-        const data = await response.json()
-        console.log(data)
-        window.location.href = '/';
-    })*/
-
-    /*
-    document.querySelector('#btnEstadoAlquilar').addEventListener('click', function() {
-        const productId = button.getAttribute('data-product-id');
-        window.location.href = '/estado_alquilar/'+ productId;;
-    });
-
-    payment.addEventListener('click', async () => {
-        const response = await fetch('/payment/{{ product.id }}', {
-            method: 'POST'
-        })
-
-        const data = await response.json()
-        console.log(data)
-        window.location.href = data.init_point;
-    })
-    */
 
 </script>
 {% endblock %}
