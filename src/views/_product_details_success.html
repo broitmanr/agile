@@ -1,0 +1,220 @@
+{% extends "_base.html" %}
+
+{% block css %}
+<style>
+    /**{*/
+    /*    margin: 0;*/
+    /*    padding: 0;*/
+    /*    font-family: Arial, Helvetica, sans-serif;*/
+    /*    box-sizing: border-box;*/
+    /*    text-decoration: none;*/
+    /*}*/
+    .container-central {
+        width: 90%;
+        height: 90%;
+        background-color: #1A2234;
+        margin-bottom: 2em;
+        padding: 20px 20px 20px;
+        text-align: center;
+        border-radius: 25px;
+        position: relative;
+    }
+
+    h1 {
+        font-size: 2em;
+        margin-bottom: 60px;
+        color: #FFFFFF;
+        position: relative;
+    }
+
+    .span-label {
+        font-size: 1.4em;
+        margin-bottom: 60px;
+        color: #FFFFFF;
+        float: left;
+    }
+
+    .span-content {
+        font-size: 1.2em;
+        margin-bottom: 60px;
+        color: #FFFFFF;
+        position: relative;
+    }
+
+    .row-detalle {
+        height: 4em;
+    }
+
+    .input-field select {
+        width: 25%;
+        background-color: #828A97;
+        color: #FFFFFF;
+        border: none;
+        cursor: pointer;
+        outline: none;
+    }
+
+    .input-field select option {
+        color: #828A97;
+    }
+
+    .btn-field {
+        width: 100%;
+        display: flex;
+        justify-content: center;
+        position: relative;
+        top: -15px;
+    }
+
+    .btn-field button {
+        flex-basis: 48%;
+        font-size: 14px;
+        background-color: #6982E8;
+        color: #FFFFFF;
+        height: 35px;
+        border-radius: 8px;
+        /*Eliminar en caso de que se quiera hacer el botón como un cuadrado*/
+        border: 0;
+        outline: 0;
+        border: none;
+        outline: none;
+        cursor: pointer;
+        transition: background 1s;
+        margin-right: 10px;
+    }
+
+    #btnFavs:hover {
+        background-color: transparent;
+    }
+
+    #btnFavs {
+        position: absolute;
+        top: 0;
+        right: 0;
+        margin-top: 27px;
+        margin-right: 20px;
+    }
+</style>
+{%endblock%}
+
+{% block main %}
+<div class="container container-central mt-4">
+    <div class="col">
+        <h1>{{product.nombre}}</h1>
+    </div>
+    <div class="row mt-4">
+        <div class="col-md-4 d-flex justify-content-center">
+            {% if product.urlImagen %}
+            <img src="{{ product.urlImagen }}" alt="Imagen de {{ product.nombre }}" width="200px" height="200px"
+                class="rounded border b-2" loading="async" />
+            {% else %}
+            <img src="/no-image.jpg" alt="Imagen de {{ product.nombre }}" width="200px" height="200px"
+                class="rounded border b-2" loading="async" onerror="this.onerror=null; this.src='/no-image.jpg';" />
+            {% endif %}
+        </div>
+        <div class="col-md-8">
+            <div class="row row-detalle">
+                <div class="col-md-3 m-1">
+                    <strong class="span-label">Marca:</strong>
+                </div>
+                <div class="col-md-4 m-1">
+                    <span class="span-content"> {{ product.marca }}</span>
+                </div>
+            </div>
+            <div class="row row-detalle">
+                <div class="col-md-3 m-1">
+                    <strong class="span-label">Categoría:</strong>
+                </div>
+                <div class="col-md-4 m-1">
+                    <span class="span-content"> {{ product.categoria.nombre }}</span>
+                </div>
+            </div>
+            <div class="row row-detalle">
+                <div class="col-md-3 m-1">
+                    <strong class="span-label">Precio:</strong>
+                </div>
+                <div class="col-md-4 m-1">
+                    <span class="span-content"> {{ product.moneda.simbolo }} {{ product.precio }} {{
+                        product.moneda.sigla }}</span>
+                </div>
+            </div>
+            <div class="row row-detalle">
+                <div class="col-md-3 m-1">
+                    <strong class="span-label">Zona:</strong>
+                </div>
+                <div class="col-md-6 m-1">
+                    <span class="span-content"> {{ product.localidad.nombre }}</span>
+                </div>
+            </div>
+            <div class="row row-detalle">
+                <div class="col-md-12 m-1">
+                    <strong class="mb-1 span-label" style="width: 100%; text-align: left">Caracteristicas</strong>
+                    <span style="color: #ced4da;float: left"> {{ product.detalle }}</span>
+                </div>
+            </div>
+        </div>
+    </div>
+    <hr style="border: 2px solid white; margin-left: 3px; margin-right: 3px; margin-top: 25px;">
+    <div class="row mt-4">
+        <div class="col-md-4 d-flex justify-content-center">
+            <img src="/iconSuccess.png" alt="Imagen de success" width="200px" height="200px" class="rounded border b-2"
+                loading="async" onerror="this.onerror=null; this.src='/no-image.jpg';" />
+        </div>
+        <div class="col-md-8">
+            <p style="color: white; font-size: larger; margin: 5% 5%;"> El su pago fue realizado con exito y fue retenido por su seguridad
+                hasta que informe que recibio el producto, para esto tiene que marcar
+                la opcion TENGO EL PRODUCTO para que se deposite el pago a el vendedor</p>
+        </div>
+    </div>
+    <div class="row mt-4">
+        <div class="col p-3 d-flex justify-content-start">
+            <button id="btnEstadoAlquilar" class="btn btn-primary" data-product-id="{{ product.id }}"><i
+                    class="fa-solid fa-arrow-left fa-bounce"></i> Volver</button>
+        </div>
+        <!--div class="col p-3 d-flex justify-content-center">
+            <form action="/chat/{{ product.id }}" method="POST">
+                <button type="submit" class="btn btn-primary">
+                    <i class="fab fa-facebook-messenger"></i> Enviar mensaje
+                </button>
+            </form>
+        </div-->
+    </div>
+</div>
+
+<script>
+
+    // Obtener el botón por su ID
+    const btnVolver = document.getElementById('btnEstadoAlquilar');
+
+    // Agregar un evento de clic al botón
+    btnVolver.addEventListener('click', () => {
+        // Obtener el ID del producto desde el atributo de datos
+        const productId = btnVolver.dataset.productId;
+
+        // Realizar la solicitud POST
+        fetch(`/estado_alquilar/${productId}`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({ producto_id: productId }),
+        })
+            .then(response => {
+                // Manejar la respuesta de la solicitud POST
+                if (response.ok) {
+                    // La solicitud fue exitosa
+                    console.log('La solicitud POST fue exitosa');
+                    window.location.href = '/';
+                } else {
+                    // La solicitud falló
+                    console.error('La solicitud POST falló');
+                }
+            })
+            .catch(error => {
+                // Manejar errores de la solicitud
+                console.error('Error al realizar la solicitud POST:', error);
+            });
+    });
+
+</script>
+{% endblock %}

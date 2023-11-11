@@ -1,6 +1,17 @@
 #containerPost{
-    margin-top: 10px;
-    margin-bottom: 10px;
+    margin-top: 1px;
+    margin-bottom: 1px;
+    width: 100%;
+    height: auto;
+    display: flex;
+    align-items: right;
+    justify-content: right;
+    margin-left: 30px;
+}
+
+#containerPostSegundo{
+    margin-top: 1px;
+    margin-bottom: 1px;
     width: 100%;
     height: auto;
     display: flex;
@@ -8,10 +19,33 @@
     justify-content: center;
 }
 
+.image-container{
+    width: 50%;
+    position: absolute;
+    overflow: hidden;
+    left: 0;
+    top: 0;
+    z-index: -1;
+    object-fit: cover;
+}
+
+#fondoLogin{
+    width: 180%;
+    height: 240%;
+    bottom: 0;
+    /*vertical-align: middle; */
+}
+
+#fondoRegistro{
+    width: 110%;
+    height: 130%;
+    vertical-align: middle;
+}
+
 .form-content{
-    width: 60%;
+    width: 50%;
     position: relative;
-    background-color: #1A2234;
+    background-color: transparent;
     padding: 20px 20px 20px;
     text-align: center;
     border-radius: 25px;
@@ -29,7 +63,7 @@
     width: 30px;
     height: 4px;
     border-radius: 3px;
-    background: #6982E8;
+    background: #9FBCCB;
     position: absolute;
     bottom: -12px;
     left: 50%;
@@ -71,7 +105,7 @@ input::placeholder{
 
 .input-field i{
     margin-left: 15px;
-    color: #6982E8;
+    color: #9FBCCB;
 }
 
 .btn-field{
@@ -86,7 +120,7 @@ input::placeholder{
 .btn-field button{
     flex-basis: 48%;
     font-size: 14px;
-    background-color: #6982E8;
+    background-color: #618A9E;
     color: #FFFFFF;
     height: 35px;
     border-radius: 8px; /*Eliminar en caso de que se quiera hacer el botón como un cuadrado*/
@@ -97,6 +131,7 @@ input::placeholder{
     cursor: pointer;
     transition: background 1s;
     margin-right: 10px;
+    margin-bottom: 8px;
 }
 
 #categoriaInput, #localidadInput, #municipioInput{

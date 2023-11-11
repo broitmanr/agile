@@ -32,10 +32,42 @@ router.get('/', async function (req, res) {
     const skip = pageSize * (currentPage - 1);
     const usuario_id = req.user;
     const categorias = await ProductModel.getCategorias();
-    const { rows, count } = await ProductModel.getAll(pageSize, skip,category, usuario_id);
+    let { rows, count } = await ProductModel.getAll(pageSize, skip,category, usuario_id);
+
+    if(rows.length % 3 != 0){
+        rows = rows.slice(0, -(rows.length % 3));
+    }
+    
     res.render('home.html', {
         products: rows,
         categories: categorias,
+        pagination: {
+            totalPages: Math.ceil(count / pageSize),
+            currentPage: currentPage,
+        },
+        estaAutenticado: req.isAuthenticated(),
+    });
+});
+
+router.post('/', async function (req, res) {
+    const pageSize = 10;
+    const currentPage = +req.query.page || 1;
+    const category = req.body.category || undefined;
+    const skip = pageSize * (currentPage - 1);
+    const usuario_id = req.user;
+    const categorias = await ProductModel.getCategorias();
+    let { rows, count } = await ProductModel.getAll(pageSize, skip,category, usuario_id);
+
+    if(rows.length % 3 != 0){
+        rows = rows.slice(0, -(rows.length % 3));
+    }
+
+    let selectedCategories = req.body.category || '';
+    
+    res.render('home.html', {
+        products: rows,
+        categories: categorias,
+        selectedCategories: selectedCategories,
         pagination: {
             totalPages: Math.ceil(count / pageSize),
             currentPage: currentPage,
@@ -150,7 +182,6 @@ router.delete('/my_favs/delete/:productId', estaAutenticado, async (req, res) =>
         const productId = +req.params.productId;
         console.log(productId);
         await FavoritoModel.deleteFavorito(userId, productId);
-        //res.redirect('/my_favs');
         res.json({ success: true });
     } catch (error){
         console.error(error);
@@ -169,12 +200,12 @@ router.get('/product/details/:id', async function (req, res) {
     }
 });
 
-router.get('/product/delete/:id', async (req, res) =>{
+router.delete('/product/delete/:id', async (req, res) =>{
     try{
         const productID = +req.params.id;
         const result = await ProductModel.deleteProduct(productID);
         console.info({message: "¡Eliminado! Se elimino con exito el producto ",result});
-        res.redirect('/my_products');
+        res.json({ success: true });
     } catch (error){
         console.error(error);
         res.status(500).json({ message: "¡Error! No se ha podido eliminar el producto" });
@@ -401,6 +432,45 @@ router.get('/null/:productId', async (req, res) => {
     await product.save();
     res.redirect(`/`);
 })
+/**
+ * Ruta que se usa para que MP responda por success y redireccione a la pagina _product_details_success.html
+ */
+router.get('/details_success/:productId', estaAutenticado, async (req, res) => {
+    const productId = req.params.productId;
+    const producto = await ProductModel.findById(productId);
+    res.render('_product_details_success.html', {product: producto});
+});
+
+/**
+ * Ruta que se usa para que MP responda por pending y redireccione a la pagina _product_details_pending.html
+ */
+router.get('/details_pending/:productId', estaAutenticado, async (req, res) => {
+    const productId = req.params.productId;
+    const producto = await ProductModel.findById(productId);
+    res.render('_product_details_pending.html', {product: producto});
+});
+
+/**
+ * Ruta que se usa para que MP responda por failure y redireccione a la pagina _product_details_failure.html
+ */
+router.get('/details_failure/:productId', estaAutenticado, async (req, res) => {
+    const productId = req.params.productId;
+    const producto = await ProductModel.findById(productId);
+    res.render('_product_details_failure.html', {product: producto});
+});
+
+router.post('/estado_alquilar/:productId', estaAutenticado, async (req, res) => {
+    const productId = req.params.productId;
+    const product = await ProductModel.findById(productId);
+    try {
+        product.estado = 'A';
+        await product.save();
+        res.json({ success: true });
+    } catch (error) {
+        console.error(error);
+        res.status(500).json ({ message: "¡Error! No se logró cambiar a estado alquilado"});
+    }
+});
 
 /*router.get('/webhook', async (req, res) => {
     console.log('webhook');

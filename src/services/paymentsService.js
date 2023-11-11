@@ -18,9 +18,9 @@ class PaymentService {
                 }
             ],
             back_urls: {
-                success: 'http://localhost:3000/',
-                failure: 'http://localhost:3000/',
-                pending: 'http://localhost:3000/'
+                success: `http://localhost:3000/details_success/${product.id}`,
+                failure: `http://localhost:3000/details_failure/${product.id}`,
+                pending: `http://localhost:3000/details_pending/${product.id}`
             },
         };
 
