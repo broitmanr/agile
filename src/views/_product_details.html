@@ -3,7 +3,6 @@
 
 {% block css %}
 <style>
-
     /**{*/
     /*    margin: 0;*/
     /*    padding: 0;*/
@@ -11,7 +10,7 @@
     /*    box-sizing: border-box;*/
     /*    text-decoration: none;*/
     /*}*/
-    .container-central{
+    .container-central {
         width: 90%;
         height: 90%;
         background-color: #527080;
@@ -22,29 +21,32 @@
         position: relative;
     }
 
-    h1{
+    h1 {
         font-size: 2em;
         margin-bottom: 60px;
         color: #FFFFFF;
         position: relative;
     }
-    .span-label{
+
+    .span-label {
         font-size: 1.4em;
         margin-bottom: 60px;
         color: #FFFFFF;
-        float:left;
+        float: left;
     }
-    .span-content{
+
+    .span-content {
         font-size: 1.2em;
         margin-bottom: 60px;
         color: #FFFFFF;
         position: relative;
     }
 
-    .row-detalle{
+    .row-detalle {
         height: 4em;
     }
-    .input-field select{
+
+    .input-field select {
         width: 25%;
         background-color: #828A97;
         color: #FFFFFF;
@@ -53,11 +55,11 @@
         outline: none;
     }
 
-    .input-field select option{
+    .input-field select option {
         color: #828A97;
     }
 
-    .btn-field{
+    .btn-field {
         width: 100%;
         display: flex;
         justify-content: center;
@@ -65,13 +67,14 @@
         top: -15px;
     }
 
-    .btn-field button{
+    .btn-field button {
         flex-basis: 48%;
         font-size: 14px;
         background-color: #6982E8;
         color: #FFFFFF;
         height: 35px;
-        border-radius: 8px; /*Eliminar en caso de que se quiera hacer el botón como un cuadrado*/
+        border-radius: 8px;
+        /*Eliminar en caso de que se quiera hacer el botón como un cuadrado*/
         border: 0;
         outline: 0;
         border: none;
@@ -80,10 +83,12 @@
         transition: background 1s;
         margin-right: 10px;
     }
-    #btnFavs:hover{
+
+    #btnFavs:hover {
         background-color: transparent;
     }
-    #btnFavs{
+
+    #btnFavs {
         position: absolute;
         top: 0;
         right: 0;
@@ -228,9 +233,11 @@
     <div class="row mt-4">
         <div class="col-md-4 d-flex justify-content-center">
             {% if product.urlImagen %}
-                <img src="{{ product.urlImagen }}" alt="Imagen de {{ product.nombre }}" width="200px" height="200px" class="rounded border b-2" loading="async" />
+            <img src="{{ product.urlImagen }}" alt="Imagen de {{ product.nombre }}" width="200px" height="200px"
+                class="rounded border b-2" loading="async" />
             {% else %}
-                <img src="/no-image.jpg" alt="Imagen de {{ product.nombre }}" width="200px" height="200px" class="rounded border b-2" loading="async" onerror="this.onerror=null; this.src='/no-image.jpg';"/>
+            <img src="/no-image.jpg" alt="Imagen de {{ product.nombre }}" width="200px" height="200px"
+                class="rounded border b-2" loading="async" onerror="this.onerror=null; this.src='/no-image.jpg';" />
             {% endif %}
         </div>
         <div class="col-md-8">
@@ -253,7 +260,7 @@
 
             <div class="row row-detalle">
                 <div class="col-md-3 m-1 d-flex align-items-center">
-                    <strong class="span-label">Precio:</strong>
+                    <strong class="span-label">Precio por día:</strong>
                 </div>
                 <div class="col-md-4 m-1 d-flex align-items-center">
                     <span class="span-content"> {{ product.moneda.simbolo }} {{ product.precio }} {{ product.moneda.sigla }}</span>
@@ -289,18 +296,47 @@
                 </button>
             </form>
         </div>
-        {% if product.estado !== 'A' and estaAuth === true%}
-        <div class="col p-3 d-flex justify-content-end">
-            <form>
-                <button id="openRentalForm" class="btn btn-success" style="background-color: #9FBCCB; color: #000000; border: none;">
-                    Alquilar Producto
-                </button>
-            </form>
-        </div>
+        {% if estaAuth and devolver != false %}
+            <button id="devolver" class="btn btn-info" data-alquiler-id="{{devolver}}">Me lo devolvieron</button>
         {% endif %}
+
+        {% if alquiler == null %}
+            {% if product.estado !== 'A' and estaAuth === true%}
+            <div class="col p-3 d-flex justify-content-end">
+                <form>
+                    <button type="button" class="btn btn-success" id="formPayment" style="background-color: #9FBCCB; color: #000000; border: none;">
+                        Alquilar Producto
+                    </button>
+                </form>
+            </div>
+            {% endif %}
+        {% else %}
+            {% if alquiler.estado == 'PR' and estaAuth == true%}
+            <div class="col p-3 d-flex justify-content-start">
+                <form>
+                    <button type="button" class="btn btn-success" id="btnLoRetire" data-alquiler-id="{{ alquiler.id }}">
+                        Lo Retire
+                    </button>
+                </form>
+            </div>
+            {% endif %}
+
+            {% if alquiler.estado == 'PD' and estaAuth == true%}
+            <div class="col p-3 d-flex justify-content-start">
+                <form>
+                    <button type="button" class="btn btn-success" id="btnLoDevolvio">
+                        Lo Devolvio
+                    </button>
+                </form>
+            </div>
+            {% endif %}
+        {% endif %}
+
+
         {% if estaAuth === true %}
         <div class="col p-3 d-flex justify-content-start">
-            <button id="btnFavs" data-product-id="{{ product.id }}" type="submit" class="btn btn-outline-warning mb-2 favorito-button">
+            <button id="btnFavs" data-product-id="{{ product.id }}" type="submit"
+                class="btn btn-outline-warning mb-2 favorito-button">
                 <!-- otra opciones https://www.neoguias.com/mostrar-ocultar-elementos-html/#Atributo_Hidden_de_HTML-->
                 <i class="fa-regular fa-star" style="display: block;"></i>
             </button>
@@ -321,9 +357,9 @@
         <div class="preguntas-contenido">
             <ul>
                 {% if preguntas | length > 0 %}
-                {% for pregunta in preguntas %}
-                {{ preguntaMacro.preguntaMacro(pregunta) }}
-                {% endfor %}
+                    {% for pregunta in preguntas %}
+                        {{ preguntaMacro.preguntaMacro(pregunta) }}
+                    {% endfor %}
                 {% endif %}
             </ul>
             {% if estaAuth === true %}
@@ -341,7 +377,7 @@
 </div>
 
 <script>
-    document.querySelector('#btnFavs').addEventListener('click', function() {
+    document.querySelector('#btnFavs').addEventListener('click', function () {
         var productId = this.getAttribute('data-product-id');
         fetch(`/my_favs/${productId}`, {
             method: 'POST',
@@ -350,16 +386,16 @@
             },
             body: JSON.stringify({ producto_id: productId }),
         })
-        .then(response => response.json())
-        .then(data => {
-            console.log(data.mensaje);
-            var cambiarIcono = this.querySelector('i');
-            cambiarIcono.classList.remove('fa-regular');
-            cambiarIcono.classList.add('fa-solid');
-        })
-        .catch((error) => {
-            console.error('Error:', error);
-        });
+            .then(response => response.json())
+            .then(data => {
+                console.log(data.mensaje);
+                var cambiarIcono = this.querySelector('i');
+                cambiarIcono.classList.remove('fa-regular');
+                cambiarIcono.classList.add('fa-solid');
+            })
+            .catch((error) => {
+                console.error('Error:', error);
+            });
     });
 </script>
 <script>
@@ -417,11 +453,70 @@
 
 
 });
-
 </script>
-{% endblock %}
 
-{%block js %}
+<script>
+
+    $(document).ready(function(){
+        const btnLoRetire = $('#btnLoRetire');
+        const alquilerId = btnLoRetire.data('alquiler-id');
+        console.log("El valor de alquilerID dentro de productDetails.html es: ", alquilerId)
+        btnLoRetire.on('click', async () => {
+            try {
+                const response = await fetch(`/_product_details_EAlquilado/${alquilerId}`,
+                {
+                    method: 'POST'
+                 });
+                const data = await response.json();
+                console.log(data);
+                if (data.success) {
+                    Swal.fire({
+                        title: 'Genial, retiraste el producto',
+                        icon: 'success'
+                    }).then(() => {
+                        window.location.href = '/';
+                    });
+                } else {
+                    console.error('Error:', data.error);
+                }
+            } catch (error) {
+                console.error('Error post el endopoint /_product_details_EstaAlquilado/${alquilerId}:', error);
+            }
+        });
+
+
+        const btnDevolvieron = $('#devolver');
+        if(btnDevolvieron){
+            const alquiler = btnDevolvieron.data('alquiler-id');
+            btnDevolvieron.on('click', async () => {
+                try {
+                    const response = await fetch(`/producto_devuelto/${alquiler}`,
+                        {
+                            method: 'POST'
+                        });
+                    const data = await response.json();
+                    console.log(data);
+                    if (data.success) {
+                        Swal.fire({
+                            title: 'Genial, te devolvieron el producto',
+                            text:'Gracias por aportar, se te acreditará el dinero en las proximas 48Hs',
+                            icon: 'success'
+                        }).then(() => {
+                            window.location.href = '/';
+                        });
+                    } else {
+                        console.error('Error:', data.error);
+                    }
+                } catch (error) {
+                    console.error(error);
+                }
+            });
+        }
+
+})
+</script>
+
+
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 <script>
     $(document).ready(function() {
@@ -525,4 +620,5 @@
 
     });
 </script>
+
 {% endblock %}
