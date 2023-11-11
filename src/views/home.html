@@ -3,6 +3,14 @@
 {% import "_pagination.html" as _pagination %}
 {% extends "_base.html" %}
 
+{% block css %}
+    <style>
+        .form-check-input:checked{
+            background-color: #384C56;
+        }
+    </style>
+{% endblock %}
+
 {% block main %}
     <div class = "row">
         {% if products | length > 0 %}

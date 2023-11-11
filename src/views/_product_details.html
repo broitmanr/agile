@@ -14,7 +14,7 @@
     .container-central{
         width: 90%;
         height: 90%;
-        background-color: #1A2234;
+        background-color: #527080;
         margin-bottom: 2em;
         padding: 20px 20px 20px;
         text-align: center;
@@ -235,43 +235,43 @@
         </div>
         <div class="col-md-8">
             <div class="row row-detalle">
-                <div class="col-md-3 m-1">
+                <div class="col-md-3 m-1 d-flex align-items-center">
                     <strong class="span-label">Marca:</strong>
                 </div>
-                <div class="col-md-4 m-1">
+                <div class="col-md-4 m-1 d-flex align-items-center">
                     <span class="span-content"> {{ product.marca }}</span>
                 </div>
             </div>
             <div class="row row-detalle">
-                <div class="col-md-3 m-1">
+                <div class="col-md-3 m-1 d-flex align-items-center">
                     <strong class="span-label">Categoría:</strong>
                 </div>
-                <div class="col-md-4 m-1">
+                <div class="col-md-4 m-1 d-flex align-items-center">
                     <span class="span-content"> {{ product.categoria.nombre }}</span>
                 </div>
             </div>
 
             <div class="row row-detalle">
-                <div class="col-md-3 m-1">
+                <div class="col-md-3 m-1 d-flex align-items-center">
                     <strong class="span-label">Precio:</strong>
                 </div>
-                <div class="col-md-4 m-1">
+                <div class="col-md-4 m-1 d-flex align-items-center">
                     <span class="span-content"> {{ product.moneda.simbolo }} {{ product.precio }} {{ product.moneda.sigla }}</span>
                 </div>
 
             </div>
             <div class="row row-detalle">
-                <div class="col-md-3 m-1">
+                <div class="col-md-3 m-1 d-flex align-items-center">
                     <strong class="span-label">Zona:</strong>
                 </div>
-                <div class="col-md-6 m-1">
+                <div class="col-md-6 m-1 d-flex align-items-center">
                     <span class="span-content"> {{ product.localidad.nombre }}</span>
                 </div>
             </div>
             <div class="row row-detalle">
-                <div class="col-md-12 m-1">
+                <div class="col-md-12 m-1 d-flex flex-column">
                     <strong class="mb-1 span-label" style="width: 100%; text-align: left">Caracteristicas</strong>
-                    <span style="color: #ced4da;float: left"> {{ product.detalle }}</span>
+                    <span style="color: #FFFFFF; align-self: flex-start;"> {{ product.detalle }}</span>
                 </div>
             </div>
 
@@ -280,19 +280,19 @@
     </div>
     <div class="row mt-4">
         <div class="col p-3 d-flex justify-content-start">
-            <a href="/" class="btn btn-primary"><i class="fa-solid fa-arrow-left fa-bounce"></i>    Volver</a>
+            <a href="/" class="btn btn-primary" style="background-color: #384C56; border: none;"><i class="fa-solid fa-arrow-left fa-bounce"></i>    Volver</a>
         </div>
         <div class="col p-3 d-flex justify-content-center">
             <form action="/chat/{{ product.id }}" method="POST">
-                <button type="submit" class="btn btn-primary">
+                <button type="submit" class="btn btn-primary" style="background-color: #384C56; border: none;">
                     <i class="fab fa-facebook-messenger"></i> Enviar mensaje
                 </button>
             </form>
         </div>
         {% if product.estado !== 'A' and estaAuth === true%}
-        <div class="col p-3 d-flex justify-content-start">
+        <div class="col p-3 d-flex justify-content-end">
             <form>
-                <button id="openRentalForm" class="btn btn-success">
+                <button id="openRentalForm" class="btn btn-success" style="background-color: #9FBCCB; color: #000000; border: none;">
                     Alquilar Producto
                 </button>
             </form>
@@ -314,8 +314,8 @@
     <div class="row">
 
         <div class="preguntas">
-            <h2>Preguntas</h2>
-            <button class="btn btn-primary">Ver preguntas</button>
+            <h2><strong>Preguntas</strong></h2>
+            <button class="btn btn-primary" style="background-color: #384C56; border: none;">Ver preguntas</button>
         </div>
 
         <div class="preguntas-contenido">
