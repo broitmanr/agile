@@ -112,6 +112,18 @@ const findByUsersProduct = async (locador_id,locatario_id,producto_id)=>{
 
 }
 
+const findProductId = async (interaccionId)=>{
+  const interaccion = await Interaccion.findOne(
+      {
+      where: {
+          id: interaccionId
+      }
+  });
+  if (interaccion){
+      return interaccion.producto_id
+  }
+}
+
 const getChatsByUserID = async (userId) => {
   return await Interaccion.findAll({
     where: {
@@ -147,4 +159,5 @@ module.exports = {
     getChat:getChat,
     findByUsersProduct:findByUsersProduct,
     getChatsByUserID: getChatsByUserID,
+    findProductId: findProductId
 }

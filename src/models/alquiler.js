@@ -45,6 +45,7 @@ const createAlquiler = async(interaccion_id) => {
         interaccion_id
     });
     await alquiler.save();
+    return alquiler
 };
 
 const cambioEstado = async(alquilerId, estado) => {

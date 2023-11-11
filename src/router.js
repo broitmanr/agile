@@ -18,6 +18,7 @@ const Alquiler = require('./models/alquiler');
 const PaymentController = require('./controllers/paymentsController.js');
 const PaymentService = require('./services/paymentsService.js');
 const alquiler = require('./models/alquiler');
+const { data } = require('jquery');
 const PaymentInstance = new PaymentController(new PaymentService());
 
 const router = express.Router();
@@ -447,8 +448,10 @@ router.post('/estado_alquilar/:productId', estaAutenticado, async (req, res) => 
         product.estado = 'A';
         await product.save();
         const alquiler = await Alquiler.createAlquiler(interaccion.id);
-        res.render('_product_details_success.html', {product: product, alquiler: alquiler});
-        res.json({ success: true });
+        res.json({
+            'alquiler':alquiler.id,
+            'producto':productId
+        });
     } catch (error) {
         console.error(error);
         res.status(500).json ({ message: "¡Error! No se logró cambiar a estado alquilado"});
@@ -458,31 +461,30 @@ router.post('/estado_alquilar/:productId', estaAutenticado, async (req, res) => 
 /**
  * llamado de success
  */
+
 router.get('/_product_details_alquilado/:alquilerId', estaAutenticado, async (req, res) => {
-    const interaccionId = req.params.alquilerId.interaccion_id;
-    const alquilerId= req.params.alquilerId;
-    const productId= interaccionId.product_id;
-    const product = await ProductModel.findById(productId);
-    const alquiler = await Alquiler.buscarAlquiler(alquilerId);
+    const alquilerID= req.params.alquilerId;
+    const alquiler = await Alquiler.buscarAlquiler(alquilerID);
+    const interaccion=alquiler.interaccion_id
+    const product_id= await Interaccion.findProductId(interaccion)
+    console.log(product_id)
+    const product = await ProductModel.findById(product_id);
     res.render('_product_details.html', {product: product, alquiler: alquiler});
 });
 
 /**
  * parametros de id producto y alquiler
  */
-router.get('/_product_details_EAlquilado/:alquilerId', estaAutenticado, async (req, res) => {
-    const interaccionId = req.params.alquilerId.interaccion_id;
-    const alquilerId= req.params.alquilerId;
-    const productId= interaccionId.product_id;
-    const product = await ProductModel.findById(productId);
-    var alquiler = await Alquiler.buscarAlquiler(alquilerId);
-    await Alquiler.cambioEstado(alquilerId,'A');
-    res.render('_product_details_alquilado.html', {product: product, alquiler: alquiler});
+router.post('/_product_details_EAlquilado/:alquilerId', estaAutenticado, async (req, res) => {
+    const alquilerID= req.params.alquilerId;
+    const alquiler = await Alquiler.buscarAlquiler(alquilerID);
+    await Alquiler.cambioEstado(alquilerID,'A');
+    res.json({ success: true });
 });
 
 /**
  * parametros de id producto y alquiler
- */
+
 router.get('/_product_details_EDevolver/:alquilerId', estaAutenticado, async (req, res) => {
     const interaccionId = req.params.alquilerId.interaccion_id;
     const alquilerId= req.params.alquilerId;
@@ -492,7 +494,7 @@ router.get('/_product_details_EDevolver/:alquilerId', estaAutenticado, async (re
     await Alquiler.cambioEstado(alquilerId,'F');
     res.render('_product_details_alquilado.html', {product: product, alquiler: alquiler});
 });
-
+*/
 /**
  * parametros de id producto y alquiler
  */

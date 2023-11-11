@@ -168,7 +168,7 @@
     </div>
     <div class="row mt-4">
         <div class="col p-3 d-flex justify-content-start">
-            <button id="btnEstadoAlquilar" class="btn btn-primary" data-product-id="{{ product.id }}" data-alquiler-id="{{ alquiler.id}}"><i
+            <button id="btnEstadoAlquilar" class="btn btn-primary" data-product-id="{{ product.id }}"><i
                     class="fa-solid fa-arrow-left fa-bounce"></i> Volver</button>
         </div>
         <!--div class="col p-3 d-flex justify-content-center">
@@ -190,8 +190,7 @@
     btnVolver.addEventListener('click', () => {
         // Obtener el ID del producto desde el atributo de datos
         const productId = btnVolver.dataset.productId;
-        const alquilerId = btnVolver.dataset.alquilerId;
-
+        console.log('Ver valor de productoID dentro de boton de Volver', productId)
         // Realizar la solicitud POST
         fetch(`/estado_alquilar/${productId}`, {
             method: 'POST',
@@ -200,12 +199,13 @@
             },
             body: JSON.stringify({ producto_id: productId }),
         })
-            .then(response => {
+        .then(response => response.json())
+            .then(data => {
+                console.log('Valor de data dentro producto_details.succes.html: ',data);
                 // Manejar la respuesta de la solicitud POST
-                if (response.ok) {
-                    // La solicitud fue exitosa
+                if (data) {
                     console.log('La solicitud POST fue exitosa');
-                    window.location.href = `localhost:3000/_product_details_alquilado/${alquilerId}`;
+                    window.location.href = `localhost:3000/_product_details_alquilado/${data.alquiler}`;
                 } else {
                     // La solicitud falló
                     console.error('La solicitud POST falló');
@@ -213,7 +213,7 @@
             })
             .catch(error => {
                 // Manejar errores de la solicitud
-                console.error('Error al realizar la solicitud POST:', error);
+                console.error('Error al realizar la solicitud POST antes del if data:', error);
             });
     });
 

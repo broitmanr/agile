@@ -180,10 +180,10 @@
             </div>
             {% endif %}
         {% else %}
-            {% if alquiler.estado == 'A' and estaAuth == true%}
+            {% if alquiler.estado == 'PR' and estaAuth == true%}
             <div class="col p-3 d-flex justify-content-start">
                 <form>
-                    <button type="button" class="btn btn-success" id="btnLoRetire">
+                    <button type="button" class="btn btn-success" id="btnLoRetire" data-alquiler-id="{{ alquiler.id }}">
                         Lo Retire
                     </button>
                 </form>
@@ -250,16 +250,34 @@
 
 </script>
 <script>
-    const btnLoRetire = document.getElementById('btnLoRetire')
 
-    btnLoRetire.addEventListener('click', async () => {
-        const response = await fetch('/payment/{{ product.id }}', {
-            method: 'POST'
-        })
+    $(document).ready(function(){
+        const btnLoRetire = $('#btnLoRetire');
+        const alquilerId = btnLoRetire.data('alquiler-id');
+        console.log("El valor de alquilerID dentro de productDetails.html es: ", alquilerId)
+        btnLoRetire.on('click', async () => {
+            try {
+                const response = await fetch(`/_product_details_EAlquilado/${alquilerId}`, 
+                {
+                    method: 'POST'
+                 });
+                const data = await response.json();
+                console.log(data);
+                if (data.success) {
+                    Swal.fire({
+                        title: 'Genial, retiraste el producto',
+                        icon: 'success'
+                    }).then(() => {
+                        window.location.href = '/';
+                    });
+                } else {
+                    console.error('Error:', data.error);
+                }
+            } catch (error) {
+                console.error('Error post el endopoint /_product_details_EstaAlquilado/${alquilerId}:', error);
+            }
+        });
 
-        const data = await response.json()
-        console.log(data)
-        window.location.href = data.init_point;
-    })
+})
 </script>
 {% endblock %}
