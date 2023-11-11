@@ -37,7 +37,7 @@ router.get('/', async function (req, res) {
     if(rows.length % 3 != 0){
         rows = rows.slice(0, -(rows.length % 3));
     }
-    
+
     res.render('home.html', {
         products: rows,
         categories: categorias,
@@ -63,7 +63,7 @@ router.post('/', async function (req, res) {
     }
 
     let selectedCategories = req.body.category || '';
-    
+
     res.render('home.html', {
         products: rows,
         categories: categorias,
@@ -196,6 +196,7 @@ router.get('/product/details/:id', async function (req, res) {
     const calificar = await CalificacionController.puedeCalificar(req.user, productId);
     if (productDetails != null) {
         // Renderiza la vista de detalles del producto y pasa los datos del producto
+        console.log(calificar);
     res.render('_product_details.html', { product: productDetails, preguntas:preguntas,calificar:calificar });
     }
 });

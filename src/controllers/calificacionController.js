@@ -8,7 +8,7 @@ exports.puedeCalificar = async(usuario,producto) => {
     try {
         if(!defined(usuario)) return false;
         const alquiler = await getAlquiler(usuario,producto);
-        return (alquiler.id && alquiler.calificacion === null) ? alquiler.id : false;
+        return (alquiler && alquiler.id && alquiler.calificacion === null) ? alquiler.id : false;
     } catch (error) {
         return error
     }
