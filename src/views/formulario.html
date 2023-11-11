@@ -14,7 +14,7 @@
                 <div class="input-group" id="inputPost">
                     <div class="input-field" id="nameInput" style="margin-top: 1px;">
                         <i class="fa-solid fa-toolbox"></i>
-                        <input type="text" name="nombre" placeholder="Nombre">
+                        <input type="text" name="nombre" placeholder="Nombre" required>
                     </div>
                     <div class="input-field" id="categoriaInput">
                         <i class="fa-solid fa-bars"></i>
@@ -29,7 +29,7 @@
                     </div>
                     <div class="input-field" id="marcaInput">
                         <i class="fa-regular fa-copyright"></i>
-                        <input type="text" name="marca" placeholder="Marca">
+                        <input type="text" name="marca" placeholder="Marca" required>
                     </div>
                     <div class="input-field" style="display: flex; align-items: center;">
                         <div style="flex: 1;">
@@ -42,7 +42,7 @@
                         </div>
                         <div style="display: flex; align-items: center">
                             <i class="fa-solid fa-dollar-sign"></i>
-                            <input type="text" name="precio" placeholder="Precio" class="small-input">
+                            <input type="text" name="precio" placeholder="Precio" class="small-input" required>
                         </div>
                     </div>
                     <div class="input-field" id="detalleInput">
@@ -87,6 +87,16 @@
         document.getElementById('formPostProduct').addEventListener('submit', function(event){
             event.preventDefault();
 
+             const inputFile = document.getElementById('urlImagen');
+            if (!inputFile.files.length) {
+                // Muestra un mensaje de error
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Oops...',
+                    text: '¡Debes subir una imagen!',
+                });
+                return; 
+            }
             Swal.fire({
                 title: '¿Desea publicar el producto?',
                 showDenyButton: true,
