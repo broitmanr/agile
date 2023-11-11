@@ -16,7 +16,7 @@
         color: #FFFFFF;
     }
     .alquilado{
-        background-color: gray;
+        background-color: #618A9E;
         opacity: 85%;
         width: 300px;
         height: 300px;
@@ -33,6 +33,7 @@
         position: relative;
         padding-left: 0;
         padding-right: 0;
+        background-color: #9FBCCB;
     }
     .product.card img{
         width: 180px;
@@ -40,6 +41,33 @@
         object-fit: cover;
         margin-bottom: 10px;
     }
+
+    .alquilado::after {
+        content: "";
+        position: absolute;
+        top: -15px;
+        left: -65px;
+        rotate:-45deg;
+        border-left: 100px solid transparent;
+        border-right: 100px solid transparent;
+        border-bottom: 100px solid #f00; /* Replace #f00 with your desired color */
+    }
+
+    .alquilado::before {
+        content: "Alquilado";
+        position: absolute;
+        top: 40px;
+        left: -90px;
+        rotate: -45deg;
+        border-left: 100px solid transparent;
+        border-right: 100px solid transparent;
+        color: white;
+        z-index: 1;
+        text-align: center;
+        font-size: 1.3em;
+    }
+
+
     .fs-3{
         font-size: 1rem;
     }
@@ -129,7 +157,7 @@
                                     '¡Eliminado!',
                                     'El producto ha sido eliminado.',
                                     'success'
-                                ); 
+                                );
                                 document.getElementById('eliminar-' + productId).closest('.product').remove();
                             }else{
                                 console.error(data.message);
