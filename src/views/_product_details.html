@@ -2,7 +2,6 @@
 
 {% block css %}
 <style>
-
     /**{*/
     /*    margin: 0;*/
     /*    padding: 0;*/
@@ -10,7 +9,7 @@
     /*    box-sizing: border-box;*/
     /*    text-decoration: none;*/
     /*}*/
-    .container-central{
+    .container-central {
         width: 90%;
         height: 90%;
         background-color: #1A2234;
@@ -21,29 +20,32 @@
         position: relative;
     }
 
-    h1{
+    h1 {
         font-size: 2em;
         margin-bottom: 60px;
         color: #FFFFFF;
         position: relative;
     }
-    .span-label{
+
+    .span-label {
         font-size: 1.4em;
         margin-bottom: 60px;
         color: #FFFFFF;
-        float:left;
+        float: left;
     }
-    .span-content{
+
+    .span-content {
         font-size: 1.2em;
         margin-bottom: 60px;
         color: #FFFFFF;
         position: relative;
     }
 
-    .row-detalle{
+    .row-detalle {
         height: 4em;
     }
-    .input-field select{
+
+    .input-field select {
         width: 25%;
         background-color: #828A97;
         color: #FFFFFF;
@@ -52,11 +54,11 @@
         outline: none;
     }
 
-    .input-field select option{
+    .input-field select option {
         color: #828A97;
     }
 
-    .btn-field{
+    .btn-field {
         width: 100%;
         display: flex;
         justify-content: center;
@@ -64,13 +66,14 @@
         top: -15px;
     }
 
-    .btn-field button{
+    .btn-field button {
         flex-basis: 48%;
         font-size: 14px;
         background-color: #6982E8;
         color: #FFFFFF;
         height: 35px;
-        border-radius: 8px; /*Eliminar en caso de que se quiera hacer el botón como un cuadrado*/
+        border-radius: 8px;
+        /*Eliminar en caso de que se quiera hacer el botón como un cuadrado*/
         border: 0;
         outline: 0;
         border: none;
@@ -79,31 +82,34 @@
         transition: background 1s;
         margin-right: 10px;
     }
-    #btnFavs:hover{
+
+    #btnFavs:hover {
         background-color: transparent;
     }
-    #btnFavs{
+
+    #btnFavs {
         position: absolute;
         top: 0;
         right: 0;
         margin-top: 27px;
         margin-right: 20px;
     }
-
 </style>
 {%endblock%}
 
 {% block main %}
 <div class="container container-central mt-4">
-        <div class="col">
-            <h1>{{product.nombre}}</h1>
-        </div>
+    <div class="col">
+        <h1>{{product.nombre}}</h1>
+    </div>
     <div class="row mt-4">
         <div class="col-md-4 d-flex justify-content-center">
             {% if product.urlImagen %}
-                <img src="{{ product.urlImagen }}" alt="Imagen de {{ product.nombre }}" width="200px" height="200px" class="rounded border b-2" loading="async" />
+            <img src="{{ product.urlImagen }}" alt="Imagen de {{ product.nombre }}" width="200px" height="200px"
+                class="rounded border b-2" loading="async" />
             {% else %}
-                <img src="/no-image.jpg" alt="Imagen de {{ product.nombre }}" width="200px" height="200px" class="rounded border b-2" loading="async" onerror="this.onerror=null; this.src='/no-image.jpg';"/>
+            <img src="/no-image.jpg" alt="Imagen de {{ product.nombre }}" width="200px" height="200px"
+                class="rounded border b-2" loading="async" onerror="this.onerror=null; this.src='/no-image.jpg';" />
             {% endif %}
         </div>
         <div class="col-md-8">
@@ -129,7 +135,8 @@
                     <strong class="span-label">Precio:</strong>
                 </div>
                 <div class="col-md-4 m-1">
-                    <span class="span-content"> {{ product.moneda.simbolo }} {{ product.precio }} {{ product.moneda.sigla }}</span>
+                    <span class="span-content"> {{ product.moneda.simbolo }} {{ product.precio }} {{
+                        product.moneda.sigla }}</span>
                 </div>
 
             </div>
@@ -153,7 +160,7 @@
     </div>
     <div class="row mt-4">
         <div class="col p-3 d-flex justify-content-start">
-            <a href="/" class="btn btn-primary"><i class="fa-solid fa-arrow-left fa-bounce"></i>    Volver</a>
+            <a href="/" class="btn btn-primary"><i class="fa-solid fa-arrow-left fa-bounce"></i> Volver</a>
         </div>
         <div class="col p-3 d-flex justify-content-center">
             <form action="/chat/{{ product.id }}" method="POST">
@@ -162,18 +169,43 @@
                 </button>
             </form>
         </div>
-        {% if product.estado !== 'A' and estaAuth === true%}
-        <div class="col p-3 d-flex justify-content-start">
-            <form>
-                <button type="button" class="btn btn-success" id="formPayment">
-                    Alquilar Producto
-                </button>
-            </form>
-        </div>
+        {% if alquiler == null %} 
+            {% if product.estado !== 'A' and estaAuth === true%}
+            <div class="col p-3 d-flex justify-content-start">
+                <form>
+                    <button type="button" class="btn btn-success" id="formPayment">
+                        Alquilar Producto
+                    </button>
+                </form>
+            </div>
+            {% endif %}
+        {% else %}
+            {% if alquiler.estado == 'A' and estaAuth == true%}
+            <div class="col p-3 d-flex justify-content-start">
+                <form>
+                    <button type="button" class="btn btn-success" id="btnLoRetire">
+                        Lo Retire
+                    </button>
+                </form>
+            </div>
+            {% endif %}
+
+            {% if alquiler.estado == 'PD' and estaAuth == true%}
+            <div class="col p-3 d-flex justify-content-start">
+                <form>
+                    <button type="button" class="btn btn-success" id="btnLoDevolvio">
+                        Lo Devolvio
+                    </button>
+                </form>
+            </div>
+            {% endif %}
         {% endif %}
+
+
         {% if estaAuth === true %}
         <div class="col p-3 d-flex justify-content-start">
-            <button id="btnFavs" data-product-id="{{ product.id }}" type="submit" class="btn btn-outline-warning mb-2 favorito-button">
+            <button id="btnFavs" data-product-id="{{ product.id }}" type="submit"
+                class="btn btn-outline-warning mb-2 favorito-button">
                 <!-- otra opciones https://www.neoguias.com/mostrar-ocultar-elementos-html/#Atributo_Hidden_de_HTML-->
                 <i class="fa-regular fa-star" style="display: block;"></i>
             </button>
@@ -183,7 +215,7 @@
 </div>
 
 <script>
-    document.querySelector('#btnFavs').addEventListener('click', function() {
+    document.querySelector('#btnFavs').addEventListener('click', function () {
         var productId = this.getAttribute('data-product-id');
         fetch(`/my_favs/${productId}`, {
             method: 'POST',
@@ -192,18 +224,18 @@
             },
             body: JSON.stringify({ producto_id: productId }),
         })
-        .then(response => response.json())
-        .then(data => {
-            console.log(data.mensaje);
-            var cambiarIcono = this.querySelector('i');
-            cambiarIcono.classList.remove('fa-regular');
-            cambiarIcono.classList.add('fa-solid');
-        })
-        .catch((error) => {
-            console.error('Error:', error);
-        });
+            .then(response => response.json())
+            .then(data => {
+                console.log(data.mensaje);
+                var cambiarIcono = this.querySelector('i');
+                cambiarIcono.classList.remove('fa-regular');
+                cambiarIcono.classList.add('fa-solid');
+            })
+            .catch((error) => {
+                console.error('Error:', error);
+            });
     });
-    
+
     const payment = document.getElementById('formPayment')
 
     payment.addEventListener('click', async () => {
@@ -216,5 +248,18 @@
         window.location.href = data.init_point;
     })
 
+</script>
+<script>
+    const btnLoRetire = document.getElementById('btnLoRetire')
+
+    btnLoRetire.addEventListener('click', async () => {
+        const response = await fetch('/payment/{{ product.id }}', {
+            method: 'POST'
+        })
+
+        const data = await response.json()
+        console.log(data)
+        window.location.href = data.init_point;
+    })
 </script>
 {% endblock %}
